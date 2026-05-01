@@ -12,23 +12,28 @@ export const useAuth = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Verificar si hay token almacenado
+    // Hidratar la sesión de forma síncrona
     const token = authService.getToken();
-    if (token) {
-      // Aquí se podría validar el token con el backend
-      setUser(token);
+    const storedUser = authService.getUser();
+
+    if (token && storedUser) {
+      setUser(storedUser);
     }
     setIsLoading(false);
   }, []);
 
   const login = async (email, password) => {
     setIsLoading(true);
-    setError(null);
+    setError(null); // Limpiar errores previos (Heurística de visibilidad del estado)
     try {
       const response = await authService.login({ email, password });
-      setUser(response.data);
+      setUser(response.data.user);
       return response;
     } catch (err) {
+      // Propagamos error string o el objeto de errores de validación
+      if (err.validationErrors) {
+        throw err;
+      }
       setError(err.message);
       throw err;
     } finally {
@@ -41,9 +46,13 @@ export const useAuth = () => {
     setError(null);
     try {
       const response = await authService.register(userData);
-      setUser(response.data);
+      // Autologin post-registro (Estrategia elegida para mejor UX)
+      setUser(response.data.user);
       return response;
     } catch (err) {
+      if (err.validationErrors) {
+        throw err; // Propagar errores específicos de campos a useForm
+      }
       setError(err.message);
       throw err;
     } finally {
@@ -55,10 +64,9 @@ export const useAuth = () => {
     setIsLoading(true);
     try {
       await authService.logout();
-      setUser(null);
-    } catch (err) {
-      setError(err.message);
     } finally {
+      setUser(null);
+      setError(null);
       setIsLoading(false);
     }
   };

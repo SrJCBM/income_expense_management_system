@@ -13,7 +13,19 @@ class CategoryService {
       });
       return response.data;
     } catch (error) {
-      throw new Error(`Error al obtener categorías: ${error.message}`);
+      if (error.response?.status === 404) {
+        return {
+          success: true,
+          data: [],
+          message: 'Sin categorías registradas',
+        };
+      }
+
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para obtener categorías.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudieron obtener las categorías.');
     }
   }
 
@@ -22,7 +34,11 @@ class CategoryService {
       const response = await api.post(API_ENDPOINTS.CATEGORIES.CREATE, categoryData);
       return response.data;
     } catch (error) {
-      throw new Error(`Error al crear categoría: ${error.message}`);
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para crear la categoría.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudo crear la categoría.');
     }
   }
 
@@ -31,7 +47,11 @@ class CategoryService {
       const response = await api.put(API_ENDPOINTS.CATEGORIES.UPDATE(id), categoryData);
       return response.data;
     } catch (error) {
-      throw new Error(`Error al actualizar categoría: ${error.message}`);
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para actualizar la categoría.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudo actualizar la categoría.');
     }
   }
 
@@ -40,7 +60,11 @@ class CategoryService {
       const response = await api.delete(API_ENDPOINTS.CATEGORIES.DELETE(id));
       return response.data;
     } catch (error) {
-      throw new Error(`Error al eliminar categoría: ${error.message}`);
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para eliminar la categoría.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudo eliminar la categoría.');
     }
   }
 }

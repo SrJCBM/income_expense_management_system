@@ -5,9 +5,16 @@
 
 import express from 'express';
 import { authenticate } from '../middlewares/authMiddleware.js';
-
-// Aquí importaremos los controladores cuando estén listos
-// import { getExpenses, createExpense, updateExpense, deleteExpense } from '../controllers/expenseController.js';
+import {
+	getExpenses,
+	createExpense,
+	updateExpense,
+	deleteExpense,
+} from '../controllers/expenseController.js';
+import {
+	validateExpenseInput,
+	handleValidationErrors,
+} from '../validators/expenseValidator.js';
 
 const router = express.Router();
 
@@ -15,15 +22,15 @@ const router = express.Router();
 router.use(authenticate);
 
 // GET - Obtener todos los gastos
-// router.get('/', getExpenses);
+router.get('/', getExpenses);
 
 // POST - Crear un nuevo gasto
-// router.post('/', createExpense);
+router.post('/', validateExpenseInput, handleValidationErrors, createExpense);
 
 // PUT - Actualizar un gasto
-// router.put('/:id', updateExpense);
+router.put('/:id', validateExpenseInput, handleValidationErrors, updateExpense);
 
 // DELETE - Eliminar un gasto
-// router.delete('/:id', deleteExpense);
+router.delete('/:id', deleteExpense);
 
 export default router;

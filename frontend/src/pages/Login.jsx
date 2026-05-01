@@ -1,22 +1,97 @@
-/**
- * Página: Login
- * Página de inicio de sesión
- */
-
-import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-// import LoginForm from '../components/LoginForm';
-import '../styles/pages/Login.css';
+import { useForm } from '../hooks/useForm.js';
+import '../styles/Auth.css';
 
 const Login = () => {
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, error: authError } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLoginSubmit = async (values) => {
+    // Limpieza de espacios y validación básica
+    const email = values.email.trim();
+    const password = values.password.trim();
+
+    if (!email || !password) {
+      throw { validationErrors: { general: 'Por favor, completa todos los campos para continuar.' } };
+    }
+
+    await login(email, password);
+    navigate('/');
+  };
+
+  const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(
+    { email: '', password: '' },
+    handleLoginSubmit
+  );
+
+  const isFormDisabled = isLoading || isSubmitting;
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h1>Inicia Sesión</h1>
-        <p>Sistema de Control de Gastos e Ingresos</p>
-        {/* <LoginForm onSubmit={login} isLoading={isLoading} error={error} /> */}
+    <div className="auth-container">
+      <div className="auth-card" role="main" aria-labelledby="login-title">
+        <div className="auth-header">
+          <h2 id="login-title">Bienvenido de nuevo</h2>
+          <p>Ingresa tus credenciales para acceder a tu panel</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
+          {/* Feedback General */}
+          {(authError || errors.general || errors.submit) && (
+            <div className="alert alert-error" role="alert" aria-live="assertive">
+              {authError || errors.general || errors.submit}
+            </div>
+          )}
+
+          <div className="form-group">
+            <label htmlFor="email">Correo electrónico</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={values.email}
+              onChange={handleChange}
+              placeholder="tu@email.com"
+              disabled={isFormDisabled}
+              required
+              aria-required="true"
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? "email-error" : undefined}
+            />
+            {errors.email && <span id="email-error" className="error-text" role="alert">{errors.email}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              disabled={isFormDisabled}
+              required
+              aria-required="true"
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? "password-error" : undefined}
+            />
+            {errors.password && <span id="password-error" className="error-text" role="alert">{errors.password}</span>}
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn-primary w-100" 
+            disabled={isFormDisabled}
+            aria-busy={isFormDisabled}
+          >
+            {isFormDisabled ? 'Autenticando...' : 'Iniciar Sesión'}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          <p>¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link></p>
+        </div>
       </div>
     </div>
   );

@@ -6,18 +6,71 @@
 import api from './api.js';
 import { API_ENDPOINTS } from '../constants/apiEndpoints.js';
 
+const AUTH_TOKEN_KEY = 'authToken';
+const AUTH_USER_KEY = 'authUser';
+const API_FALLBACK_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const buildNetworkError = () =>
+  new Error(
+    `No se pudo conectar con el backend. Verifica que el API esté activo en ${API_FALLBACK_URL}.`
+  );
+
+const mapBackendValidationErrors = (errors = []) => {
+  const mappedErrors = {};
+
+  for (const error of errors) {
+    const field = error.path || error.param || 'general';
+    if (!mappedErrors[field]) {
+      mappedErrors[field] = error.msg || 'Valor inválido';
+    }
+  }
+
+  return mappedErrors;
+};
+
 class AuthService {
+  saveSession(token, user) {
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  }
+
+  normalizeApiAuthResponse(payload) {
+    const token = payload?.data?.token || payload?.token;
+    const user = payload?.data?.user || payload?.user;
+
+    if (!token || !user) {
+      throw new Error('La respuesta de autenticación no incluye un token válido.');
+    }
+
+    this.saveSession(token, user);
+
+    return {
+      success: payload?.success ?? true,
+      message: payload?.message || 'Operación exitosa',
+      data: {
+        token,
+        user,
+      },
+    };
+  }
+
   /**
    * Registrar nuevo usuario
    */
   async register(userData) {
     try {
       const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, userData);
-      if (response.data.data.token) {
-        localStorage.setItem('authToken', response.data.data.token);
-      }
-      return response.data;
+      return this.normalizeApiAuthResponse(response.data);
     } catch (error) {
+      if (!error.response) {
+        throw buildNetworkError();
+      }
+
+      // Manejo del formato de errores devuelto por el backend
+      if (error.response?.data?.errors) {
+        throw { validationErrors: mapBackendValidationErrors(error.response.data.errors) };
+      }
+
       throw new Error(`Error al registrar: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -28,12 +81,14 @@ class AuthService {
   async login(credentials) {
     try {
       const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
-      if (response.data.data.token) {
-        localStorage.setItem('authToken', response.data.data.token);
-      }
-      return response.data;
+      return this.normalizeApiAuthResponse(response.data);
     } catch (error) {
-      throw new Error(`Error al iniciar sesión: ${error.response?.data?.message || error.message}`);
+      if (!error.response) {
+        throw buildNetworkError();
+      }
+
+      // Si el backend devuelve status code pero no un array de errors, propagamos el mensaje
+      throw new Error(error.response?.data?.message || 'Error al iniciar sesión. Verifica tus credenciales.');
     }
   }
 
@@ -41,11 +96,17 @@ class AuthService {
    * Cerrar sesión
    */
   async logout() {
+    // Siempre limpiamos la sesión local independientemente de la respuesta del backend
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(AUTH_USER_KEY);
+
     try {
-      localStorage.removeItem('authToken');
       await api.post(API_ENDPOINTS.AUTH.LOGOUT);
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      // Si el backend está caído, igual mantenemos logout local sin ruido en consola.
+      if (error.response) {
+        console.warn('No se pudo notificar logout al backend:', error.response?.data?.message || error.message);
+      }
     }
   }
 
@@ -53,14 +114,31 @@ class AuthService {
    * Obtener token almacenado
    */
   getToken() {
-    return localStorage.getItem('authToken');
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  }
+
+  /**
+   * Obtener usuario almacenado
+   */
+  getUser() {
+    const rawUser = localStorage.getItem(AUTH_USER_KEY);
+
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawUser);
+    } catch {
+      return null;
+    }
   }
 
   /**
    * Verificar si está autenticado
    */
   isAuthenticated() {
-    return !!this.getToken();
+    return !!this.getToken() && !!this.getUser();
   }
 }
 

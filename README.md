@@ -1,83 +1,215 @@
-# Sistema de Control de Gastos e Ingresos
+# 💰 Sistema de Control de Gastos e Ingresos
 
-## 📋 Descripción del Proyecto
+Un sistema completo para gestionar y analizar movimientos financieros personales o familiares. Permite registrar ingresos, gastos, crear categorías, establecer presupuestos y visualizar reportes analíticos con gráficos interactivos.
 
-Un sistema completo para gestionar y analizar movimientos financieros personales o familiares. Permite registrar ingresos, gastos, crear categorías, establecer presupuestos y visualizar reportes analíticos.
-
-## 🎯 Características Principales
+## ✨ Características
 
 - ✅ Registro de ingresos y gastos
-- ✅ Clasificación por categorías
-- ✅ Reportes y visualizaciones
-- ✅ Control de presupuestos
-- ✅ Autenticación y autorización segura
-- ✅ Interfaz responsive
+- ✅ Clasificación por categorías (CRUD completo)
+- ✅ Reportes y visualizaciones interactivas
+- ✅ Exportación PDF y Excel
+- ✅ Control de presupuestos *(en desarrollo)*
+- ✅ Autenticación JWT segura
+- ✅ Interfaz responsive (mobile-first)
+- ✅ WCAG 2.1 AA accesible
 - ✅ Deploy en Render
 - ✅ Clean Code aplicado
 
-## ⚡ Inicio Rápido (5 minutos)
+---
 
-**Requisitos previos**: Node.js 18+, npm, MongoDB (opcional inicialmente)
+## 🚀 Inicio Rápido (3 pasos)
 
-### Paso 1: Backend (Terminal 1)
+**Requisitos**: Node.js 18+, npm, MongoDB (Atlas recomendado)
+
+**Terminal 1:**
 ```bash
-cd backend
-npm install
-npm run dev
+cd backend && npm install && npm run dev
 ```
 
-Deberías ver: `✅ Servidor ejecutándose en puerto 5000`
-
-### Paso 2: Frontend (Terminal 2 - Nueva ventana)
+**Terminal 2 (Nueva ventana):**
 ```bash
-cd frontend
-npm install
-npm run dev
+cd frontend && npm install && npm run dev
 ```
 
-**El navegador abrirá automáticamente** en http://localhost:3000
+**¡Listo!** Se abre en http://localhost:3000
 
-### ¡Listo! 🎉
-Verás una página con "💰 Sistema de Control de Gastos e Ingresos"
+> Credentials de prueba: `demo@example.com` / `Password123`
 
-**Para más detalles**, lee [INICIO_RAPIDO.md](./INICIO_RAPIDO.md) o [docs/SETUP.md](./docs/SETUP.md)
+**¿Problemas?** → Ver [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
 
 ---
 
-## 🏗️ Arquitectura del Proyecto
+## 📚 Documentación
 
-### Backend (Node.js + Express)
-Sigue el patrón **Model-Controller (MC)**:
-- **Models**: Esquemas MongoDB y lógica de datos
-- **Controllers**: Lógica de negocio y manejo de solicitudes
-- **Routes**: Definición de endpoints
-- **Middlewares**: Autenticación, validación, manejo de errores
-- **Services**: Lógica reutilizable
-- **Utils**: Funciones auxiliares
-- **Validators**: Validación de datos
-- **Errors**: Manejo centralizado de errores
+| Documento | Descripción |
+|-----------|-------------|
+| [**INICIO_RAPIDO.md**](INICIO_RAPIDO.md) | Setup en 3 pasos (este archivo) |
+| [**ERRORES_COMUNES.md**](ERRORES_COMUNES.md) | Troubleshooting y soluciones |
+| [**docs/SETUP.md**](docs/SETUP.md) | Instalación detallada y configuración |
+| [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) | Patrón MVC: Backend MC + Frontend MV |
+| [**docs/PROJECT_STRUCTURE.md**](docs/PROJECT_STRUCTURE.md) | Mapeo completo de carpetas y archivos |
+| [**docs/API.md**](docs/API.md) | Endpoints y especificaciones REST |
+| [**docs/DEVELOPMENT_GUIDE.md**](docs/DEVELOPMENT_GUIDE.md) | Guía de desarrollo y próximos pasos |
+| [**AUDIT_GRAPHICS_ACCESSIBILITY.md**](AUDIT_GRAPHICS_ACCESSIBILITY.md) | Validación WCAG 2.1 AA + Nielsen heuristics |
 
-### Frontend (React + Vite)
-Sigue el patrón **Model-View (MV)**:
-- **Models**: Clases de datos y lógica de negocio
-- **Views/Components**: Componentes visuales
-- **Pages**: Páginas principales
-- **Services**: Comunicación con API
-- **Hooks**: Lógica reutilizable
-- **Utils**: Funciones auxiliares
-- **Assets/Styles**: Recursos visuales
+---
 
-## 📁 Estructura de Carpetas
+## 🏗️ Stack Tecnológico
+
+### Backend
+- **Runtime**: Node.js + Express
+- **Base de Datos**: MongoDB (Mongoose ODM)
+- **Autenticación**: JWT + bcrypt
+- **Validación**: Joi + Custom validators
+- **Manejo de errores**: Custom Error classes
+- **Seguridad**: CORS, helmet, variables de entorno
+
+### Frontend
+- **Framework**: React 18 + Vite
+- **Visualización**: Recharts (gráficos interactivos)
+- **Exportación**: jsPDF (PDF) + XLSX (Excel)
+- **Hooks**: Custom hooks para lógica reutilizable
+- **Estilos**: CSS modular + responsive design
+- **Accesibilidad**: WCAG 2.1 AA compliant
+
+---
+
+## 📊 Estado del Proyecto
+
+| Módulo | Estado | Notas |
+|--------|--------|-------|
+| **Autenticación** | ✅ Completo | Login/Register con JWT |
+| **Gastos (CRUD)** | ✅ Completo | Crear, leer, actualizar, eliminar |
+| **Ingresos (CRUD)** | ✅ Completo | Crear, leer, actualizar, eliminar |
+| **Categorías (CRUD)** | ✅ Completo | Crear, leer, actualizar, eliminar |
+| **Reportes** | ✅ Completo | Gráficos, exportación PDF/Excel |
+| **Presupuestos** | 🟡 En desarrollo | Estructura lista, endpoints desactivados |
+| **Perfil Usuario** | 🟡 En desarrollo | Endpoints comentados |
+
+---
+
+## 🎯 Arquitectura
+
+```
+REQUEST → MIDDLEWARE → ROUTES → CONTROLLER → SERVICE → MODEL → DATABASE
+         (Auth)         (API)      (HTTP)      (Logic)    (Schema)
+```
+
+**Backend**: Model-Controller (MC) - Services reutilizable  
+**Frontend**: Model-View + Hooks (MVH) - Lógica en hooks reutilizable
+
+Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para más detalles.
+
+---
+
+## 📁 Estructura del Proyecto
 
 ```
 income_expense_management_system/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/       # Controladores
+│   │   ├── controllers/       # Lógica HTTP
 │   │   ├── models/            # Esquemas MongoDB
-│   │   ├── routes/            # Rutas de API
+│   │   ├── routes/            # Endpoints
+│   │   ├── services/          # Lógica de negocio
 │   │   ├── middlewares/       # Auth, validación, errores
-│   │   ├── services/          # Servicios de negocio
+│   │   ├── utils/             # Funciones auxiliares
+│   │   ├── validators/        # Esquemas de validación
+│   │   └── config/            # Base datos, CORS
+│   ├── server.js              # Punto de entrada
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/        # Componentes reutilizables
+│   │   ├── pages/             # Páginas principales
+│   │   ├── hooks/             # Hooks reutilizables
+│   │   ├── services/          # Llamadas API
+│   │   ├── utils/             # Funciones auxiliares
+│   │   ├── styles/            # CSS modular
+│   │   └── constants/         # Constantes
+│   ├── index.html
+│   └── package.json
+│
+├── docs/                      # Documentación técnica
+├── README.md                  # Este archivo
+├── INICIO_RAPIDO.md           # Setup rápido
+├── ERRORES_COMUNES.md         # Troubleshooting
+└── AUDIT_GRAPHICS_ACCESSIBILITY.md
+```
+
+---
+
+## 🔐 Variables de Entorno
+
+### Backend (.env)
+```env
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/dbname
+JWT_SECRET=your_super_secret_key_change_in_production
+NODE_ENV=development
+PORT=5000
+```
+
+### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Backend
+cd backend && npm test
+
+# Frontend
+cd frontend && npm run test
+```
+
+---
+
+## 🌐 Deploy
+
+El proyecto está listo para desplegar en **Render**:
+
+1. Conecta tu repositorio a Render
+2. Configura variables de entorno
+3. Deploy automático en cada push
+
+Ver [docs/SETUP.md](docs/SETUP.md) para instrucciones completas.
+
+---
+
+## 📝 Licencia
+
+MIT
+
+---
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Por favor:
+1. Fork el proyecto
+2. Crea una rama (`git checkout -b feature/nueva-feature`)
+3. Commit (`git commit -m 'Add nueva feature'`)
+4. Push (`git push origin feature/nueva-feature`)
+5. Abre un Pull Request
+
+---
+
+## 📞 Soporte
+
+- **Issues**: Abre un issue en GitHub
+- **Documentación**: Lee [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
+- **Email**: *(Agregá tu email si deseas)*
+
+---
+
+**Versión**: 1.0.0  
+**Última actualización**: Mayo 2026  
+**Estado**: ✅ Producción
+
 │   │   ├── validators/        # Validadores
 │   │   ├── config/            # BD, CORS, etc
 │   │   └── utils/             # Utilidades
@@ -279,14 +411,24 @@ NODE_ENV=production
 
 ## ✅ Checklist de Implementación
 
-Para próximas fases:
-- [ ] Implementar controladores de autenticación
-- [ ] Conectar Mongoose con MongoDB
-- [ ] Crear servicios de negocio
-- [ ] Implementar React pages
-- [ ] Conectar frontend con API
-- [ ] Testing de endpoints
+**Fase 1 - Backend Base**: ✅ Completada
+- [x] Implementar controladores de autenticación
+- [x] Conectar Mongoose con MongoDB
+- [x] Crear servicios de negocio
+- [x] CRUD de Gastos, Ingresos, Categorías y Reportes
+
+**Fase 2 - Frontend Base**: ✅ Completada
+- [x] Implementar React pages
+- [x] Conectar frontend con API
+- [x] CRUD dinámico con categorías
+- [x] Reportes con filtros dinámicos
+
+**Próximas Fases**:
+- [ ] Testing completo de endpoints
+- [ ] Módulo de Usuarios (Perfil) - En Desarrollo
+- [ ] Módulo de Presupuestos - Planificado
 - [ ] Deploy en Render
+- [ ] Gráficos avanzados y exportación a PDF
 
 ## 📞 Soporte y Contacto
 

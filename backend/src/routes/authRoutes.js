@@ -4,21 +4,30 @@
  */
 
 import express from 'express';
-// import { register, login, logout, refreshToken } from '../controllers/authController.js';
-// import { validateRegisterInput, validateLoginInput, handleValidationErrors } from '../validators/authValidator.js';
+import {
+	register,
+	login,
+	logout,
+	refreshToken,
+} from '../controllers/authController.js';
+import {
+	validateRegisterInput,
+	validateLoginInput,
+	handleValidationErrors,
+} from '../validators/authValidator.js';
 
 const router = express.Router();
 
 // POST - Registrar usuario
-// router.post('/register', validateRegisterInput, handleValidationErrors, register);
+router.post('/register', validateRegisterInput, handleValidationErrors, register);
 
 // POST - Iniciar sesión
-// router.post('/login', validateLoginInput, handleValidationErrors, login);
+router.post('/login', validateLoginInput, handleValidationErrors, login);
 
 // POST - Cerrar sesión
-// router.post('/logout', logout);
+router.post('/logout', logout);
 
 // POST - Refrescar token
-// router.post('/refresh', refreshToken);
+router.post('/refresh', refreshToken);
 
 export default router;

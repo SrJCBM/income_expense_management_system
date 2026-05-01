@@ -17,14 +17,15 @@ dotenv.config();
 // Importar configuraciones
 import { corsOptions } from './src/config/corsConfig.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
+import { connectDB, initializeDatabaseSchema } from './src/config/database.js';
 
 // Importar rutas
-// import userRoutes from './src/routes/userRoutes.js';
-// import expenseRoutes from './src/routes/expenseRoutes.js';
-// import incomeRoutes from './src/routes/incomeRoutes.js';
-// import categoryRoutes from './src/routes/categoryRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
+import expenseRoutes from './src/routes/expenseRoutes.js';
+import incomeRoutes from './src/routes/incomeRoutes.js';
+import categoryRoutes from './src/routes/categoryRoutes.js';
 // import budgetRoutes from './src/routes/budgetRoutes.js';
-// import reportRoutes from './src/routes/reportRoutes.js';
+import reportRoutes from './src/routes/reportRoutes.js';
 
 const app = express();
 
@@ -44,12 +45,12 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // RUTAS
 // ============================================
 // Las rutas se agregarán aquí conforme se implementen los controladores
-// app.use('/api/users', userRoutes);
-// app.use('/api/expenses', expenseRoutes);
-// app.use('/api/incomes', incomeRoutes);
-// app.use('/api/categories', categoryRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/incomes', incomeRoutes);
+app.use('/api/categories', categoryRoutes);
 // app.use('/api/budgets', budgetRoutes);
-// app.use('/api/reports', reportRoutes);
+app.use('/api/reports', reportRoutes);
 
 // ============================================
 // RUTA DE HEALTH CHECK
@@ -83,7 +84,17 @@ app.use(errorHandler);
 // ============================================
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`✅ Servidor ejecutándose en puerto ${PORT}`);
-  console.log(`📍 Entorno: ${process.env.NODE_ENV}`);
+const bootstrap = async () => {
+  await connectDB();
+  await initializeDatabaseSchema();
+
+  app.listen(PORT, () => {
+    console.log(`✅ Servidor ejecutándose en puerto ${PORT}`);
+    console.log(`📍 Entorno: ${process.env.NODE_ENV}`);
+  });
+};
+
+bootstrap().catch((error) => {
+  console.error(`❌ No se pudo iniciar el servidor: ${error.message}`);
+  process.exit(1);
 });

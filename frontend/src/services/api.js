@@ -4,7 +4,6 @@
  */
 
 import axios from 'axios';
-import { API_ENDPOINTS } from '../constants/apiEndpoints.js';
 
 const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 10000;
 
@@ -31,8 +30,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Documentación para el Backend: 
+    // Ante un 401 Unauthorized, forzamos un reload completo con window.location.href 
+    // en lugar de una redirección SPA, ya que esto garantiza que se limpie todo 
+    // el estado en memoria de React y evita posibles bugs de hidratación o estados zombi.
     if (error.response?.status === 401) {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('authUser');
       window.location.href = '/login';
     }
     return Promise.reject(error);

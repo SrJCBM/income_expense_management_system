@@ -11,52 +11,42 @@ La estructura está lista. Ahora necesitas implementar la funcionalidad.
 ### Fase 1: Backend Base (Semana 1)
 
 #### 1.1 Configuración Inicial
-- [ ] Instalar dependencias: `npm install` en backend/
-- [ ] Crear `.env` con valores reales
-- [ ] Conectar MongoDB (local o Atlas)
-- [ ] Probar conexión a BD
+- [x] Instalar dependencias: `npm install` en backend/
+- [x] Crear `.env` con valores reales
+- [x] Conectar MongoDB (local o Atlas)
+- [x] Probar conexión a BD
 
 #### 1.2 Autenticación (Lo primero)
-**Archivos a editar**:
-- `backend/src/controllers/authController.js` ← Implementar aquí
-  - `register()` - Crear usuario con password hasheado
-  - `login()` - Validar credenciales, generar JWT
-  - `logout()` - Opcional
-  - `refreshToken()` - Refrescar JWT
+- [x] `backend/src/controllers/authController.js` - Implementado
+  - [x] `register()` - Crear usuario con password hasheado
+  - [x] `login()` - Validar credenciales, generar JWT
 
-- `backend/src/services/authService.js` ← Lógica aquí
-  - Validar usuario existente
-  - Comparar contraseñas
-  - Generar token
+- [x] `backend/src/services/authService.js` - Implementado
+  - [x] Validar usuario existente
+  - [x] Comparar contraseñas
+  - [x] Generar token
 
-- `backend/src/routes/authRoutes.js` ← Conectar rutas
-  - Descomentar y conectar al server.js
-
-**Probar con**:
-```bash
-curl -X POST http://localhost:5000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","password":"12345678","name":"Juan"}'
-```
+- [x] `backend/src/routes/authRoutes.js` - Conectado al server.js
 
 #### 1.3 CRUD de Gastos
-- [ ] Implementar `expenseController.js` - TODO
-- [ ] Implementar `expenseService.js` - TODO
-- [ ] Conectar `expenseRoutes.js` al server - TODO
-- [ ] Probar endpoints
+- [x] Implementar `expenseController.js` - ✅ Completado
+- [x] Implementar `expenseService.js` - ✅ Completado
+- [x] Conectar `expenseRoutes.js` al server - ✅ Completado
+- [x] Endpoints: GET, POST, PUT, DELETE funcionales
 
 #### 1.4 CRUD de Ingresos
-- [ ] Similar a gastos
-- [ ] `incomeController.js`
-- [ ] `incomeService.js`
+- [x] `incomeController.js` - ✅ Completado
+- [x] `incomeService.js` - ✅ Completado
+- [x] Endpoints: GET, POST, PUT, DELETE funcionales
 
 #### 1.5 CRUD de Categorías
-- [ ] Similar a gastos
-- [ ] `categoryController.js`
+- [x] `categoryController.js` - ✅ Completado
+- [x] `categoryService.js` - ✅ Completado
+- [x] Default categories seeding on user registration
 
 #### 1.6 Reportes
-- [ ] `reportController.js`
-- [ ] Implementar endpoints de reporte
+- [x] `reportController.js` - ✅ Completado
+- [x] Endpoints: summary, monthly, yearly, category-breakdown, filters
 
 **Resultado esperado**: API funcional con todos los endpoints
 

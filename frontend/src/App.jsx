@@ -3,45 +3,38 @@
  * Componente raíz de la aplicación React
  */
 
-import React from 'react';
-import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute.jsx';
+import Layout from './components/Layout.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Expenses from './pages/Expenses.jsx';
+import Reports from './pages/Reports.jsx';
+// Importaciones futuras para Incomes y Categories, temporalmente usar un placeholder o Dashboard
+import Incomes from './pages/Incomes.jsx'; // Esto fallará si no existe, vamos a crearlo vacío
+import Categories from './pages/Categories.jsx';
 
 function App() {
-  const [user, setUser] = React.useState(null);
-
   return (
-    <div className="App">
-      <header className="app-header">
-        <h1>💰 Sistema de Control de Gastos e Ingresos</h1>
-        <p>Gestiona tus finanzas personales de forma inteligente</p>
-      </header>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      
+      {/* Rutas Privadas */}
+      <Route element={<PrivateRoute />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/expenses" element={<Expenses />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/incomes" element={<Incomes />} />
+          <Route path="/categories" element={<Categories />} />
+        </Route>
+      </Route>
 
-      <main className="app-main">
-        {!user ? (
-          <div className="welcome-section">
-            <h2>Bienvenido</h2>
-            <p>Esta es la aplicación principal para controlar tus ingresos y gastos.</p>
-            <div className="button-group">
-              <button className="btn btn-primary" onClick={() => alert('Login - Próximamente')}>
-                Iniciar Sesión
-              </button>
-              <button className="btn btn-secondary" onClick={() => alert('Registro - Próximamente')}>
-                Registrarse
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="dashboard-section">
-            <h2>Bienvenido, {user.name}</h2>
-            <p>Tu dashboard estará aquí pronto.</p>
-          </div>
-        )}
-
-        <footer className="app-footer">
-          <p>© 2024 Sistema de Control de Gastos - Todos los derechos reservados</p>
-        </footer>
-      </main>
-    </div>
+      {/* Redirección por defecto */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 

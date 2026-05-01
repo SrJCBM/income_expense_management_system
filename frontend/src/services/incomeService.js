@@ -13,7 +13,19 @@ class IncomeService {
       });
       return response.data;
     } catch (error) {
-      throw new Error(`Error al obtener ingresos: ${error.message}`);
+      if (error.response?.status === 404) {
+        return {
+          success: true,
+          data: [],
+          message: 'Sin ingresos registrados',
+        };
+      }
+
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para obtener ingresos.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudieron obtener los ingresos.');
     }
   }
 
@@ -22,7 +34,11 @@ class IncomeService {
       const response = await api.post(API_ENDPOINTS.INCOMES.CREATE, incomeData);
       return response.data;
     } catch (error) {
-      throw new Error(`Error al crear ingreso: ${error.message}`);
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para crear el ingreso.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudo crear el ingreso.');
     }
   }
 
@@ -31,7 +47,11 @@ class IncomeService {
       const response = await api.put(API_ENDPOINTS.INCOMES.UPDATE(id), incomeData);
       return response.data;
     } catch (error) {
-      throw new Error(`Error al actualizar ingreso: ${error.message}`);
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para actualizar el ingreso.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudo actualizar el ingreso.');
     }
   }
 
@@ -40,7 +60,11 @@ class IncomeService {
       const response = await api.delete(API_ENDPOINTS.INCOMES.DELETE(id));
       return response.data;
     } catch (error) {
-      throw new Error(`Error al eliminar ingreso: ${error.message}`);
+      if (!error.response) {
+        throw new Error('No se pudo conectar con el servidor para eliminar el ingreso.');
+      }
+
+      throw new Error(error.response?.data?.message || 'No se pudo eliminar el ingreso.');
     }
   }
 }

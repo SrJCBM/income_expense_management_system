@@ -56,6 +56,7 @@ export const API_ENDPOINTS = {
 
   // Reports
   REPORTS: {
+    FILTERS: `${BASE_URL}/reports/filters`,
     SUMMARY: `${BASE_URL}/reports/summary`,
     MONTHLY: `${BASE_URL}/reports/monthly`,
     YEARLY: `${BASE_URL}/reports/yearly`,

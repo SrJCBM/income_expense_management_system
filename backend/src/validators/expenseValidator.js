@@ -6,12 +6,24 @@
 import { body, validationResult } from 'express-validator';
 
 export const validateExpenseInput = [
+  body().custom((_, { req }) => {
+    if (!req.body.description && !req.body.concept) {
+      throw new Error('La descripción es requerida');
+    }
+    return true;
+  }),
+
   body('description')
+    .optional()
     .trim()
-    .notEmpty()
-    .withMessage('La descripción es requerida')
     .isLength({ max: 500 })
     .withMessage('La descripción no debe exceder 500 caracteres'),
+
+  body('concept')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('El concepto no debe exceder 500 caracteres'),
 
   body('amount')
     .notEmpty()
@@ -19,9 +31,20 @@ export const validateExpenseInput = [
     .isFloat({ min: 0.01 })
     .withMessage('El monto debe ser un número positivo'),
 
+  body().custom((_, { req }) => {
+    if (!req.body.category && !req.body.categoryId) {
+      throw new Error('La categoría es requerida');
+    }
+    return true;
+  }),
+
   body('category')
-    .notEmpty()
-    .withMessage('La categoría es requerida')
+    .optional()
+    .isMongoId()
+    .withMessage('ID de categoría inválido'),
+
+  body('categoryId')
+    .optional()
     .isMongoId()
     .withMessage('ID de categoría inválido'),
 

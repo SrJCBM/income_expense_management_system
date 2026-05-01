@@ -1,33 +1,42 @@
+# ⚡ Inicio Rápido - 3 Pasos
+
+> **¿Primer vistazo?** Lee este archivo (2 min). **¿Instalación completa?** Ve a [docs/SETUP.md](docs/SETUP.md)
+
+## 🚀 Paso 1: Backend (Terminal 1)
+
+```powershell
+cd backend
+npm install
+npm run dev
 ```
-╔════════════════════════════════════════════════════════════════════════════╗
-║                                                                            ║
-║  🎯 SISTEMA DE CONTROL DE GASTOS E INGRESOS                              ║
-║  Arquitectura MVC Completa - Listo para Desarrollo                        ║
-║                                                                            ║
-║  ⚡ INICIO RÁPIDO: 3 pasos para empezar                                    ║
-║  🐛 ¿PROBLEMAS? Lee: ERRORES_COMUNES.md                                   ║
-║  📚 AYUDA COMPLETA: docs/SETUP.md                                         ║
-║                                                                            ║
-╚════════════════════════════════════════════════════════════════════════════╝
 
+Espera el mensaje: `✅ Servidor ejecutándose en puerto 5000`
 
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 📊 ESTADO DEL PROYECTO                                                     │
-├────────────────────────────────────────────────────────────────────────────┤
-│ ✅ Backend (Node.js + Express)      → ESTRUCTURA LISTA                     │
-│ ✅ Frontend (React + Vite)          → ESTRUCTURA LISTA                     │
-│ ✅ Base de Datos (MongoDB)          → MODELOS DEFINIDOS                    │
-│ ✅ Seguridad (JWT + Bcrypt)         → CONFIGURADA                          │
-│ ✅ Variables de Entorno (.env)      → PROTEGIDAS                           │
-│ ✅ Documentación                    → COMPLETA (7 ARCHIVOS)                │
-│ ✅ Clean Code                       → APLICADO EN TODO                     │
-│ ⏳ Implementación de Lógica         → PRÓXIMO PASO                         │
-└────────────────────────────────────────────────────────────────────────────┘
+## 🚀 Paso 2: Frontend (Terminal 2)
 
+```powershell
+cd frontend
+npm install
+npm run dev
+```
 
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 🏗️ ESTRUCTURA DEL PROYECTO                                                 │
-├────────────────────────────────────────────────────────────────────────────┤
+El navegador abrirá en **http://localhost:3000** 🎉
+
+## 🚀 Paso 3: Login
+
+- Email: `demo@example.com`
+- Password: `Password123`
+
+---
+
+## 📚 Siguiente
+
+- **¿Problemas?** → [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
+- **Instalación detallada** → [docs/SETUP.md](docs/SETUP.md)
+- **Arquitectura** → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- **API Endpoints** → [docs/API.md](docs/API.md)
+- **Guía de desarrollo** → [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)
+
 │                                                                            │
 │  📦 Backend                                                                │
 │  ├── 📁 Controllers      [6 archivos]  ← Lógica de solicitudes            │

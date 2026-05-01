@@ -10,7 +10,7 @@ Header: Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 👤 Usuarios
+## 👤 Autenticación
 
 ### Registrar Usuario
 ```
@@ -57,22 +57,12 @@ Response 200:
 }
 ```
 
-### Obtener Perfil
-```
-GET /api/users/profile
-Authorization: Bearer <TOKEN>
+---
 
-Response 200:
-{
-  "success": true,
-  "data": {
-    "userId": "507f1f77bcf86cd799439011",
-    "email": "user@example.com",
-    "name": "Juan Pérez",
-    "createdAt": "2026-04-24"
-  }
-}
-```
+## 👥 Perfil de Usuario
+
+> [!WARNING] **Módulo en Desarrollo**
+> Los endpoints de perfil de usuario están en desarrollo y no están activos en esta versión. Se planifica implementarlos en futuras versiones.
 
 ---
 
@@ -194,12 +184,45 @@ Content-Type: application/json
 {
   "description": "Salario mensual",
   "amount": 3000.00,
-  "category": "Salario",
+  "category": "507f1f77bcf86cd799439014",
   "date": "2026-04-01",
   "notes": "Salario de marzo"
 }
 
 Response 201: { ... }
+```
+
+### Actualizar Ingreso
+```
+PUT /api/incomes/:id
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+
+{
+  "description": "Salario actualizado",
+  "amount": 3500.00,
+  "category": "507f1f77bcf86cd799439014",
+  "date": "2026-04-01"
+}
+
+Response 200:
+{
+  "success": true,
+  "message": "Ingreso actualizado",
+  "data": { ... }
+}
+```
+
+### Eliminar Ingreso
+```
+DELETE /api/incomes/:id
+Authorization: Bearer <TOKEN>
+
+Response 200:
+{
+  "success": true,
+  "message": "Ingreso eliminado"
+}
 ```
 
 ---
@@ -242,45 +265,51 @@ Content-Type: application/json
 Response 201: { ... }
 ```
 
----
-
-## 💾 Presupuestos
-
-### Listar Presupuestos
+### Actualizar Categoría
 ```
-GET /api/budgets
+PUT /api/categories/:id
+Authorization: Bearer <TOKEN>
+Content-Type: application/json
+
+{
+  "name": "Entretenimiento Actualizado",
+  "color": "#FF6B9D",
+  "icon": "🎭"
+}
+
+Response 200:
+{
+  "success": true,
+  "message": "Categoría actualizada",
+  "data": { ... }
+}
+```
+
+### Eliminar Categoría
+```
+DELETE /api/categories/:id
 Authorization: Bearer <TOKEN>
 
 Response 200:
 {
   "success": true,
-  "data": [
-    {
-      "id": "507f1f77bcf86cd799439015",
-      "category": "507f1f77bcf86cd799439013",
-      "limitAmount": 500.00,
-      "currentSpent": 325.50,
-      "month": 4,
-      "year": 2026
-    }
-  ]
+  "message": "Categoría eliminada"
 }
 ```
 
-### Crear Presupuesto
+---
+
+## 💾 Presupuestos
+
+> [!WARNING] **Módulo en Desarrollo**
+> El módulo de presupuestos está planificado para futuras versiones. Los endpoints no están activados en esta versión.
+
+*Documentación de referencia para implementación futura*:
 ```
-POST /api/budgets
-Authorization: Bearer <TOKEN>
-Content-Type: application/json
-
-{
-  "category": "507f1f77bcf86cd799439013",
-  "limitAmount": 500.00,
-  "month": 4,
-  "year": 2026
-}
-
-Response 201: { ... }
+GET /api/budgets - Listar presupuestos
+POST /api/budgets - Crear presupuesto
+PUT /api/budgets/:id - Actualizar presupuesto
+DELETE /api/budgets/:id - Eliminar presupuesto
 ```
 
 ---
@@ -348,6 +377,26 @@ Response 200:
   ]
 }
 ```
+
+### Filtros de Reportes
+```
+GET /api/reports/filters
+Authorization: Bearer <TOKEN>
+
+Response 200:
+{
+  "success": true,
+  "data": {
+    "years": [2026, 2025],
+    "months": [1, 2, 3, 4],
+    "suggestedPeriod": {
+      "year": 2026,
+      "month": 4
+    }
+  }
+}
+```
+*Retorna los años y meses con datos de ingresos/gastos existentes para filtrar reportes dinámicamente*.
 
 ---
 

@@ -35,9 +35,15 @@ api.interceptors.response.use(
     // en lugar de una redirección SPA, ya que esto garantiza que se limpie todo 
     // el estado en memoria de React y evita posibles bugs de hidratación o estados zombi.
     if (error.response?.status === 401) {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('authUser');
-      window.location.href = '/login';
+      const url = error.config?.url ?? '';
+      // Auth endpoints returning 401 mean wrong credentials, not session expiry.
+      // Only force-logout when a protected route gets a 401 (token expired / revoked).
+      const isAuthEndpoint = /\/auth\/(login|register)(\?.*)?$/.test(url);
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

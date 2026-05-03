@@ -6,6 +6,12 @@ import { successResponse } from '../utils/responseFormatter.js';
 import { asyncHandler } from '../middlewares/errorHandler.js';
 import categoryService from '../services/categoryService.js';
 
+export const getCategory = asyncHandler(async (req, res) => {
+  const category = await categoryService.getCategory(req.params.id, req.user.userId);
+
+  res.status(200).json(successResponse(category, 'Categoría obtenida'));
+});
+
 export const getCategories = asyncHandler(async (req, res) => {
   const categories = await categoryService.getUserCategories(req.user.userId, {
     type: req.query.type,

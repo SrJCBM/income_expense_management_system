@@ -1,8 +1,9 @@
 import { useForm } from '../hooks/useForm.js';
+import { EXPENSE_CATEGORIES } from '../constants/categories.js';
 
 const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting }) => {
   const isEdit = !!initialData;
-  
+
   const handleSubmitForm = async (values) => {
     if (!values.amount || !values.concept || !values.date) {
       throw { validationErrors: { general: 'Por favor, completa los campos obligatorios.' } };
@@ -19,7 +20,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
       amount: initialData?.amount || '',
       date: initialData?.date || new Date().toISOString().split('T')[0],
       categoryId: initialData?.categoryId || '',
-      description: initialData?.description || ''
+      description: initialData?.description || '',
     },
     handleSubmitForm
   );
@@ -27,14 +28,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
   const loading = isSubmitting || externalIsSubmitting;
 
   return (
-    <form onSubmit={handleSubmit} className="expense-form" noValidate>
+    <form onSubmit={handleSubmit} className="expense-form" noValidate data-testid="expense-form">
       {errors.general && (
-        <div className="alert alert-error" role="alert" aria-live="assertive">
+        <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="expense-error-general">
           {errors.general}
         </div>
       )}
       {errors.submit && (
-        <div className="alert alert-error" role="alert" aria-live="assertive">
+        <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="expense-error-submit">
           {errors.submit}
         </div>
       )}
@@ -51,9 +52,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           disabled={loading}
           aria-required="true"
           aria-invalid={!!errors.concept}
-          aria-describedby={errors.concept ? "concept-error" : undefined}
+          aria-describedby={errors.concept ? 'concept-error' : undefined}
+          data-testid="expense-concept"
         />
-        {errors.concept && <span id="concept-error" className="error-text" role="alert">{errors.concept}</span>}
+        {errors.concept && (
+          <span id="concept-error" className="error-text" role="alert" data-testid="expense-error-concept">
+            {errors.concept}
+          </span>
+        )}
       </div>
 
       <div className="form-row">
@@ -71,9 +77,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
             disabled={loading}
             aria-required="true"
             aria-invalid={!!errors.amount}
-            aria-describedby={errors.amount ? "amount-error" : undefined}
+            aria-describedby={errors.amount ? 'amount-error' : undefined}
+            data-testid="expense-amount"
           />
-          {errors.amount && <span id="amount-error" className="error-text" role="alert">{errors.amount}</span>}
+          {errors.amount && (
+            <span id="amount-error" className="error-text" role="alert" data-testid="expense-error-amount">
+              {errors.amount}
+            </span>
+          )}
         </div>
 
         <div className="form-group">
@@ -87,9 +98,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
             disabled={loading}
             aria-required="true"
             aria-invalid={!!errors.date}
-            aria-describedby={errors.date ? "date-error" : undefined}
+            aria-describedby={errors.date ? 'date-error' : undefined}
+            data-testid="expense-date"
           />
-          {errors.date && <span id="date-error" className="error-text" role="alert">{errors.date}</span>}
+          {errors.date && (
+            <span id="date-error" className="error-text" role="alert" data-testid="expense-error-date">
+              {errors.date}
+            </span>
+          )}
         </div>
       </div>
 
@@ -102,12 +118,12 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           onChange={handleChange}
           disabled={loading}
           className="form-select"
+          data-testid="expense-category"
         >
           <option value="">Selecciona una categoría</option>
-          <option value="1">Alimentación</option>
-          <option value="2">Transporte</option>
-          <option value="3">Vivienda</option>
-          <option value="4">Entretenimiento</option>
+          {EXPENSE_CATEGORIES.map(({ value, label }) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
         </select>
       </div>
 
@@ -121,15 +137,28 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           placeholder="Detalles del gasto (opcional)"
           disabled={loading}
           className="form-textarea"
+          data-testid="expense-description"
         ></textarea>
       </div>
 
       <div className="form-actions">
-        <button type="button" className="btn-secondary" onClick={onCancel} disabled={loading}>
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={onCancel}
+          disabled={loading}
+          data-testid="expense-cancel"
+        >
           Cancelar
         </button>
-        <button type="submit" className="btn-primary" disabled={loading} aria-busy={loading}>
-          {loading ? 'Guardando...' : (isEdit ? 'Actualizar Gasto' : 'Crear Gasto')}
+        <button
+          type="submit"
+          className="btn-primary"
+          disabled={loading}
+          aria-busy={loading}
+          data-testid="expense-submit"
+        >
+          {loading ? 'Guardando...' : isEdit ? 'Actualizar Gasto' : 'Crear Gasto'}
         </button>
       </div>
     </form>

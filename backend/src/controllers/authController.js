@@ -42,3 +42,11 @@ export const refreshToken = asyncHandler(async (req, res) => {
     successResponse(payload, 'Token refrescado exitosamente')
   );
 });
+
+export const getProfile = asyncHandler(async (req, res) => {
+  const payload = await authService.getUserProfile(req.user.userId);
+
+  res.status(200).json(
+    successResponse(payload, 'Perfil obtenido exitosamente')
+  );
+});

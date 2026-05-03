@@ -5,6 +5,54 @@
 
 import { body, validationResult } from 'express-validator';
 
+/**
+ * Validar monto/cantidad
+ */
+export const validateAmount = (amount) => {
+  if (amount === null || amount === undefined) {
+    return false;
+  }
+  const num = parseFloat(amount);
+  // Rechazar NaN, Infinity, y valores iguales a 0
+  if (isNaN(num) || !isFinite(num) || num <= 0) {
+    return false;
+  }
+  // Si es string, verificar que sea totalmente numérico
+  if (typeof amount === 'string') {
+    return /^\d+(\.\d+)?$/.test(amount.trim());
+  }
+  return true;
+};
+
+/**
+ * Validar formato de fecha
+ */
+export const validateDate = (date) => {
+  if (!date || typeof date !== 'string') {
+    return false;
+  }
+  // Verificar formato ISO8601
+  const isoRegex = /^\d{4}-\d{2}-\d{2}T?\d{0,2}:?\d{0,2}:?\d{0,2}Z?$/;
+  if (!isoRegex.test(date)) {
+    return false;
+  }
+  const dateObj = new Date(date);
+  return dateObj instanceof Date && !isNaN(dateObj.getTime());
+};
+
+/**
+ * Validar categoría
+ */
+export const validateCategory = (category, validCategories) => {
+  if (!category || typeof category !== 'string') {
+    return false;
+  }
+  if (!Array.isArray(validCategories)) {
+    return false;
+  }
+  return validCategories.includes(category);
+};
+
 export const validateExpenseInput = [
   body().custom((_, { req }) => {
     if (!req.body.description && !req.body.concept) {

@@ -7,6 +7,7 @@ import express from 'express';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import {
 	getExpenses,
+	getExpenseById,
 	createExpense,
 	updateExpense,
 	deleteExpense,
@@ -26,6 +27,9 @@ router.get('/', getExpenses);
 
 // POST - Crear un nuevo gasto
 router.post('/', validateExpenseInput, handleValidationErrors, createExpense);
+
+// GET - Obtener un gasto por ID
+router.get('/:id', getExpenseById);
 
 // PUT - Actualizar un gasto
 router.put('/:id', validateExpenseInput, handleValidationErrors, updateExpense);

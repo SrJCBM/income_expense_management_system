@@ -118,6 +118,22 @@ class ExpenseService {
   }
 
   /**
+   * Obtener gasto por ID
+   */
+  async getExpenseById(expenseId, userId) {
+    const expense = await Expense.findOne({
+      _id: expenseId,
+      userId,
+    }).populate('category', 'name type color');
+
+    if (!expense) {
+      throw new NotFoundError('Gasto no encontrado');
+    }
+
+    return mapExpenseForResponse(expense);
+  }
+
+  /**
    * Eliminar gasto
    */
   async deleteExpense(expenseId, userId) {

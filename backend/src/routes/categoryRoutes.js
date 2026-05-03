@@ -8,6 +8,7 @@ import { authenticate } from '../middlewares/authMiddleware.js';
 import {
 	createCategory,
 	deleteCategory,
+	getCategory,
 	getCategories,
 	updateCategory,
 } from '../controllers/categoryController.js';
@@ -21,6 +22,9 @@ router.get('/', getCategories);
 
 // POST - Crear categoría
 router.post('/', createCategory);
+
+// GET - Obtener categoría por ID
+router.get('/:id', getCategory);
 
 // PUT - Actualizar categoría
 router.put('/:id', updateCategory);

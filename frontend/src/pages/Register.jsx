@@ -46,7 +46,7 @@ const Register = () => {
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {/* Feedback General */}
           {(authError || errors.general || errors.submit) && (
-            <div className="alert alert-error" role="alert" aria-live="assertive">
+            <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="error-message">
               {authError || errors.general || errors.submit}
             </div>
           )}
@@ -65,6 +65,7 @@ const Register = () => {
               aria-required="true"
               aria-invalid={!!errors.name}
               aria-describedby={errors.name ? "name-error" : undefined}
+              data-testid="name-input"
             />
             {errors.name && <span id="name-error" className="error-text" role="alert">{errors.name}</span>}
           </div>
@@ -83,6 +84,7 @@ const Register = () => {
               aria-required="true"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? "email-error" : undefined}
+              data-testid="email-input"
             />
             {errors.email && <span id="email-error" className="error-text" role="alert">{errors.email}</span>}
           </div>
@@ -101,6 +103,7 @@ const Register = () => {
               aria-required="true"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
+              data-testid="password-input"
             />
             {errors.password && <span id="password-error" className="error-text" role="alert">{errors.password}</span>}
           </div>
@@ -119,15 +122,17 @@ const Register = () => {
               aria-required="true"
               aria-invalid={!!errors.confirmPassword}
               aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
+              data-testid="confirm-password-input"
             />
             {errors.confirmPassword && <span id="confirmPassword-error" className="error-text" role="alert">{errors.confirmPassword}</span>}
           </div>
 
-          <button 
-            type="submit" 
-            className="btn-primary w-100" 
+          <button
+            type="submit"
+            className="btn-primary w-100"
             disabled={isFormDisabled}
             aria-busy={isFormDisabled}
+            data-testid="register-button"
           >
             {isFormDisabled ? 'Registrando tu cuenta...' : 'Crear Cuenta'}
           </button>

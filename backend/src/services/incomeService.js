@@ -1,8 +1,8 @@
 /**
  * Servicio de Ingresos
- * Contiene la lógica de negocio para ingresos
  */
 
+import mongoose from 'mongoose';
 import Income from '../models/Income.js';
 import Category from '../models/Category.js';
 import { NotFoundError, ValidationError } from '../errors/ApplicationError.js';
@@ -42,9 +42,12 @@ const ensureValidIncomeCategory = async (userId, categoryId) => {
     return;
   }
 
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+
   const category = await Category.findOne({
     _id: categoryId,
-    userId,
+    userId: userObjectId,
     type: 'income',
   });
 
@@ -54,9 +57,6 @@ const ensureValidIncomeCategory = async (userId, categoryId) => {
 };
 
 class IncomeService {
-  /**
-   * Obtener ingresos del usuario con filtros opcionales
-   */
   async getUserIncomes(userId, filters = {}) {
     const query = { userId };
 
@@ -85,9 +85,18 @@ class IncomeService {
     return incomes.map(mapIncomeForResponse);
   }
 
-  /**
-   * Crear nuevo ingreso
-   */
+  // ← NUEVO
+  async getIncomeById(incomeId, userId) {
+    const income = await Income.findOne({ _id: incomeId, userId })
+      .populate('category', 'name type color');
+
+    if (!income) {
+      throw new NotFoundError('Ingreso no encontrado');
+    }
+
+    return mapIncomeForResponse(income);
+  }
+
   async createIncome(userId, incomeData) {
     const normalizedData = normalizeIncomeInput(incomeData);
 
@@ -106,10 +115,13 @@ class IncomeService {
     return mapIncomeForResponse(populatedIncome);
   }
 
-  /**
-   * Actualizar ingreso
-   */
   async updateIncome(incomeId, userId, incomeData) {
+    const existingIncome = await Income.findOne({ _id: incomeId, userId });
+
+    if (!existingIncome) {
+      throw new NotFoundError('Ingreso no encontrado');
+    }
+
     const normalizedData = normalizeIncomeInput(incomeData);
 
     if (normalizedData.category) {
@@ -119,22 +131,12 @@ class IncomeService {
     const income = await Income.findOneAndUpdate(
       { _id: incomeId, userId },
       normalizedData,
-      {
-        new: true,
-        runValidators: true,
-      }
+      { new: true, runValidators: true }
     ).populate('category', 'name type color');
-
-    if (!income) {
-      throw new NotFoundError('Ingreso no encontrado');
-    }
 
     return mapIncomeForResponse(income);
   }
 
-  /**
-   * Eliminar ingreso
-   */
   async deleteIncome(incomeId, userId) {
     const income = await Income.findOneAndDelete({ _id: incomeId, userId });
 

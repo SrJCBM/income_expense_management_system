@@ -38,7 +38,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {/* Feedback General */}
           {(authError || errors.general || errors.submit) && (
-            <div className="alert alert-error" role="alert" aria-live="assertive">
+            <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="error-message">
               {authError || errors.general || errors.submit}
             </div>
           )}
@@ -57,6 +57,7 @@ const Login = () => {
               aria-required="true"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? "email-error" : undefined}
+              data-testid="email-input"
             />
             {errors.email && <span id="email-error" className="error-text" role="alert">{errors.email}</span>}
           </div>
@@ -75,15 +76,17 @@ const Login = () => {
               aria-required="true"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
+              data-testid="password-input"
             />
             {errors.password && <span id="password-error" className="error-text" role="alert">{errors.password}</span>}
           </div>
 
-          <button 
-            type="submit" 
-            className="btn-primary w-100" 
+          <button
+            type="submit"
+            className="btn-primary w-100"
             disabled={isFormDisabled}
             aria-busy={isFormDisabled}
+            data-testid="login-button"
           >
             {isFormDisabled ? 'Autenticando...' : 'Iniciar Sesión'}
           </button>

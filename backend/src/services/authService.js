@@ -108,6 +108,16 @@ class AuthService {
 			token,
 		};
 	}
+
+	async getUserProfile(userId) {
+		const user = await User.findById(userId);
+
+		if (!user || !user.isActive) {
+			throw new NotFoundError('Usuario no encontrado');
+		}
+
+		return sanitizeUser(user);
+	}
 }
 
 export default new AuthService();

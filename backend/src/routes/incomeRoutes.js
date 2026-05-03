@@ -1,31 +1,26 @@
-/**
- * Rutas de Ingresos
- * Endpoints para gestionar ingresos
- */
-
-import express from 'express';
+﻿import express from 'express';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import {
-	createIncome,
-	deleteIncome,
-	getIncomes,
-	updateIncome,
+  createIncome,
+  deleteIncome,
+  getIncomes,
+  getIncomeById,
+  updateIncome,
 } from '../controllers/incomeController.js';
+import {
+  validateIncomeInput,
+  handleValidationErrors,
+  normalizeIncomeAliases,
+} from '../validators/incomeValidator.js';
 
 const router = express.Router();
 
 router.use(authenticate);
 
-// GET - Obtener todos los ingresos
 router.get('/', getIncomes);
-
-// POST - Crear ingreso
-router.post('/', createIncome);
-
-// PUT - Actualizar ingreso
-router.put('/:id', updateIncome);
-
-// DELETE - Eliminar ingreso
+router.get('/:id', getIncomeById);
+router.post('/', normalizeIncomeAliases, validateIncomeInput, handleValidationErrors, createIncome);
+router.put('/:id', normalizeIncomeAliases, validateIncomeInput, handleValidationErrors, updateIncome);
 router.delete('/:id', deleteIncome);
 
 export default router;

@@ -9,12 +9,14 @@ import {
 	login,
 	logout,
 	refreshToken,
+	getProfile,
 } from '../controllers/authController.js';
 import {
 	validateRegisterInput,
 	validateLoginInput,
 	handleValidationErrors,
 } from '../validators/authValidator.js';
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -23,6 +25,9 @@ router.post('/register', validateRegisterInput, handleValidationErrors, register
 
 // POST - Iniciar sesión
 router.post('/login', validateLoginInput, handleValidationErrors, login);
+
+// GET - Obtener perfil del usuario autenticado
+router.get('/me', authenticate, getProfile);
 
 // POST - Cerrar sesión
 router.post('/logout', logout);

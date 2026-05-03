@@ -38,7 +38,7 @@ const Layout = () => {
           <div className="user-info">
             <span className="user-name">{user?.name || 'Usuario'}</span>
           </div>
-          <button className="btn-logout" onClick={handleLogout}>
+          <button className="btn-logout" onClick={handleLogout} data-testid="logout-button">
             Cerrar Sesión
           </button>
         </div>

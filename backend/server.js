@@ -79,6 +79,9 @@ app.use((req, res) => {
 // ============================================
 app.use(errorHandler);
 
+// Exportar app para tests
+export default app;
+
 // ============================================
 // INICIAR SERVIDOR
 // ============================================
@@ -94,7 +97,10 @@ const bootstrap = async () => {
   });
 };
 
-bootstrap().catch((error) => {
-  console.error(`❌ No se pudo iniciar el servidor: ${error.message}`);
-  process.exit(1);
-});
+// Iniciar el servidor siempre que no estemos en entorno de pruebas (Vitest)
+if (process.env.NODE_ENV !== 'test') {
+  bootstrap().catch((error) => {
+    console.error(`❌ No se pudo iniciar el servidor: ${error.message}`);
+    process.exit(1);
+  });
+}

@@ -91,6 +91,16 @@ export const ensureDefaultCategoriesForUser = async (userId) => {
 };
 
 class CategoryService {
+  async getCategory(categoryId, userId) {
+    const category = await Category.findOne({ _id: categoryId, userId });
+
+    if (!category) {
+      throw new NotFoundError('Categoría no encontrada');
+    }
+
+    return mapCategoryForResponse(category);
+  }
+
   async getUserCategories(userId, filters = {}) {
     await ensureDefaultCategoriesForUser(userId);
 

@@ -19,6 +19,15 @@ export const getExpenses = asyncHandler(async (req, res) => {
 });
 
 /**
+ * Obtener un gasto por ID
+ */
+export const getExpenseById = asyncHandler(async (req, res) => {
+  const expense = await expenseService.getExpenseById(req.params.id, req.user.userId);
+
+  res.status(200).json(successResponse(expense, 'Gasto obtenido'));
+});
+
+/**
  * Crear un nuevo gasto
  */
 export const createExpense = asyncHandler(async (req, res) => {

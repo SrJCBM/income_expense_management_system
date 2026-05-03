@@ -4,6 +4,28 @@
 
 import { body, validationResult } from 'express-validator';
 
+/**
+ * Validar formato de email
+ */
+export const validateEmail = (email) => {
+  if (!email || typeof email !== 'string') {
+    return false;
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+};
+
+/**
+ * Validar contraseña
+ */
+export const validatePassword = (password) => {
+  if (!password || typeof password !== 'string') {
+    return false;
+  }
+  // Mínimo 8 caracteres
+  return password.length >= 8;
+};
+
 export const validateRegisterInput = [
   body('email')
     .trim()

@@ -34,3 +34,8 @@ export const paginatedResponse = (data, page, limit, total, message = 'Datos obt
     },
   };
 };
+
+// Aliases para compatibilidad con tests
+export const success = successResponse;
+export const error = errorResponse;
+export const paginated = paginatedResponse;

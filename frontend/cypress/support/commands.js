@@ -51,11 +51,15 @@ Cypress.Commands.add('getByDataTest', (testId) => {
 
 /**
  * Run an axe accessibility audit on the current page.
- * Accepts optional axe context and options (same API as cy.checkA11y).
+ * Wraps the command provided by cypress-axe without shadowing it.
  */
-Cypress.Commands.add('checkA11y', (context = null, options = {}) => {
+Cypress.Commands.add('auditA11y', (context = null, options = {}) => {
   cy.injectAxe();
-  cy.checkA11y(context, options, (violations) => {
+  const target = context || 'body';
+
+  cy.get(target)
+    .then(($target) => cy.window().then((win) => win.axe.run($target[0], options)))
+    .then(({ violations }) => {
     violations.forEach((violation) => {
       const nodes = violation.nodes.map((n) => n.target).join(', ');
       cy.log(`[a11y] ${violation.id} — ${violation.description} | nodes: ${nodes}`);

@@ -246,8 +246,12 @@ describe('Authentication Flow', () => {
   // =========================================================================
   describe('Logout', () => {
     beforeEach(() => {
-      cy.seedSession(FAKE_TOKEN, FAKE_USER);
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          win.localStorage.setItem('authToken', FAKE_TOKEN);
+          win.localStorage.setItem('authUser', JSON.stringify(FAKE_USER));
+        },
+      });
       cy.contains('Panel de Control').should('be.visible');
     });
 

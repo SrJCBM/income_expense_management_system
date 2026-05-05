@@ -1,41 +1,77 @@
+## 🧭 Memoria de Proyecto
+
+La aplicación nació como un sistema web de control de gastos e ingresos y luego evolucionó hasta convertirse en una versión de escritorio con Electron. El desarrollo se planteó de forma incremental para mantener control sobre la arquitectura, validar cada módulo de manera independiente y llegar a una entrega estable y empaquetable.
+
+## 📋 Pasos Seguidos en el Desarrollo
+
+### 1. Concepción del proyecto y primera estructura
+En la primera etapa se definió el objetivo general del sistema: registrar ingresos y gastos, organizar categorías, consultar reportes y facilitar el control financiero desde una interfaz simple. Antes de programar funcionalidades, se decidió separar el proyecto en dos bloques principales: un backend para la lógica de negocio y el acceso a datos, y un frontend para la interacción del usuario.
+### 2. Implementación del backend base
+
+Una vez definida la base, se implementó primero el backend porque allí residía la lógica crítica del sistema. Se trabajó la autenticación de usuarios, la conexión con MongoDB, el manejo de variables de entorno y la base de los endpoints REST.
+### 3. Construcción del frontend
+
+Con el backend ya funcional, se construyó la interfaz visual en React. Primero se resolvió el login y el registro, luego se desarrollaron las pantallas principales del sistema: dashboard, ingresos, gastos y reportes.
+### 4. Integración y corrección de flujos reales
+
+Una vez que ambas capas estaban montadas, se conectaron entre sí y se probaron los flujos completos de la aplicación. Aquí aparecieron los problemas más importantes de uso real: rutas que no cargaban en producción, empaquetado incompleto del backend, categorías enviadas con valores inválidos y reportes que todavía no consumían datos reales.
+### 5. Testing y validación
+
+Con la implementación ya estable se ejecutaron pruebas unitarias, de integración y end-to-end. El objetivo fue comprobar que la aplicación no solo compilara, sino que realmente funcionara con datos reales, autenticación, navegación y persistencia.
+### 6. Exportación como aplicación de escritorio
+
+La etapa final fue convertir la solución web en una aplicación de escritorio para Windows. Para eso se ajustó el build de Vite, se empaquetó el backend como recurso externo, se configuró Electron para iniciar backend y frontend de forma coordinada y se generó un instalador NSIS.
 # 🎯 Guía de Desarrollo - Próximos Pasos
 
-## ✅ Arquitectura Base Completada
+## 🧭 Memoria de Proyecto
 
-La estructura está lista. Ahora necesitas implementar la funcionalidad.
+La aplicación nació como un sistema web de control de gastos e ingresos y luego evolucionó hasta convertirse en una versión de escritorio con Electron. El desarrollo se planteó de forma incremental para mantener control sobre la arquitectura, validar cada módulo de manera independiente y llegar a una entrega estable y empaquetable.
+
+### 1. Concepción del proyecto y primera estructura
+
+El proyecto se planteó para administrar finanzas personales o familiares con una interfaz clara, funcional y orientada al seguimiento de ingresos, gastos, categorías y reportes. Desde el inicio se definió que la solución debía ser mantenible, por lo que se separaron las responsabilidades principales en dos capas bien delimitadas: backend para la lógica de negocio y persistencia, y frontend para la interacción visual.
+
+En esta etapa se organizó la estructura inicial del repositorio, se agruparon los archivos por dominio funcional y se estableció un patrón de trabajo basado en módulos. El objetivo fue evitar una base monolítica y construir una arquitectura donde cada carpeta respondiera a una responsabilidad concreta: controladores, servicios, modelos, validadores, rutas, hooks, componentes y páginas.
+
+La primera estructura también sirvió para definir el flujo general de la aplicación. Antes de escribir la lógica completa se dejaron claros los puntos de entrada, los módulos de autenticación, los espacios para formularios reutilizables y la base para futuros reportes y exportaciones.
+
+### 2. Implementación del backend base
+
+Una vez definida la base, se implementó primero el backend porque allí residía la lógica crítica del sistema. Se trabajó la autenticación de usuarios, la conexión con MongoDB, el manejo de variables de entorno y la base de los endpoints REST.
+
+Durante esta fase se desarrollaron los módulos de ingresos, gastos, categorías y reportes. Cada entidad se estructuró con un patrón claro: modelo para persistencia, servicio para reglas de negocio, controlador para respuesta HTTP y validador para proteger la entrada de datos.
+
+### 3. Construcción del frontend
+
+Con el backend ya funcional, se construyó la interfaz visual en React. Primero se resolvió el login y el registro, luego se desarrollaron las pantallas principales del sistema: dashboard, ingresos, gastos y reportes.
+
+En esta etapa también se crearon hooks personalizados para centralizar el consumo de la API y el manejo de formularios. Esto permitió mantener los componentes más limpios y reutilizar lógica entre pantallas similares.
+
+Durante esta fase se ajustaron detalles clave para que la aplicación no dependiera solo de datos de prueba. Se conectaron los formularios a la API real, se validaron categorías y montos, y se incorporaron vistas con información dinámica en lugar de valores estáticos.
+
+### 4. Integración y corrección de flujos reales
+
+Una vez que ambas capas estaban montadas, se conectaron entre sí y se probaron los flujos completos de la aplicación. Aquí aparecieron los problemas más importantes de uso real: rutas que no cargaban en producción, empaquetado incompleto del backend, categorías enviadas con valores inválidos y reportes que todavía no consumían datos reales.
+
+Se corrigieron también detalles de comportamiento en la interfaz: formularios que no mostraban bien los errores, filtros que no coincidían con la API y un dashboard que todavía mostraba valores estáticos. Cada corrección se fue validando con pruebas y builds para evitar romper lo ya implementado.
+
+### 5. Testing y validación
+
+Con la implementación ya estable se ejecutaron pruebas unitarias, de integración y end-to-end. El objetivo fue comprobar que la aplicación no solo compilara, sino que realmente funcionara con datos reales, autenticación, navegación y persistencia.
+
+El testing sirvió para detectar y corregir fallos concretos que no eran visibles en una ejecución simple de desarrollo. Entre los problemas resueltos estuvieron la carga incorrecta del frontend en producción, la ubicación del backend empaquetado, la resolución de módulos dentro de Electron, el envío de categorías inválidas en gastos y el dashboard que aún no consumía datos reales.
+
+Cada corrección se volvió a validar con build y con una nueva ejecución de la app para confirmar que el cambio no introdujera regresiones. Ese ciclo permitió pasar de un prototipo funcional a una versión consistente y demostrable.
+
+### 6. Exportación como aplicación de escritorio
+
+La última etapa consistió en preparar la exportación como aplicación de escritorio para Windows. Para ello se ajustó el proceso de build con Vite, se empaquetó el backend como recurso externo, se configuró Electron para iniciar backend y frontend de forma coordinada y se generó un instalador NSIS listo para distribución.
+
+El resultado final es una aplicación que se abre como programa nativo, carga la interfaz React desde archivos locales y conecta con el backend en modo producción sin requerir que el usuario abra varias terminales. Esa transformación es la diferencia principal entre una app web en construcción y una entrega final instalable.
+
+**Resultado esperado**: una aplicación de escritorio estable, con arquitectura clara, pruebas aplicadas en puntos críticos y un instalador listo para demostración o distribución.
 
 ---
-
-## 📋 Orden Recomendado de Desarrollo
-
-### Fase 1: Backend Base (Semana 1)
-
-#### 1.1 Configuración Inicial
-- [x] Instalar dependencias: `npm install` en backend/
-- [x] Crear `.env` con valores reales
-- [x] Conectar MongoDB (local o Atlas)
-- [x] Probar conexión a BD
-
-#### 1.2 Autenticación (Lo primero)
-- [x] `backend/src/controllers/authController.js` - Implementado
-  - [x] `register()` - Crear usuario con password hasheado
-  - [x] `login()` - Validar credenciales, generar JWT
-
-- [x] `backend/src/services/authService.js` - Implementado
-  - [x] Validar usuario existente
-  - [x] Comparar contraseñas
-  - [x] Generar token
-
-- [x] `backend/src/routes/authRoutes.js` - Conectado al server.js
-
-#### 1.3 CRUD de Gastos
-- [x] Implementar `expenseController.js` - ✅ Completado
-- [x] Implementar `expenseService.js` - ✅ Completado
-- [x] Conectar `expenseRoutes.js` al server - ✅ Completado
-- [x] Endpoints: GET, POST, PUT, DELETE funcionales
-
-#### 1.4 CRUD de Ingresos
-- [x] `incomeController.js` - ✅ Completado
 - [x] `incomeService.js` - ✅ Completado
 - [x] Endpoints: GET, POST, PUT, DELETE funcionales
 

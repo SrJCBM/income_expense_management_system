@@ -27,7 +27,7 @@ export const useExpenses = () => {
   const addExpense = async (expenseData) => {
     try {
       const response = await expenseService.createExpense(expenseData);
-      setExpenses([...expenses, response.data]);
+      setExpenses((currentExpenses) => [...currentExpenses, response.data]);
       return response;
     } catch (err) {
       setError(err.message);
@@ -38,7 +38,7 @@ export const useExpenses = () => {
   const updateExpense = async (id, expenseData) => {
     try {
       const response = await expenseService.updateExpense(id, expenseData);
-      setExpenses(expenses.map(e => (e.id === id ? response.data : e)));
+      setExpenses((currentExpenses) => currentExpenses.map((expense) => (expense.id === id ? response.data : expense)));
       return response;
     } catch (err) {
       setError(err.message);
@@ -49,7 +49,7 @@ export const useExpenses = () => {
   const removeExpense = async (id) => {
     try {
       await expenseService.deleteExpense(id);
-      setExpenses(expenses.filter(e => e.id !== id));
+      setExpenses((currentExpenses) => currentExpenses.filter((expense) => expense.id !== id));
     } catch (err) {
       setError(err.message);
       throw err;

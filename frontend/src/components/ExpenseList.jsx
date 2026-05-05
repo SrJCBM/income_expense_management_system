@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 
 const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
+  const total = useMemo(
+    () => (expenses || []).reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0),
+    [expenses]
+  );
+
   if (isLoading) {
     return (
       <div className="expense-list-loading" data-testid="expense-loading">
@@ -28,11 +33,6 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
       </div>
     );
   }
-
-  const total = useMemo(
-    () => (expenses || []).reduce((sum, e) => sum + parseFloat(e.amount || 0), 0),
-    [expenses]
-  );
 
   return (
     <div className="expense-list" data-testid="expense-list">

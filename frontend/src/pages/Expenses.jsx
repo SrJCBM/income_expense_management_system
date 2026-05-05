@@ -55,8 +55,8 @@ const Expenses = () => {
 
   const handleApplyFilters = () => {
     const filters = {};
-    if (categoryFilter) filters.categoryId = categoryFilter;
-    if (monthFilter)    filters.month      = monthFilter;
+    if (categoryFilter) filters.category = categoryFilter;
+    if (monthFilter) filters.month = monthFilter;
     fetchExpenses(filters);
   };
 

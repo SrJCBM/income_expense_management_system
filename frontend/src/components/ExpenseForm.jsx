@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import { useForm } from '../hooks/useForm.js';
-import { EXPENSE_CATEGORIES } from '../constants/categories.js';
+import { useCategories } from '../hooks/useCategories.js';
 
 const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting }) => {
   const isEdit = !!initialData;
+  const { categories, isLoading: isLoadingCategories, error: categoriesError, fetchCategories } = useCategories();
+
+  useEffect(() => {
+    fetchCategories('expense');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmitForm = async (values) => {
     if (!values.amount || !values.concept || !values.date) {
@@ -10,6 +17,9 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
     }
     if (Number(values.amount) <= 0) {
       throw { validationErrors: { amount: 'El monto debe ser mayor a 0.' } };
+    }
+    if (!values.categoryId) {
+      throw { validationErrors: { categoryId: 'Selecciona una categoría para el gasto.' } };
     }
     await onSubmit(values);
   };
@@ -20,7 +30,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
       amount: initialData?.amount || '',
       date: initialData?.date || new Date().toISOString().split('T')[0],
       categoryId: initialData?.categoryId || '',
-      description: initialData?.description || '',
+      notes: initialData?.notes || initialData?.description || '',
     },
     handleSubmitForm
   );
@@ -110,34 +120,49 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
       </div>
 
       <div className="form-group">
-        <label htmlFor="categoryId">Categoría</label>
+        <label htmlFor="categoryId">Categoría *</label>
         <select
           id="categoryId"
           name="categoryId"
           value={values.categoryId}
           onChange={handleChange}
-          disabled={loading}
+          disabled={loading || isLoadingCategories}
           className="form-select"
           data-testid="expense-category"
+          aria-required="true"
+          aria-invalid={!!errors.categoryId}
+          aria-describedby={errors.categoryId ? 'categoryId-error' : undefined}
         >
-          <option value="">Selecciona una categoría</option>
-          {EXPENSE_CATEGORIES.map(({ value, label }) => (
-            <option key={value} value={value}>{label}</option>
+          <option value="">{isLoadingCategories ? 'Cargando categorías...' : 'Selecciona una categoría'}</option>
+          {categories.map((category) => (
+            <option key={category.id || category._id} value={category.id || category._id}>
+              {category.name}
+            </option>
           ))}
         </select>
+        {errors.categoryId && (
+          <span id="categoryId-error" className="error-text" role="alert" data-testid="expense-error-category">
+            {errors.categoryId}
+          </span>
+        )}
+        {categoriesError && (
+          <span className="error-text" role="alert" data-testid="expense-categories-error">
+            {categoriesError}
+          </span>
+        )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="description">Notas Adicionales</label>
+        <label htmlFor="notes">Notas Adicionales</label>
         <textarea
-          id="description"
-          name="description"
-          value={values.description}
+          id="notes"
+          name="notes"
+          value={values.notes}
           onChange={handleChange}
           placeholder="Detalles del gasto (opcional)"
           disabled={loading}
           className="form-textarea"
-          data-testid="expense-description"
+          data-testid="expense-notes"
         ></textarea>
       </div>
 

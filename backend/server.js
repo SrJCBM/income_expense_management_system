@@ -10,9 +10,14 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Configurar variables de entorno
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configurar variables de entorno desde el backend, no desde el cwd actual
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 // Importar configuraciones
 import { corsOptions } from './src/config/corsConfig.js';

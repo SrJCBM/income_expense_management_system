@@ -1,28 +1,29 @@
 /**
- * Validadores de Autenticación
+ * Validadores de autenticacion.
  */
 
 import { body, validationResult } from 'express-validator';
 
 /**
- * Validar formato de email
+ * Validar formato de email.
  */
 export const validateEmail = (email) => {
   if (!email || typeof email !== 'string') {
     return false;
   }
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email.trim());
 };
 
 /**
- * Validar contraseña
+ * Validar contrasena.
  */
 export const validatePassword = (password) => {
   if (!password || typeof password !== 'string') {
     return false;
   }
-  // Mínimo 8 caracteres
+
   return password.length >= 8;
 };
 
@@ -33,14 +34,16 @@ export const validateRegisterInput = [
     .withMessage('El email es requerido')
     .isEmail()
     .normalizeEmail()
-    .withMessage('Email no válido'),
+    .withMessage('Email no valido'),
   body('password')
     .isLength({ min: 8 })
-    .withMessage('La contraseña debe tener al menos 8 caracteres'),
+    .withMessage('La contrasena debe tener al menos 8 caracteres'),
   body('name')
     .trim()
     .notEmpty()
-    .withMessage('El nombre es requerido'),
+    .withMessage('El nombre es requerido')
+    .matches(/[A-Za-z]/)
+    .withMessage('El nombre debe incluir al menos una letra'),
 ];
 
 export const validateLoginInput = [
@@ -50,10 +53,10 @@ export const validateLoginInput = [
     .withMessage('El email es requerido')
     .isEmail()
     .normalizeEmail()
-    .withMessage('Email no válido'),
+    .withMessage('Email no valido'),
   body('password')
     .notEmpty()
-    .withMessage('La contraseña es requerida'),
+    .withMessage('La contrasena es requerida'),
 ];
 
 export const handleValidationErrors = (req, res, next) => {
@@ -62,7 +65,7 @@ export const handleValidationErrors = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      message: 'Errores de validación',
+      message: 'Errores de validacion',
       errors: errors.array(),
     });
   }

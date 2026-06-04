@@ -47,6 +47,18 @@ const validateType = (type) => {
   }
 };
 
+const resolveIcon = (icon) => {
+  if (icon === undefined || icon === null || icon === '') {
+    return '📌';
+  }
+
+  if (/[A-Za-z]/.test(icon) || !/[^\x00-\x7F]/.test(icon)) {
+    throw new ValidationError('Selecciona un icono de la lista');
+  }
+
+  return icon;
+};
+
 const ensureUniqueNamePerType = async ({ userId, type, name, excludeId = null }) => {
   const normalizedName = String(name || '').trim();
   const duplicateQuery = {
@@ -134,7 +146,7 @@ class CategoryService {
       name,
       type,
       color: categoryData.color,
-      icon: categoryData.icon,
+      icon: resolveIcon(categoryData.icon),
       description: categoryData.description,
     });
 
@@ -172,7 +184,7 @@ class CategoryService {
     }
 
     if (categoryData.icon !== undefined) {
-      category.icon = categoryData.icon;
+      category.icon = resolveIcon(categoryData.icon);
     }
 
     if (categoryData.description !== undefined) {

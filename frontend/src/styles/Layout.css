@@ -59,8 +59,8 @@
 
 .nav-link.active {
   background: rgba(99, 102, 241, 0.15);
-  color: var(--primary-color);
-  border-left: 3px solid var(--primary-color);
+  color: #dbe4ff;
+  border-left: 3px solid #a5b4fc;
 }
 
 .sidebar-footer {

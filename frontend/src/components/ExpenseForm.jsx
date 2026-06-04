@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from '../hooks/useForm.js';
 import { useCategories } from '../hooks/useCategories.js';
+import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
 
 const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting }) => {
   const isEdit = !!initialData;
@@ -21,15 +22,19 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
     if (!values.categoryId) {
       throw { validationErrors: { categoryId: 'Selecciona una categoría para el gasto.' } };
     }
-    await onSubmit(values);
+    await onSubmit({
+      ...values,
+      amount: Number(values.amount),
+      date: toLocalNoonISOString(values.date),
+    });
   };
 
   const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(
     {
       concept: initialData?.concept || '',
       amount: initialData?.amount || '',
-      date: initialData?.date || new Date().toISOString().split('T')[0],
-      categoryId: initialData?.categoryId || '',
+      date: toDateInputValue(initialData?.date) || getTodayInputValue(),
+      categoryId: initialData?.categoryId || initialData?.category?._id || initialData?.category?.id || initialData?.category || '',
       notes: initialData?.notes || initialData?.description || '',
     },
     handleSubmitForm

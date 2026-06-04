@@ -33,7 +33,7 @@ const normalizeExpenseInput = (expenseData) => {
     description: expenseData.description || expenseData.concept,
     amount: expenseData.amount,
     category: expenseData.category || expenseData.categoryId,
-    date: expenseData.date,
+    date: normalizeTransactionDate(expenseData.date),
     notes: expenseData.notes,
   };
 
@@ -42,6 +42,14 @@ const normalizeExpenseInput = (expenseData) => {
   }
 
   return normalized;
+};
+
+const normalizeTransactionDate = (date) => {
+  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return `${date}T12:00:00`;
+  }
+
+  return date;
 };
 
 class ExpenseService {

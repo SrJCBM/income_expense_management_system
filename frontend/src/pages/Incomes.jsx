@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useIncomes } from '../hooks/useIncomes.js';
 import { useForm } from '../hooks/useForm.js';
 import categoryService from '../services/categoryService.js';
+import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
 import '../styles/pages/Expenses.css';
 
 const Incomes = () => {
@@ -48,7 +49,7 @@ const Incomes = () => {
     const payload = {
       concept: values.concept,
       amount: Number(values.amount),
-      date: values.date,
+      date: toLocalNoonISOString(values.date),
       categoryId: values.categoryId,
       notes: values.notes,
     };
@@ -68,7 +69,7 @@ const Incomes = () => {
     {
       concept: '',
       amount: '',
-      date: new Date().toISOString().split('T')[0],
+      date: getTodayInputValue(),
       categoryId: '',
       notes: '',
     },
@@ -85,8 +86,8 @@ const Incomes = () => {
     setEditingIncome(income);
     setFieldValue('concept', income.concept || income.description || '');
     setFieldValue('amount', income.amount || '');
-    setFieldValue('date', income.date ? new Date(income.date).toISOString().split('T')[0] : '');
-    setFieldValue('categoryId', income.categoryId || income.category?._id || '');
+    setFieldValue('date', toDateInputValue(income.date));
+    setFieldValue('categoryId', income.categoryId || income.category?._id || income.category?.id || income.category || '');
     setFieldValue('notes', income.notes || '');
     setShowForm(true);
   };
@@ -285,7 +286,7 @@ const Incomes = () => {
 
                   return (
                     <tr key={incomeId}>
-                      <td>{new Date(income.date).toLocaleDateString()}</td>
+                      <td>{toDateInputValue(income.date)}</td>
                       <td>{income.concept}</td>
                       <td>{income.category?.name || 'Sin categoría'}</td>
                       <td className="amount positive">+${parseFloat(income.amount).toFixed(2)}</td>

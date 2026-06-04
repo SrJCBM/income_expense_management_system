@@ -33,9 +33,17 @@ const normalizeIncomeInput = (incomeData) => ({
   description: incomeData.description || incomeData.concept,
   amount: incomeData.amount,
   category: incomeData.category || incomeData.categoryId,
-  date: incomeData.date,
+  date: normalizeTransactionDate(incomeData.date),
   notes: incomeData.notes,
 });
+
+const normalizeTransactionDate = (date) => {
+  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return `${date}T12:00:00`;
+  }
+
+  return date;
+};
 
 const ensureValidIncomeCategory = async (userId, categoryId) => {
   if (!categoryId) {

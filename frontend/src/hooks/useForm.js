@@ -12,17 +12,17 @@ export const useForm = (initialValues, onSubmit) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setValues({
-      ...values,
+    setValues((currentValues) => ({
+      ...currentValues,
       [name]: value,
-    });
+    }));
 
     // Limpiar error del campo cuando el usuario empieza a escribir
     if (errors[name]) {
-      setErrors({
-        ...errors,
+      setErrors((currentErrors) => ({
+        ...currentErrors,
         [name]: '',
-      });
+      }));
     }
   };
 
@@ -44,17 +44,17 @@ export const useForm = (initialValues, onSubmit) => {
   };
 
   const setFieldValue = (name, value) => {
-    setValues({
-      ...values,
+    setValues((currentValues) => ({
+      ...currentValues,
       [name]: value,
-    });
+    }));
   };
 
   const setFieldError = (name, error) => {
-    setErrors({
-      ...errors,
+    setErrors((currentErrors) => ({
+      ...currentErrors,
       [name]: error,
-    });
+    }));
   };
 
   const resetForm = () => {

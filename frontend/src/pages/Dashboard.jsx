@@ -55,30 +55,30 @@ const Dashboard = () => {
 
       <div className="dashboard-grid">
         <div className="dashboard-card summary-card">
-          <h3>Balance Total</h3>
+          <h2>Balance Total</h2>
           <p className="amount">{isLoading ? '...' : formatCurrency(summary.balance)}</p>
         </div>
         <div className="dashboard-card incomes-card">
-          <h3>Ingresos del Mes</h3>
+          <h2>Ingresos del Mes</h2>
           <p className="amount positive">{isLoading ? '...' : `+${formatCurrency(summary.totalIncome)}`}</p>
         </div>
         <div className="dashboard-card expenses-card">
-          <h3>Gastos del Mes</h3>
+          <h2>Gastos del Mes</h2>
           <p className="amount negative">{isLoading ? '...' : `-${formatCurrency(summary.totalExpense)}`}</p>
         </div>
       </div>
 
       <div className="dashboard-content">
         <div className="recent-activity">
-          <h3>Actividad Reciente</h3>
+          <h2>Actividad Reciente</h2>
           {summary.expensesByCategory?.length > 0 ? (
-            <div className="empty-state">
-              <p>Distribución de gastos por categoría</p>
+            <div className="category-summary">
+              <p className="summary-title">Distribución de gastos por categoría</p>
               <ul className="category-summary-list">
                 {summary.expensesByCategory.map((item) => (
-                  <li key={item.categoryId || item.name}>
-                    <span>{item.name}</span>
-                    <strong>{formatCurrency(item.amount)}</strong>
+                  <li key={item.categoryId || item.name} className="category-item">
+                    <span className="cat-name">{item.name}</span>
+                    <span className="cat-amount">{formatCurrency(item.amount)}</span>
                   </li>
                 ))}
               </ul>

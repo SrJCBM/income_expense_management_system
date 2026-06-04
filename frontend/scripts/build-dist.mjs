@@ -73,7 +73,7 @@ try {
   console.log('✅ [4/4] Instalador generado\n');
 
   console.log('🎉 ¡Build completado!');
-  console.log('📍 Instalador: dist/release/Income Expense Manager Setup 1.0.0.exe\n');
+  console.log('📍 Instalador: dist/release/Income Expense Manager Setup 1.1.0.exe\n');
 } catch (error) {
   console.error('❌ Error durante el build:', error.message);
   process.exit(1);

@@ -115,6 +115,7 @@ frontend/.env.local
 frontend/coverage/
 frontend/.parcel-cache
 frontend/.cache
+frontend/release/
 
 # ============================================
 # MISC

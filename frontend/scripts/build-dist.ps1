@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Income Expense Manager - Build 1.0.0" -ForegroundColor Cyan
+Write-Host "  Income Expense Manager - Build 1.1.0" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -93,7 +93,7 @@ try {
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "Installer Location:" -ForegroundColor Yellow
-    Write-Host "   $(Join-Path $frontendRoot 'release\Income Expense Manager Setup 1.0.0.exe')" -ForegroundColor White
+    Write-Host "   $(Join-Path $frontendRoot 'release\Income Expense Manager Setup 1.1.0.exe')" -ForegroundColor White
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
     Write-Host "   1. Find the .exe in the 'release' folder" -ForegroundColor Gray

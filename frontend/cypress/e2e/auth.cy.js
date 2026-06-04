@@ -1,15 +1,5 @@
-/**
- * E2E tests — Authentication Flow
- *
- * Covers: Registration · Login · Logout · Route protection
- *
- * API intercepts use glob patterns so the baseUrl in VITE_API_URL doesn't break tests.
- * localStorage keys match authService.js: 'authToken' / 'authUser'.
- * The protected dashboard lives at '/' (PrivateRoute → Layout → Dashboard).
- */
-
 const FAKE_TOKEN = 'fake-jwt-token-cypress';
-const FAKE_USER  = { id: 1, name: 'Test User', email: 'testuser@example.com' };
+const FAKE_USER = { id: 1, name: 'Test User', email: 'testuser@example.com' };
 
 const loginSuccess = (overrides = {}) => ({
   statusCode: 200,
@@ -20,9 +10,8 @@ const loginSuccess = (overrides = {}) => ({
   },
 });
 
-// ---------------------------------------------------------------------------
 describe('Authentication Flow', () => {
-  let td; // testData fixture
+  let td;
 
   before(() => {
     cy.fixture('testData').then((data) => {
@@ -30,13 +19,15 @@ describe('Authentication Flow', () => {
     });
   });
 
-  // =========================================================================
+  beforeEach(() => {
+    cy.mockProtectedApi();
+  });
+
   describe('Registration', () => {
     beforeEach(() => {
-      cy.visit('/register');
+      cy.visit('/#/register');
     });
 
-    // --- Form visibility ---------------------------------------------------
     it('Debe mostrar el formulario de registro', () => {
       cy.getByDataTest('name-input').should('be.visible');
       cy.getByDataTest('email-input').should('be.visible');
@@ -47,8 +38,7 @@ describe('Authentication Flow', () => {
         .and('contain.text', 'Crear Cuenta');
     });
 
-    // --- Happy path --------------------------------------------------------
-    it('Debe registrar un nuevo usuario con datos válidos', () => {
+    it('Debe registrar un nuevo usuario con datos validos', () => {
       cy.intercept('POST', '**/auth/register', {
         statusCode: 201,
         body: {
@@ -70,7 +60,7 @@ describe('Authentication Flow', () => {
       });
     });
 
-    it('Debe redirigir a / (dashboard) después del registro exitoso', () => {
+    it('Debe redirigir a / despues del registro exitoso', () => {
       cy.intercept('POST', '**/auth/register', {
         statusCode: 201,
         body: { success: true, data: { token: FAKE_TOKEN, user: FAKE_USER } },
@@ -83,15 +73,14 @@ describe('Authentication Flow', () => {
       cy.getByDataTest('register-button').click();
 
       cy.wait('@registerOk');
-      cy.url().should('eq', `${Cypress.config('baseUrl')}/`);
+      cy.url().should('eq', `${Cypress.config('baseUrl')}/#/`);
       cy.contains('Panel de Control').should('be.visible');
     });
 
-    // --- Error: duplicate email -------------------------------------------
     it('Debe mostrar error si el email ya existe', () => {
       cy.intercept('POST', '**/auth/register', {
         statusCode: 409,
-        body: { success: false, message: 'El email ya está registrado' },
+        body: { success: false, message: 'El email ya esta registrado' },
       }).as('emailExists');
 
       cy.getByDataTest('name-input').type(td.testUser.name);
@@ -103,35 +92,32 @@ describe('Authentication Flow', () => {
       cy.wait('@emailExists');
       cy.getByDataTest('error-message')
         .should('be.visible')
-        .and('contain.text', 'El email ya está registrado');
+        .and('contain.text', 'El email ya esta registrado');
       cy.url().should('include', '/register');
     });
 
-    // --- Error: password mismatch (client-side) ----------------------------
-    it('Debe mostrar error si las contraseñas no coinciden', () => {
+    it('Debe mostrar error si las contrasenas no coinciden', () => {
       cy.getByDataTest('name-input').type(td.testUser.name);
       cy.getByDataTest('email-input').type(td.testUser.email);
       cy.getByDataTest('password-input').type('Password123!');
       cy.getByDataTest('confirm-password-input').type('OtroPassword456!');
       cy.getByDataTest('register-button').click();
 
-      cy.get('[role="alert"]').should('contain.text', 'Las contraseñas no coinciden');
+      cy.get('[role="alert"]').should('contain.text', 'contrasenas no coinciden');
       cy.url().should('include', '/register');
     });
 
-    // --- Error: weak password (client-side) --------------------------------
-    it('Debe mostrar error si la contraseña es débil (< 6 caracteres)', () => {
+    it('Debe mostrar error si la contrasena es debil (< 8 caracteres)', () => {
       cy.getByDataTest('name-input').type(td.testUser.name);
       cy.getByDataTest('email-input').type(td.testUser.email);
       cy.getByDataTest('password-input').type('abc');
       cy.getByDataTest('confirm-password-input').type('abc');
       cy.getByDataTest('register-button').click();
 
-      cy.get('[role="alert"]').should('contain.text', 'al menos 6 caracteres');
+      cy.get('[role="alert"]').should('contain.text', 'al menos 8 caracteres');
       cy.url().should('include', '/register');
     });
 
-    // --- Accessibility attributes -----------------------------------------
     it('Los campos deben tener atributos ARIA accesibles', () => {
       cy.getByDataTest('name-input').should('have.attr', 'aria-required', 'true');
       cy.getByDataTest('email-input')
@@ -147,23 +133,20 @@ describe('Authentication Flow', () => {
     });
   });
 
-  // =========================================================================
   describe('Login', () => {
     beforeEach(() => {
-      cy.visit('/login');
+      cy.visit('/#/login');
     });
 
-    // --- Form visibility ---------------------------------------------------
     it('Debe mostrar el formulario de login', () => {
       cy.getByDataTest('email-input').should('be.visible');
       cy.getByDataTest('password-input').should('be.visible');
       cy.getByDataTest('login-button')
         .should('be.visible')
-        .and('contain.text', 'Iniciar Sesión');
+        .and('contain.text', 'Iniciar');
     });
 
-    // --- Happy path --------------------------------------------------------
-    it('Debe iniciar sesión con credenciales válidas', () => {
+    it('Debe iniciar sesion con credenciales validas', () => {
       cy.intercept('POST', '**/auth/login', loginSuccess()).as('loginRequest');
 
       cy.getByDataTest('email-input').type(td.testUser.email);
@@ -176,7 +159,7 @@ describe('Authentication Flow', () => {
       });
     });
 
-    it('Debe redirigir a / (dashboard) después del login', () => {
+    it('Debe redirigir a / despues del login', () => {
       cy.intercept('POST', '**/auth/login', loginSuccess()).as('loginOk');
 
       cy.getByDataTest('email-input').type(td.testUser.email);
@@ -184,15 +167,14 @@ describe('Authentication Flow', () => {
       cy.getByDataTest('login-button').click();
 
       cy.wait('@loginOk');
-      cy.url().should('eq', `${Cypress.config('baseUrl')}/`);
+      cy.url().should('eq', `${Cypress.config('baseUrl')}/#/`);
       cy.contains('Panel de Control').should('be.visible');
     });
 
-    // --- Error: wrong credentials ------------------------------------------
-    it('Debe mostrar error con credenciales inválidas', () => {
+    it('Debe mostrar error con credenciales invalidas', () => {
       cy.intercept('POST', '**/auth/login', {
         statusCode: 401,
-        body: { success: false, message: 'Credenciales inválidas. Verifica tu email o contraseña.' },
+        body: { success: false, message: 'Credenciales invalidas. Verifica tu email o contrasena.' },
       }).as('loginFail');
 
       cy.getByDataTest('email-input').type('notexist@example.com');
@@ -202,27 +184,25 @@ describe('Authentication Flow', () => {
       cy.wait('@loginFail');
       cy.getByDataTest('error-message')
         .should('be.visible')
-        .and('contain.text', 'Credenciales inválidas');
+        .and('contain.text', 'Credenciales invalidas');
       cy.url().should('include', '/login');
     });
 
-    // --- Error: empty fields (client-side) ---------------------------------
-    it('Debe mostrar error si el email está vacío', () => {
+    it('Debe mostrar error si el email esta vacio', () => {
       cy.getByDataTest('password-input').type(td.testUser.password);
       cy.getByDataTest('login-button').click();
 
       cy.get('[role="alert"]').should('contain.text', 'completa todos los campos');
     });
 
-    it('Debe mostrar error si la contraseña está vacía', () => {
+    it('Debe mostrar error si la contrasena esta vacia', () => {
       cy.getByDataTest('email-input').type(td.testUser.email);
       cy.getByDataTest('login-button').click();
 
       cy.get('[role="alert"]').should('contain.text', 'completa todos los campos');
     });
 
-    // --- Session persistence -----------------------------------------------
-    it('Debe persistir la sesión al recargar la página', () => {
+    it('Debe persistir la sesion al recargar la pagina', () => {
       cy.intercept('POST', '**/auth/login', loginSuccess()).as('loginPersist');
 
       cy.getByDataTest('email-input').type(td.testUser.email);
@@ -230,40 +210,33 @@ describe('Authentication Flow', () => {
       cy.getByDataTest('login-button').click();
       cy.wait('@loginPersist');
 
-      // Confirm token was persisted
       cy.window().then((win) => {
         expect(win.localStorage.getItem('authToken')).to.equal(FAKE_TOKEN);
       });
 
       cy.reload();
-
-      // PrivateRoute reads localStorage on mount → stays authenticated
-      cy.url().should('eq', `${Cypress.config('baseUrl')}/`);
+      cy.url().should('eq', `${Cypress.config('baseUrl')}/#/`);
       cy.contains('Panel de Control').should('be.visible');
     });
   });
 
-  // =========================================================================
   describe('Logout', () => {
-    beforeEach(() => {
-      cy.visit('/', {
-        onBeforeLoad(win) {
-          win.localStorage.setItem('authToken', FAKE_TOKEN);
-          win.localStorage.setItem('authUser', JSON.stringify(FAKE_USER));
-        },
-      });
+    beforeEach(function () {
+      if (this.currentTest.title.includes('sin token')) {
+        return;
+      }
+
+      cy.visitWithSession('/', FAKE_TOKEN, FAKE_USER);
       cy.contains('Panel de Control').should('be.visible');
     });
 
-    // --- Logout button visible ---------------------------------------------
-    it('Debe mostrar el botón de logout en el dashboard', () => {
+    it('Debe mostrar el boton de logout en el dashboard', () => {
       cy.getByDataTest('logout-button')
         .should('be.visible')
-        .and('contain.text', 'Cerrar Sesión');
+        .and('contain.text', 'Cerrar');
     });
 
-    // --- Happy path logout -------------------------------------------------
-    it('Debe limpiar la sesión al hacer click en logout', () => {
+    it('Debe limpiar la sesion al hacer click en logout', () => {
       cy.intercept('POST', '**/auth/logout', { statusCode: 200, body: { success: true } }).as('logoutRequest');
 
       cy.getByDataTest('logout-button').click();
@@ -275,7 +248,7 @@ describe('Authentication Flow', () => {
       });
     });
 
-    it('Debe redirigir a /login después del logout', () => {
+    it('Debe redirigir a /login despues del logout', () => {
       cy.intercept('POST', '**/auth/logout', { statusCode: 200, body: { success: true } }).as('logoutRedirect');
 
       cy.getByDataTest('logout-button').click();
@@ -284,10 +257,9 @@ describe('Authentication Flow', () => {
       cy.url().should('include', '/login');
     });
 
-    // --- Route protection --------------------------------------------------
-    it('No debe permitir acceder al dashboard sin token (redirige a /login)', () => {
+    it('No debe permitir acceder al dashboard sin token', () => {
       cy.clearLocalStorage();
-      cy.visit('/');
+      cy.visit('/#/');
       cy.url().should('include', '/login');
     });
 

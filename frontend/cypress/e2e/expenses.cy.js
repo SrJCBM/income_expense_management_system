@@ -1,27 +1,24 @@
-/**
- * E2E tests — Expenses CRUD
- *
- * The real app keeps the expense form inline inside /expenses.
- */
-
 const TEST_TOKEN = 'fake-jwt-token-cypress';
 const TEST_USER = { id: 1, name: 'Test User', email: 'testuser@example.com' };
+const TEST_CATEGORY_ID = '665f1a111111111111111111';
 
-const visitExpensesWithSession = () => {
-  cy.visit('/expenses', {
-    onBeforeLoad(win) {
-      win.localStorage.setItem('authToken', TEST_TOKEN);
-      win.localStorage.setItem('authUser', JSON.stringify(TEST_USER));
-    },
-  });
+const sampleCategory = {
+  id: TEST_CATEGORY_ID,
+  _id: TEST_CATEGORY_ID,
+  name: 'Alimentacion',
+  type: 'expense',
+  color: '#ef4444',
+  icon: '📌',
 };
 
 const sampleExpense = {
   id: 'expense-1',
+  _id: 'expense-1',
   concept: 'Supermercado',
   amount: 150.75,
   date: '2026-05-01',
-  category: { name: 'Alimentación' },
+  categoryId: TEST_CATEGORY_ID,
+  category: sampleCategory,
   description: 'Compra semanal de alimentos',
 };
 
@@ -40,7 +37,12 @@ describe('CRUD de Gastos (E2E)', () => {
       body: { success: true, data: [sampleExpense] },
     }).as('getExpenses');
 
-    visitExpensesWithSession();
+    cy.intercept('GET', '**/api/categories?type=expense*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleCategory] },
+    }).as('getExpenseCategories');
+
+    cy.visitWithSession('/expenses', TEST_TOKEN, TEST_USER);
     cy.wait('@getExpenses');
   });
 
@@ -56,11 +58,11 @@ describe('CRUD de Gastos (E2E)', () => {
     cy.get('[data-testid="expense-concept"]').should('be.visible');
   });
 
-  it('Debe crear un gasto con datos válidos', () => {
+  it('Debe crear un gasto con datos validos', () => {
     const expense = testData?.testExpense || {
       concept: 'Compra de prueba',
       amount: 150.75,
-      categoryId: '1',
+      categoryId: TEST_CATEGORY_ID,
       date: '2026-05-01',
       description: 'Compra semanal de alimentos',
     };
@@ -75,7 +77,8 @@ describe('CRUD de Gastos (E2E)', () => {
           concept: expense.concept,
           amount: Number(expense.amount),
           date: expense.date,
-          category: { name: 'Alimentación' },
+          categoryId: TEST_CATEGORY_ID,
+          category: sampleCategory,
           description: expense.description,
         },
       },
@@ -84,9 +87,9 @@ describe('CRUD de Gastos (E2E)', () => {
     cy.get('[data-testid="new-expense-button"]').click();
     cy.get('[data-testid="expense-concept"]').clear().type(expense.concept);
     cy.get('[data-testid="expense-amount"]').clear().type(String(expense.amount));
-    cy.get('[data-testid="expense-category"]').select('Alimentación');
+    cy.get('[data-testid="expense-category"]').select(TEST_CATEGORY_ID);
     cy.get('[data-testid="expense-date"]').clear().type(expense.date);
-    cy.get('[data-testid="expense-description"]').clear().type(expense.description);
+    cy.get('[data-testid="expense-notes"]').clear().type(expense.description);
     cy.get('[data-testid="expense-submit"]').click();
 
     cy.wait('@createExpense').its('response.statusCode').should('eq', 201);
@@ -105,7 +108,7 @@ describe('CRUD de Gastos (E2E)', () => {
 
   it('Debe validar que el monto sea mayor a 0', () => {
     cy.get('[data-testid="new-expense-button"]').click();
-    cy.get('[data-testid="expense-concept"]').clear().type('Compra mínima');
+    cy.get('[data-testid="expense-concept"]').clear().type('Compra minima');
     cy.get('[data-testid="expense-amount"]').clear().type('-50');
     cy.get('[data-testid="expense-date"]').clear().type('2026-05-15');
     cy.get('[data-testid="expense-submit"]').click();
@@ -138,7 +141,7 @@ describe('CRUD de Gastos (E2E)', () => {
     cy.get('[data-testid="expense-list"]').should('contain', 'Supermercado editado');
   });
 
-  it('Debe eliminar un gasto confirmando el diálogo del navegador', () => {
+  it('Debe eliminar un gasto confirmando el dialogo del navegador', () => {
     cy.window().then((win) => {
       cy.stub(win, 'confirm').returns(true);
     });

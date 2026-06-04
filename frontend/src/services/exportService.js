@@ -49,6 +49,15 @@ export const exportToPDF = async (data, month, year) => {
       throw new Error('Mes o año inválido');
     }
 
+    // Try to load the autoTable plugin dynamically (optional). If not available, we'll use a fallback.
+    try {
+      // eslint-disable-next-line no-undef
+      await import('jspdf-autotable');
+    } catch (err) {
+      // plugin not installed — fallback will be used later
+      // console.warn('jspdf-autotable not available, using fallback table rendering.');
+    }
+
     const doc = new jsPDF();
     
     const monthNames = [
@@ -90,26 +99,42 @@ export const exportToPDF = async (data, month, year) => {
         `$${cat.amount.toFixed(2)}`,
         `${cat.percentage}%`,
       ]);
-      
-      doc.autoTable({
-        startY: 100,
-        head: [['Categoría', 'Monto', 'Porcentaje']],
-        body: tableData,
-        theme: 'grid',
-        margin: 20,
-        styles: {
-          fontSize: 10,
-          textColor: 60,
-        },
-        headStyles: {
-          fillColor: [59, 130, 246],
-          textColor: [255, 255, 255],
-          fontStyle: 'bold',
-        },
-        alternateRowStyles: {
-          fillColor: [245, 245, 245],
-        },
-      });
+
+      if (typeof doc.autoTable === 'function') {
+        doc.autoTable({
+          startY: 100,
+          head: [['Categoría', 'Monto', 'Porcentaje']],
+          body: tableData,
+          theme: 'grid',
+          margin: 20,
+          styles: {
+            fontSize: 10,
+            textColor: 60,
+          },
+          headStyles: {
+            fillColor: [59, 130, 246],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+          },
+          alternateRowStyles: {
+            fillColor: [245, 245, 245],
+          },
+        });
+      } else {
+        // Fallback simple rendering when autoTable isn't available
+        let y = 100;
+        doc.setFontSize(10);
+        tableData.forEach((row) => {
+          doc.text(row[0].toString(), 20, y);
+          doc.text(row[1].toString(), 110, y);
+          doc.text(row[2].toString(), 150, y);
+          y += 8;
+          if (y > doc.internal.pageSize.getHeight() - 30) {
+            doc.addPage();
+            y = 20;
+          }
+        });
+      }
     }
     
     // Pie de página

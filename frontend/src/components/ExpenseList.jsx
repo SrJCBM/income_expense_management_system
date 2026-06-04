@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { toDateInputValue } from '../utils/dateUtils.js';
 
 const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
   const total = useMemo(
@@ -49,7 +50,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
         <tbody>
           {expenses.map((expense) => (
             <tr key={expense.id || expense._id} data-testid="expense-item">
-              <td>{new Date(expense.date).toLocaleDateString()}</td>
+              <td>{toDateInputValue(expense.date)}</td>
               <td>{expense.concept}</td>
               <td>{expense.category?.name || 'Sin categoría'}</td>
               <td className="amount negative">-${parseFloat(expense.amount).toFixed(2)}</td>

@@ -3,6 +3,8 @@
  * Funciones para formatear datos en el frontend
  */
 
+import { toDateInputValue } from './dateUtils.js';
+
 export const formatCurrency = (amount, currency = 'USD') => {
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
@@ -11,7 +13,14 @@ export const formatCurrency = (amount, currency = 'USD') => {
 };
 
 export const formatDate = (date, locale = 'es-MX') => {
-  return new Date(date).toLocaleDateString(locale);
+  const dateOnly = toDateInputValue(date);
+
+  if (!dateOnly) {
+    return '';
+  }
+
+  const [year, month, day] = dateOnly.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(locale);
 };
 
 export const formatDatetime = (dateTime, locale = 'es-MX') => {

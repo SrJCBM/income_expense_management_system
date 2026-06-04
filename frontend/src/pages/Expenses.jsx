@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useExpenses } from '../hooks/useExpenses.js';
 import ExpenseList from '../components/ExpenseList.jsx';
 import ExpenseForm from '../components/ExpenseForm.jsx';
-import { EXPENSE_CATEGORIES } from '../constants/categories.js';
+import { useCategories } from '../hooks/useCategories.js';
 import '../styles/pages/Expenses.css';
 
 const Expenses = () => {
@@ -12,9 +12,11 @@ const Expenses = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [monthFilter, setMonthFilter]       = useState('');
+  const { categories, fetchCategories } = useCategories();
 
   useEffect(() => {
     fetchExpenses();
+    fetchCategories('expense');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -45,6 +47,7 @@ const Expenses = () => {
 
   const handleNewExpense = () => {
     if (successMessage) setSuccessMessage('');
+    setEditingExpense(null);
     setShowForm(true);
   };
 
@@ -56,7 +59,18 @@ const Expenses = () => {
   const handleApplyFilters = () => {
     const filters = {};
     if (categoryFilter) filters.category = categoryFilter;
-    if (monthFilter) filters.month = monthFilter;
+    if (monthFilter) {
+      // input type="month" returns YYYY-MM, backend expects numeric month and year
+      const parts = String(monthFilter).split('-');
+      if (parts.length === 2) {
+        const year = Number(parts[0]);
+        const month = Number(parts[1]);
+        if (!Number.isNaN(year) && !Number.isNaN(month)) {
+          filters.year = year;
+          filters.month = month;
+        }
+      }
+    }
     fetchExpenses(filters);
   };
 
@@ -83,6 +97,7 @@ const Expenses = () => {
         </div>
       )}
 
+      {!showForm && (
       <div className="filters-bar" data-testid="expense-filters">
         <select
           value={categoryFilter}
@@ -91,8 +106,8 @@ const Expenses = () => {
           aria-label="Filtrar por categoría"
         >
           <option value="">Todas las categorías</option>
-          {EXPENSE_CATEGORIES.map(({ value, label }) => (
-            <option key={value} value={value}>{label}</option>
+          {Array.isArray(categories) && categories.map((cat) => (
+            <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
           ))}
         </select>
 
@@ -106,13 +121,14 @@ const Expenses = () => {
 
         <button
           type="button"
-          className="btn-secondary"
+          className="btn-secondary btn-filter"
           onClick={handleApplyFilters}
           data-testid="apply-filters"
         >
           Filtrar
         </button>
       </div>
+      )}
 
       {showForm ? (
         <div className="card form-card">

@@ -50,6 +50,7 @@ cd frontend && npm install && npm run dev
 | [**docs/PROJECT_STRUCTURE.md**](docs/PROJECT_STRUCTURE.md) | Mapeo completo de carpetas y archivos |
 | [**docs/API.md**](docs/API.md) | Endpoints y especificaciones REST |
 | [**docs/DEVELOPMENT_GUIDE.md**](docs/DEVELOPMENT_GUIDE.md) | Guía de desarrollo y próximos pasos |
+| [**docs/CYPRESS_GUIDE.md**](docs/CYPRESS_GUIDE.md) | Uso, actualizacion y troubleshooting de Cypress |
 | [**AUDIT_GRAPHICS_ACCESSIBILITY.md**](AUDIT_GRAPHICS_ACCESSIBILITY.md) | Validación WCAG 2.1 AA + Nielsen heuristics |
 
 ---
@@ -68,6 +69,8 @@ cd frontend && npm install && npm run dev
 - **Framework**: React 18 + Vite
 - **Visualización**: Recharts (gráficos interactivos)
 - **Exportación**: jsPDF (PDF) + XLSX (Excel)
+- **E2E Testing**: Cypress 15.16.0 + cypress-axe
+- **Desktop**: Electron + electron-builder
 - **Hooks**: Custom hooks para lógica reutilizable
 - **Estilos**: CSS modular + responsive design
 - **Accesibilidad**: WCAG 2.1 AA compliant
@@ -163,9 +166,46 @@ VITE_API_URL=http://localhost:5000
 # Backend
 cd backend && npm test
 
-# Frontend
-cd frontend && npm run test
+# Frontend E2E
+cd frontend && npm run cypress:run
+
+# Frontend accessibility smoke
+cd frontend && npm run test:a11y
 ```
+Para abrir Cypress en modo visual:
+
+```bash
+cd frontend
+npm run dev
+npm run cypress
+```
+
+En Windows, si Cypress muestra `Cypress.exe: bad option: --smoke-test`, ejecuta antes:
+
+```powershell
+Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
+```
+
+Ver [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md) para el flujo completo.
+
+---
+
+## Build Desktop
+
+La version actual del instalador es `1.1.0`.
+
+```bash
+cd frontend
+npm run build:dist
+```
+
+El instalador se genera en:
+
+```text
+frontend/release/Income Expense Manager Setup 1.1.0.exe
+```
+
+La carpeta `frontend/release/` esta ignorada por Git porque contiene artefactos pesados. No debe subirse al repositorio.
 
 ---
 
@@ -206,8 +246,8 @@ Las contribuciones son bienvenidas. Por favor:
 
 ---
 
-**Versión**: 1.0.0  
-**Última actualización**: Mayo 2026  
+**Version**: 1.1.0  
+**Ultima actualizacion**: Junio 2026  
 **Estado**: ✅ Producción
 
 │   │   ├── validators/        # Validadores

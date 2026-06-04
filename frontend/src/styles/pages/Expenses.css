@@ -54,6 +54,32 @@
   font-size: 1rem;
 }
 
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.filters-bar select,
+.filters-bar input {
+  min-height: 42px;
+  padding: 0.65rem 0.9rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+}
+
+.btn-filter {
+  min-height: 42px;
+  font-weight: 700;
+  border-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.14);
+}
+
 .form-textarea {
   resize: vertical;
   min-height: 100px;
@@ -81,12 +107,14 @@ input[type='color'] {
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .data-table th, .data-table td {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid var(--surface-border);
+  overflow-wrap: anywhere;
 }
 
 .data-table th {
@@ -104,6 +132,7 @@ input[type='color'] {
 .actions-cell {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .btn-icon {
@@ -118,6 +147,14 @@ input[type='color'] {
 .btn-icon:hover {
   opacity: 1;
   transform: scale(1.1);
+}
+
+.btn-icon.btn-edit {
+  color: var(--primary-color);
+}
+
+.btn-icon.btn-delete {
+  color: var(--danger-color);
 }
 
 .skeleton-item {
@@ -144,5 +181,10 @@ input[type='color'] {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+  }
+
+  .filters-bar {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

@@ -78,6 +78,12 @@ npm run test:coverage     # See coverage report
 - 29 E2E tests documented
 - Test commands and expected output
 
+#### Cypress setup and troubleshooting
+-> See: [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md)
+- Cypress 15.16.0 setup
+- UI and headless commands
+- Windows `ELECTRON_RUN_AS_NODE` fix
+
 ---
 
 ### 🚀 **Development Commands**

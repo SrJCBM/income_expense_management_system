@@ -3,6 +3,21 @@ import { useCategories } from '../hooks/useCategories.js';
 import { useForm } from '../hooks/useForm.js';
 import '../styles/pages/Expenses.css';
 
+const ICON_OPTIONS = [
+  { value: '📌', label: 'Pin' },
+  { value: '🍽️', label: 'Alimentacion' },
+  { value: '🚌', label: 'Transporte' },
+  { value: '🏠', label: 'Vivienda' },
+  { value: '💊', label: 'Salud' },
+  { value: '📚', label: 'Educacion' },
+  { value: '💼', label: 'Trabajo' },
+  { value: '💰', label: 'Dinero' },
+  { value: '📈', label: 'Inversiones' },
+  { value: '🧾', label: 'Servicios' },
+];
+
+const isAllowedIcon = (icon) => ICON_OPTIONS.some((option) => option.value === icon);
+
 const Categories = () => {
   const {
     categories,
@@ -13,7 +28,7 @@ const Categories = () => {
     updateCategory,
     removeCategory,
   } = useCategories();
-  
+
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
 
@@ -24,7 +39,11 @@ const Categories = () => {
 
   const handleCategorySubmit = async (values) => {
     if (!values.name || !values.type) {
-      throw { validationErrors: { general: 'El nombre y tipo de categoría son obligatorios.' } };
+      throw { validationErrors: { general: 'El nombre y tipo de categoria son obligatorios.' } };
+    }
+
+    if (!isAllowedIcon(values.icon)) {
+      throw { validationErrors: { icon: 'Selecciona un icono de la lista.' } };
     }
 
     const payload = {
@@ -51,7 +70,7 @@ const Categories = () => {
       name: '',
       type: 'expense',
       color: '#6366f1',
-      icon: '📌',
+      icon: ICON_OPTIONS[0].value,
       description: '',
     },
     handleCategorySubmit
@@ -68,20 +87,20 @@ const Categories = () => {
     setFieldValue('name', category.name || '');
     setFieldValue('type', category.type || 'expense');
     setFieldValue('color', category.color || '#6366f1');
-    setFieldValue('icon', category.icon || '📌');
+    setFieldValue('icon', isAllowedIcon(category.icon) ? category.icon : ICON_OPTIONS[0].value);
     setFieldValue('description', category.description || '');
     setShowForm(true);
   };
 
   const handleDeleteClick = async (category) => {
-    if (!window.confirm(`¿Eliminar la categoría \"${category.name}\"?`)) {
+    if (!window.confirm(`Eliminar la categoria "${category.name}"?`)) {
       return;
     }
 
     try {
       await removeCategory(category.id || category._id);
     } catch {
-      // El error ya se maneja desde el hook
+      // El error ya se maneja desde el hook.
     }
   };
 
@@ -95,7 +114,7 @@ const Categories = () => {
     <div className="expenses-container">
       <header className="page-header flex-between">
         <div>
-          <h1>Gestionar Categorías</h1>
+          <h1>Gestionar Categorias</h1>
           <p className="subtitle">Organiza tus transacciones</p>
         </div>
         <button
@@ -103,13 +122,13 @@ const Categories = () => {
           onClick={handleCreateClick}
           disabled={showForm}
         >
-          + Nueva Categoría
+          + Nueva Categoria
         </button>
       </header>
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingCategory ? 'Editar Categoría' : 'Crear Categoría'}</h3>
+          <h3>{editingCategory ? 'Editar Categoria' : 'Crear Categoria'}</h3>
 
           {errors.general && (
             <div className="alert alert-error" role="alert" aria-live="assertive">
@@ -132,11 +151,11 @@ const Categories = () => {
                   name="name"
                   value={values.name}
                   onChange={handleChange}
-                  placeholder="Ej. Alimentación"
+                  placeholder="Ej. Alimentacion"
                   disabled={isSubmitting}
                   aria-required="true"
                   aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
+                  aria-describedby={errors.name ? 'name-error' : undefined}
                 />
                 {errors.name && <span id="name-error" className="error-text" role="alert">{errors.name}</span>}
               </div>
@@ -152,7 +171,7 @@ const Categories = () => {
                   disabled={isSubmitting}
                   aria-required="true"
                   aria-invalid={!!errors.type}
-                  aria-describedby={errors.type ? "type-error" : undefined}
+                  aria-describedby={errors.type ? 'type-error' : undefined}
                 >
                   <option value="expense">Gasto</option>
                   <option value="income">Ingreso</option>
@@ -176,28 +195,35 @@ const Categories = () => {
 
               <div className="form-group">
                 <label htmlFor="category-icon">Icono</label>
-                <input
+                <select
                   id="category-icon"
-                  type="text"
                   name="icon"
                   value={values.icon}
                   onChange={handleChange}
-                  maxLength={4}
-                  placeholder="📌"
+                  className="form-select"
                   disabled={isSubmitting}
-                />
+                  aria-invalid={!!errors.icon}
+                  aria-describedby={errors.icon ? 'icon-error' : undefined}
+                >
+                  {ICON_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.value} {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.icon && <span id="icon-error" className="error-text" role="alert">{errors.icon}</span>}
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="category-description">Descripción</label>
+              <label htmlFor="category-description">Descripcion</label>
               <textarea
                 id="category-description"
                 name="description"
                 value={values.description}
                 onChange={handleChange}
                 className="form-textarea"
-                placeholder="Describe para qué usarás esta categoría (opcional)"
+                placeholder="Describe para que usaras esta categoria (opcional)"
                 disabled={isSubmitting}
               ></textarea>
             </div>
@@ -215,8 +241,8 @@ const Categories = () => {
                 {isSubmitting
                   ? 'Guardando...'
                   : editingCategory
-                    ? 'Actualizar Categoría'
-                    : 'Crear Categoría'}
+                    ? 'Actualizar Categoria'
+                    : 'Crear Categoria'}
               </button>
             </div>
           </form>
@@ -230,8 +256,8 @@ const Categories = () => {
           ) : categories.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🏷️</div>
-              <h3>No tienes categorías registradas</h3>
-              <p className="hint">Crea una categoría para organizar tus movimientos.</p>
+              <h3>No tienes categorias registradas</h3>
+              <p className="hint">Crea una categoria para organizar tus movimientos.</p>
             </div>
           ) : (
             <table className="data-table">
@@ -239,7 +265,7 @@ const Categories = () => {
                 <tr>
                   <th>Nombre</th>
                   <th>Tipo</th>
-                  <th>Descripción</th>
+                  <th>Descripcion</th>
                   <th>Color</th>
                   <th>Acciones</th>
                 </tr>
@@ -251,11 +277,13 @@ const Categories = () => {
                   return (
                     <tr key={categoryId}>
                       <td>
-                        <span style={{ marginRight: '0.5rem' }}>{category.icon || '📌'}</span>
+                        <span style={{ marginRight: '0.5rem' }}>
+                          {isAllowedIcon(category.icon) ? category.icon : ICON_OPTIONS[0].value}
+                        </span>
                         {category.name}
                       </td>
                       <td>{category.type === 'income' ? 'Ingreso' : 'Gasto'}</td>
-                      <td>{category.description || 'Sin descripción'}</td>
+                      <td>{category.description || 'Sin descripcion'}</td>
                       <td>
                         <span
                           style={{

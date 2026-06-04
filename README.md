@@ -1,178 +1,195 @@
-# 💰 Sistema de Control de Gastos e Ingresos
+# Sistema de Control de Gastos e Ingresos
 
-Un sistema completo para gestionar y analizar movimientos financieros personales o familiares. Permite registrar ingresos, gastos, crear categorías, establecer presupuestos y visualizar reportes analíticos con gráficos interactivos.
+Aplicacion full-stack para registrar, consultar y analizar ingresos y gastos personales o familiares. Permite gestionar categorias, visualizar reportes, exportar informacion y empaquetar una version de escritorio con Electron.
 
-## ✨ Características
+## Caracteristicas
 
-- ✅ Registro de ingresos y gastos
-- ✅ Clasificación por categorías (CRUD completo)
-- ✅ Reportes y visualizaciones interactivas
-- ✅ Exportación PDF y Excel
-- ✅ Control de presupuestos *(en desarrollo)*
-- ✅ Autenticación JWT segura
-- ✅ Interfaz responsive (mobile-first)
-- ✅ WCAG 2.1 AA accesible
-- ✅ Deploy en Render
-- ✅ Clean Code aplicado
+- Registro y edicion de ingresos.
+- Registro y edicion de gastos.
+- Categorias para ingresos y gastos.
+- Dashboard con resumen financiero.
+- Reportes con graficos y desglose por categoria.
+- Exportacion a PDF y Excel.
+- Autenticacion con JWT.
+- Interfaz responsive.
+- Pruebas E2E con Cypress.
+- Build de escritorio con Electron.
 
----
+## Inicio Rapido
 
-## 🚀 Inicio Rápido (3 pasos)
+Requisitos:
 
-**Requisitos**: Node.js 18+, npm, MongoDB (Atlas recomendado)
+- Node.js 18 o superior.
+- npm.
+- MongoDB local o MongoDB Atlas.
 
-**Terminal 1:**
+Terminal 1:
+
 ```bash
-cd backend && npm install && npm run dev
+cd backend
+npm install
+npm run dev
 ```
 
-**Terminal 2 (Nueva ventana):**
+Terminal 2:
+
 ```bash
-cd frontend && npm install && npm run dev
+cd frontend
+npm install
+npm run dev
 ```
 
-**¡Listo!** Se abre en http://localhost:3000
+Frontend:
 
-> Credentials de prueba: `demo@example.com` / `Password123`
-
-**¿Problemas?** → Ver [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
-
----
-
-## 📚 Documentación
-
-| Documento | Descripción |
-|-----------|-------------|
-| [**INICIO_RAPIDO.md**](INICIO_RAPIDO.md) | Setup en 3 pasos (este archivo) |
-| [**ERRORES_COMUNES.md**](ERRORES_COMUNES.md) | Troubleshooting y soluciones |
-| [**docs/SETUP.md**](docs/SETUP.md) | Instalación detallada y configuración |
-| [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) | Patrón MVC: Backend MC + Frontend MV |
-| [**docs/PROJECT_STRUCTURE.md**](docs/PROJECT_STRUCTURE.md) | Mapeo completo de carpetas y archivos |
-| [**docs/API.md**](docs/API.md) | Endpoints y especificaciones REST |
-| [**docs/DEVELOPMENT_GUIDE.md**](docs/DEVELOPMENT_GUIDE.md) | Guía de desarrollo y próximos pasos |
-| [**docs/CYPRESS_GUIDE.md**](docs/CYPRESS_GUIDE.md) | Uso, actualizacion y troubleshooting de Cypress |
-| [**AUDIT_GRAPHICS_ACCESSIBILITY.md**](AUDIT_GRAPHICS_ACCESSIBILITY.md) | Validación WCAG 2.1 AA + Nielsen heuristics |
-
----
-
-## 🏗️ Stack Tecnológico
-
-### Backend
-- **Runtime**: Node.js + Express
-- **Base de Datos**: MongoDB (Mongoose ODM)
-- **Autenticación**: JWT + bcrypt
-- **Validación**: Joi + Custom validators
-- **Manejo de errores**: Custom Error classes
-- **Seguridad**: CORS, helmet, variables de entorno
-
-### Frontend
-- **Framework**: React 18 + Vite
-- **Visualización**: Recharts (gráficos interactivos)
-- **Exportación**: jsPDF (PDF) + XLSX (Excel)
-- **E2E Testing**: Cypress 15.16.0 + cypress-axe
-- **Desktop**: Electron + electron-builder
-- **Hooks**: Custom hooks para lógica reutilizable
-- **Estilos**: CSS modular + responsive design
-- **Accesibilidad**: WCAG 2.1 AA compliant
-
----
-
-## 📊 Estado del Proyecto
-
-| Módulo | Estado | Notas |
-|--------|--------|-------|
-| **Autenticación** | ✅ Completo | Login/Register con JWT |
-| **Gastos (CRUD)** | ✅ Completo | Crear, leer, actualizar, eliminar |
-| **Ingresos (CRUD)** | ✅ Completo | Crear, leer, actualizar, eliminar |
-| **Categorías (CRUD)** | ✅ Completo | Crear, leer, actualizar, eliminar |
-| **Reportes** | ✅ Completo | Gráficos, exportación PDF/Excel |
-| **Presupuestos** | 🟡 En desarrollo | Estructura lista, endpoints desactivados |
-| **Perfil Usuario** | 🟡 En desarrollo | Endpoints comentados |
-
----
-
-## 🎯 Arquitectura
-
-```
-REQUEST → MIDDLEWARE → ROUTES → CONTROLLER → SERVICE → MODEL → DATABASE
-         (Auth)         (API)      (HTTP)      (Logic)    (Schema)
+```text
+http://localhost:3000
 ```
 
-**Backend**: Model-Controller (MC) - Services reutilizable  
-**Frontend**: Model-View + Hooks (MVH) - Lógica en hooks reutilizable
+Backend:
 
-Ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para más detalles.
-
----
-
-## 📁 Estructura del Proyecto
-
+```text
+http://localhost:5000/api
 ```
+
+## Documentacion
+
+| Documento | Descripcion |
+| --- | --- |
+| [INICIO_RAPIDO.md](INICIO_RAPIDO.md) | Guia corta de instalacion y arranque. |
+| [ERRORES_COMUNES.md](ERRORES_COMUNES.md) | Problemas frecuentes y soluciones. |
+| [docs/SETUP.md](docs/SETUP.md) | Configuracion detallada del entorno. |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitectura general del sistema. |
+| [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) | Estructura completa de carpetas. |
+| [docs/API.md](docs/API.md) | Endpoints y contratos REST. |
+| [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) | Flujo de desarrollo. |
+| [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md) | Uso, actualizacion y troubleshooting de Cypress. |
+| [TESTING.md](TESTING.md) | Resumen de pruebas del proyecto. |
+
+La documentacion de despliegue y configuraciones de hosting debe mantenerse en las guias tecnicas, no en este README general.
+
+## Stack Tecnologico
+
+Backend:
+
+- Node.js.
+- Express.
+- MongoDB con Mongoose.
+- JWT y bcrypt.
+- express-validator.
+- Helmet y CORS.
+- Vitest, Supertest y mongodb-memory-server.
+
+Frontend:
+
+- React 18.
+- Vite.
+- React Router.
+- Axios.
+- Recharts.
+- jsPDF, jspdf-autotable y XLSX.
+- Cypress 15.16.0 y cypress-axe.
+- Electron y electron-builder.
+
+## Estructura Base
+
+```text
 income_expense_management_system/
-├── backend/
-│   ├── src/
-│   │   ├── controllers/       # Lógica HTTP
-│   │   ├── models/            # Esquemas MongoDB
-│   │   ├── routes/            # Endpoints
-│   │   ├── services/          # Lógica de negocio
-│   │   ├── middlewares/       # Auth, validación, errores
-│   │   ├── utils/             # Funciones auxiliares
-│   │   ├── validators/        # Esquemas de validación
-│   │   └── config/            # Base datos, CORS
-│   ├── server.js              # Punto de entrada
-│   └── package.json
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/        # Componentes reutilizables
-│   │   ├── pages/             # Páginas principales
-│   │   ├── hooks/             # Hooks reutilizables
-│   │   ├── services/          # Llamadas API
-│   │   ├── utils/             # Funciones auxiliares
-│   │   ├── styles/            # CSS modular
-│   │   └── constants/         # Constantes
-│   ├── index.html
-│   └── package.json
-│
-├── docs/                      # Documentación técnica
-├── README.md                  # Este archivo
-├── INICIO_RAPIDO.md           # Setup rápido
-├── ERRORES_COMUNES.md         # Troubleshooting
-└── AUDIT_GRAPHICS_ACCESSIBILITY.md
+  backend/
+    server.js
+    package.json
+    vitest.config.js
+    src/
+      config/
+      constants/
+      controllers/
+      errors/
+      middlewares/
+      models/
+      routes/
+      services/
+      utils/
+      validators/
+    tests/
+      unit/
+      integration/
+      helpers/
+      fixtures/
+
+  frontend/
+    package.json
+    vite.config.js
+    cypress.config.js
+    electron/
+    scripts/
+    src/
+      components/
+      constants/
+      hooks/
+      models/
+      pages/
+      services/
+      styles/
+      utils/
+    cypress/
+      e2e/
+      support/
+      fixtures/
+
+  docs/
 ```
 
----
+## Variables de Entorno
 
-## 🔐 Variables de Entorno
+Backend (`backend/.env`):
 
-### Backend (.env)
 ```env
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/dbname
-JWT_SECRET=your_super_secret_key_change_in_production
-NODE_ENV=development
 PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/dbname
+DB_NAME=income_expense_db
+JWT_SECRET=change_this_secret
+JWT_EXPIRE=7d
+FRONTEND_URL=http://localhost:3000
+BCRYPT_ROUNDS=10
 ```
 
-### Frontend (.env)
+Frontend (`frontend/.env`):
+
 ```env
-VITE_API_URL=http://localhost:5000
+VITE_API_URL=http://localhost:5000/api
+VITE_API_TIMEOUT=10000
+VITE_AUTH_MODE=mock
+VITE_APP_NAME=Income & Expense Manager
+VITE_APP_VERSION=1.1.0
 ```
 
----
+No subir archivos `.env` al repositorio.
 
-## 🧪 Testing
+## Testing
+
+Backend:
 
 ```bash
-# Backend
-cd backend && npm test
-
-# Frontend E2E
-cd frontend && npm run cypress:run
-
-# Frontend accessibility smoke
-cd frontend && npm run test:a11y
+cd backend
+npm test
+npm run test:coverage
 ```
-Para abrir Cypress en modo visual:
+
+Frontend E2E:
+
+```bash
+cd frontend
+npm run cypress:run
+```
+
+Frontend accessibility smoke:
+
+```bash
+cd frontend
+npm run test:a11y
+```
+
+Abrir Cypress en modo visual:
 
 ```bash
 cd frontend
@@ -180,7 +197,7 @@ npm run dev
 npm run cypress
 ```
 
-En Windows, si Cypress muestra `Cypress.exe: bad option: --smoke-test`, ejecuta antes:
+En Windows, si Cypress muestra `Cypress.exe: bad option: --smoke-test`, ejecutar antes:
 
 ```powershell
 Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
@@ -188,18 +205,22 @@ Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
 
 Ver [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md) para el flujo completo.
 
----
-
 ## Build Desktop
 
-La version actual del instalador es `1.1.0`.
+Version actual del instalador:
+
+```text
+1.1.0
+```
+
+Generar instalador:
 
 ```bash
 cd frontend
 npm run build:dist
 ```
 
-El instalador se genera en:
+Salida local:
 
 ```text
 frontend/release/Income Expense Manager Setup 1.1.0.exe
@@ -207,276 +228,30 @@ frontend/release/Income Expense Manager Setup 1.1.0.exe
 
 La carpeta `frontend/release/` esta ignorada por Git porque contiene artefactos pesados. No debe subirse al repositorio.
 
----
+## Estado del Proyecto
 
-## 🌐 Deploy
+| Modulo | Estado |
+| --- | --- |
+| Autenticacion | Completo |
+| Gastos | Completo |
+| Ingresos | Completo |
+| Categorias | Completo |
+| Reportes | Completo |
+| Presupuestos | En desarrollo |
+| Perfil de usuario | En desarrollo |
 
-El proyecto está listo para desplegar en **Render**:
+## Soporte
 
-1. Conecta tu repositorio a Render
-2. Configura variables de entorno
-3. Deploy automático en cada push
+- Issues: abrir un issue en GitHub.
+- Documentacion: revisar [ERRORES_COMUNES.md](ERRORES_COMUNES.md).
+- Cypress: revisar [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md).
 
-Ver [docs/SETUP.md](docs/SETUP.md) para instrucciones completas.
-
----
-
-## 📝 Licencia
+## Licencia
 
 MIT
 
 ---
 
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-1. Fork el proyecto
-2. Crea una rama (`git checkout -b feature/nueva-feature`)
-3. Commit (`git commit -m 'Add nueva feature'`)
-4. Push (`git push origin feature/nueva-feature`)
-5. Abre un Pull Request
-
----
-
-## 📞 Soporte
-
-- **Issues**: Abre un issue en GitHub
-- **Documentación**: Lee [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
-- **Email**: *jcblaciomachuca@gmail.com*
-
----
-
-**Version**: 1.1.0  
-**Ultima actualizacion**: Junio 2026  
-**Estado**: ✅ Producción
-
-│   │   ├── validators/        # Validadores
-│   │   ├── config/            # BD, CORS, etc
-│   │   └── utils/             # Utilidades
-│   ├── server.js              # Punto de entrada ✅
-│   ├── package.json
-│   └── .env.example           # Variables de entorno
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/        # Componentes
-│   │   ├── pages/             # Páginas
-│   │   ├── models/            # Modelos de datos
-│   │   ├── services/          # Servicios API
-│   │   ├── hooks/             # Custom Hooks
-│   │   ├── styles/            # CSS
-│   │   ├── App.jsx            # Componente raíz ✅
-│   │   └── main.jsx           # Entry point ✅
-│   ├── index.html             # HTML principal ✅
-│   ├── vite.config.js
-│   ├── package.json
-│   └── .env.example
-│
-└── docs/                      # Documentación
-    ├── SETUP.md               # Instalación detallada
-    ├── ARCHITECTURE.md
-    ├── API.md
-    └── DEVELOPMENT_GUIDE.md
-```
-
-## 🔒 Seguridad
-
-### Protección de Datos
-- Variables de entorno (.env) para datos sensibles
-- **NO COMMITAR archivos .env** - Solo commitar .env.example
-- JWT para autenticación
-- Bcrypt para contraseñas
-- CORS configurado
-- Helmet para headers de seguridad
-
-### Configuración Inicial
-```bash
-# 1. Copiar archivos ejemplo
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
-
-# 2. Editar con valores reales (sin commitear)
-```
-
-## 🚀 Instalación Completa
-
-## � Instalación Completa
-
-Para instrucciones detalladas con troubleshooting y solución de errores comunes, ver:
-- 📖 **[INICIO_RAPIDO.md](./INICIO_RAPIDO.md)** - Guía rápida (3 pasos)
-- 📘 **[docs/SETUP.md](./docs/SETUP.md)** - Guía completa con errores comunes
-
-### Backend Quick Setup
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-### Frontend Quick Setup (Nueva Terminal)
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## 📝 Clean Code Principles
-
-El proyecto sigue los siguientes principios:
-
-1. **Nombres Significativos**: Variables, funciones y clases con nombres descriptivos
-2. **Funciones Pequeñas**: Cada función hace una sola cosa bien
-3. **Comentarios Útiles**: JSDoc para funciones importantes
-4. **Manejo de Errores**: Try-catch y errores personalizados
-5. **DRY (Don't Repeat Yourself)**: Código reutilizable en servicios y utils
-6. **SOLID**: Responsabilidad única, abierto-cerrado, etc.
-7. **Formateo Consistente**: Indentación, convenciones de nombres
-8. **Validación**: Entrada validada en frontend y backend
-
-## 🔌 API Endpoints
-
-### Autenticación
-- `POST /api/auth/register` - Registrar usuario
-- `POST /api/auth/login` - Iniciar sesión
-- `POST /api/auth/logout` - Cerrar sesión
-
-### Usuarios
-- `GET /api/users/profile` - Obtener perfil
-- `PUT /api/users/profile/update` - Actualizar perfil
-
-### Gastos
-- `GET /api/expenses` - Listar gastos
-- `POST /api/expenses` - Crear gasto
-- `PUT /api/expenses/:id` - Actualizar gasto
-- `DELETE /api/expenses/:id` - Eliminar gasto
-
-### Ingresos
-- `GET /api/incomes` - Listar ingresos
-- `POST /api/incomes` - Crear ingreso
-- `PUT /api/incomes/:id` - Actualizar ingreso
-- `DELETE /api/incomes/:id` - Eliminar ingreso
-
-### Categorías
-- `GET /api/categories` - Listar categorías
-- `POST /api/categories` - Crear categoría
-
-### Reportes
-- `GET /api/reports/summary` - Resumen general
-- `GET /api/reports/monthly` - Reporte mensual
-- `GET /api/reports/yearly` - Reporte anual
-
-## 📚 Documentación
-
-| Documento | Descripción |
-|-----------|-------------|
-| [INICIO_RAPIDO.md](./INICIO_RAPIDO.md) | Guía de inicio rápido (3 pasos) |
-| [docs/SETUP.md](./docs/SETUP.md) | Instalación detallada + troubleshooting |
-| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Arquitectura y patrones de diseño |
-| [docs/API.md](./docs/API.md) | Documentación de endpoints |
-| [docs/DEVELOPMENT_GUIDE.md](./docs/DEVELOPMENT_GUIDE.md) | Guía para desarrolladores |
-| [docs/PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md) | Estructura completa del proyecto |
-
-## 📦 Deploy en Render
-
-### Pasos para Render:
-
-1. **Crear cuenta en Render** (render.com)
-
-2. **Backend**:
-   - Conectar repositorio Git
-   - Seleccionar backend/ como raíz del servicio
-   - Variables de entorno en dashboard de Render
-   - Start: `npm run start`
-
-3. **Frontend**:
-   - Build command: `npm run build`
-   - Publicar desde carpeta `dist/`
-
-### Variables en Render:
-```
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=tu_clave_segura
-NODE_ENV=production
-```
-
-## 🛠️ Tecnologías Utilizadas
-
-### Backend
-- **Express.js** - Framework web
-- **MongoDB** - Base de datos
-- **Mongoose** - ODM
-- **JWT** - Autenticación
-- **bcryptjs** - Encriptación
-- **Helmet** - Seguridad HTTP
-- **CORS** - Control de origen
-- **express-validator** - Validación
-- **nodemon** - Hot reload desarrollo
-
-### Frontend
-- **React 18** - Librería UI
-- **Vite 4** - Build tool ultra-rápido
-- **React Router v6** - Navegación
-- **Axios** - Cliente HTTP
-- **CSS3** - Estilos responsive
-
-## 🐛 Troubleshooting
-
-### Errores Comunes
-
-**"npm: command not found"**
-- Instala Node.js desde nodejs.org
-- Verifica: `node --version` y `npm --version`
-
-**"ENOENT: no such file or directory"**
-- Asegúrate de estar en la carpeta correcta (backend o frontend)
-- Código: `cd backend` o `cd frontend` primero
-
-**"Port already in use"**
-- Otro proceso usa el puerto 5000 o 3000
-- Cierra el programa o cambia el puerto en .env
-
-**"MongoDB connection error"**
-- Verifica que MongoDB está corriendo
-- Comprueba MONGODB_URI en backend/.env
-- En Render, verifica la credencial de MongoDB Atlas
-
-### Para más ayuda
-- Lee [docs/SETUP.md](./docs/SETUP.md) (sección Troubleshooting)
-- Crea un issue en el repositorio
-- Contacta al líder del proyecto
-
----
-
-## ✅ Checklist de Implementación
-
-**Fase 1 - Backend Base**: ✅ Completada
-- [x] Implementar controladores de autenticación
-- [x] Conectar Mongoose con MongoDB
-- [x] Crear servicios de negocio
-- [x] CRUD de Gastos, Ingresos, Categorías y Reportes
-
-**Fase 2 - Frontend Base**: ✅ Completada
-- [x] Implementar React pages
-- [x] Conectar frontend con API
-- [x] CRUD dinámico con categorías
-- [x] Reportes con filtros dinámicos
-
-**Próximas Fases**:
-- [ ] Testing completo de endpoints
-- [ ] Módulo de Usuarios (Perfil) - En Desarrollo
-- [ ] Módulo de Presupuestos - Planificado
-- [ ] Deploy en Render
-- [ ] Gráficos avanzados y exportación a PDF
-
-## 📞 Soporte y Contacto
-
-Para reportar bugs o sugerencias, crear un issue en el repositorio.
-
----
-
-**Fecha de creación**: 2026  
-**Licencia**: MIT  
-**Estado**: 🚀 En desarrollo (Arquitectura Completa)
-
+Version: 1.1.0  
+Ultima actualizacion: Junio 2026  
+Estado: Produccion

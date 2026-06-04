@@ -242,7 +242,7 @@ Las contribuciones son bienvenidas. Por favor:
 
 - **Issues**: Abre un issue en GitHub
 - **Documentación**: Lee [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
-- **Email**: *(Agregá tu email si deseas)*
+- **Email**: *jcblaciomachuca@gmail.com*
 
 ---
 

@@ -125,3 +125,4 @@ frontend/release/
 venv/
 env/
 ENV/
+cypress-mcp/

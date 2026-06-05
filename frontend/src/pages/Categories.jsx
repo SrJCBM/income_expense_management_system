@@ -31,6 +31,7 @@ const Categories = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchCategories();
@@ -56,8 +57,10 @@ const Categories = () => {
 
     if (editingCategory) {
       await updateCategory(editingCategory.id || editingCategory._id, payload);
+      setSuccessMessage('Categoria actualizada exitosamente.');
     } else {
       await addCategory(payload);
+      setSuccessMessage('Categoria creada exitosamente.');
     }
 
     setShowForm(false);
@@ -77,12 +80,14 @@ const Categories = () => {
   );
 
   const handleCreateClick = () => {
+    if (successMessage) setSuccessMessage('');
     resetForm();
     setEditingCategory(null);
     setShowForm(true);
   };
 
   const handleEditClick = (category) => {
+    if (successMessage) setSuccessMessage('');
     setEditingCategory(category);
     setFieldValue('name', category.name || '');
     setFieldValue('type', category.type || 'expense');
@@ -99,6 +104,7 @@ const Categories = () => {
 
     try {
       await removeCategory(category.id || category._id);
+      setSuccessMessage('Categoria eliminada exitosamente.');
     } catch {
       // El error ya se maneja desde el hook.
     }
@@ -121,27 +127,34 @@ const Categories = () => {
           className="btn-primary"
           onClick={handleCreateClick}
           disabled={showForm}
+          data-testid="new-category-button"
         >
           + Nueva Categoria
         </button>
       </header>
+
+      {successMessage && (
+        <div className="alert alert-success" role="status" aria-live="polite" data-testid="success-message">
+          {successMessage}
+        </div>
+      )}
 
       {showForm ? (
         <div className="card form-card">
           <h3>{editingCategory ? 'Editar Categoria' : 'Crear Categoria'}</h3>
 
           {errors.general && (
-            <div className="alert alert-error" role="alert" aria-live="assertive">
+            <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="category-error-general">
               {errors.general}
             </div>
           )}
           {errors.submit && (
-            <div className="alert alert-error" role="alert" aria-live="assertive">
+            <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="category-error-general">
               {errors.submit}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit} noValidate data-testid="category-form">
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="category-name">Nombre *</label>
@@ -156,8 +169,9 @@ const Categories = () => {
                   aria-required="true"
                   aria-invalid={!!errors.name}
                   aria-describedby={errors.name ? 'name-error' : undefined}
+                  data-testid="category-name"
                 />
-                {errors.name && <span id="name-error" className="error-text" role="alert">{errors.name}</span>}
+                {errors.name && <span id="name-error" className="error-text" role="alert" data-testid="category-error-name">{errors.name}</span>}
               </div>
 
               <div className="form-group">
@@ -172,11 +186,12 @@ const Categories = () => {
                   aria-required="true"
                   aria-invalid={!!errors.type}
                   aria-describedby={errors.type ? 'type-error' : undefined}
+                  data-testid="category-type"
                 >
                   <option value="expense">Gasto</option>
                   <option value="income">Ingreso</option>
                 </select>
-                {errors.type && <span id="type-error" className="error-text" role="alert">{errors.type}</span>}
+                {errors.type && <span id="type-error" className="error-text" role="alert" data-testid="category-error-type">{errors.type}</span>}
               </div>
             </div>
 
@@ -190,6 +205,7 @@ const Categories = () => {
                   value={values.color}
                   onChange={handleChange}
                   disabled={isSubmitting}
+                  data-testid="category-color"
                 />
               </div>
 
@@ -204,6 +220,7 @@ const Categories = () => {
                   disabled={isSubmitting}
                   aria-invalid={!!errors.icon}
                   aria-describedby={errors.icon ? 'icon-error' : undefined}
+                  data-testid="category-icon"
                 >
                   {ICON_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -211,7 +228,7 @@ const Categories = () => {
                     </option>
                   ))}
                 </select>
-                {errors.icon && <span id="icon-error" className="error-text" role="alert">{errors.icon}</span>}
+                {errors.icon && <span id="icon-error" className="error-text" role="alert" data-testid="category-error-icon">{errors.icon}</span>}
               </div>
             </div>
 
@@ -225,6 +242,7 @@ const Categories = () => {
                 className="form-textarea"
                 placeholder="Describe para que usaras esta categoria (opcional)"
                 disabled={isSubmitting}
+                data-testid="category-description"
               ></textarea>
             </div>
 
@@ -234,10 +252,11 @@ const Categories = () => {
                 className="btn-secondary"
                 onClick={handleCancel}
                 disabled={isSubmitting}
+                data-testid="category-cancel"
               >
                 Cancelar
               </button>
-              <button type="submit" className="btn-primary" disabled={isSubmitting} aria-busy={isSubmitting}>
+              <button type="submit" className="btn-primary" disabled={isSubmitting} aria-busy={isSubmitting} data-testid="category-submit">
                 {isSubmitting
                   ? 'Guardando...'
                   : editingCategory
@@ -260,7 +279,7 @@ const Categories = () => {
               <p className="hint">Crea una categoria para organizar tus movimientos.</p>
             </div>
           ) : (
-            <table className="data-table">
+            <table className="data-table" data-testid="category-list">
               <thead>
                 <tr>
                   <th>Nombre</th>
@@ -275,7 +294,7 @@ const Categories = () => {
                   const categoryId = category.id || category._id;
 
                   return (
-                    <tr key={categoryId}>
+                    <tr key={categoryId} data-testid="category-item">
                       <td>
                         <span style={{ marginRight: '0.5rem' }}>
                           {isAllowedIcon(category.icon) ? category.icon : ICON_OPTIONS[0].value}
@@ -300,6 +319,7 @@ const Categories = () => {
                           className="btn-icon"
                           onClick={() => handleEditClick(category)}
                           title="Editar"
+                          data-testid="edit-category"
                         >
                           ✏️
                         </button>
@@ -307,6 +327,7 @@ const Categories = () => {
                           className="btn-icon"
                           onClick={() => handleDeleteClick(category)}
                           title="Eliminar"
+                          data-testid="delete-category"
                         >
                           🗑️
                         </button>

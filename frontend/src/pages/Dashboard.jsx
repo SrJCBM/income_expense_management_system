@@ -54,17 +54,17 @@ const Dashboard = () => {
       )}
 
       <div className="dashboard-grid">
-        <div className="dashboard-card summary-card">
+        <div className="dashboard-card summary-card" data-testid="dashboard-balance">
           <h2>Balance Total</h2>
-          <p className="amount">{isLoading ? '...' : formatCurrency(summary.balance)}</p>
+          <p className="amount" data-testid="dashboard-balance-amount">{isLoading ? '...' : formatCurrency(summary.balance)}</p>
         </div>
-        <div className="dashboard-card incomes-card">
+        <div className="dashboard-card incomes-card" data-testid="dashboard-incomes">
           <h2>Ingresos del Mes</h2>
-          <p className="amount positive">{isLoading ? '...' : `+${formatCurrency(summary.totalIncome)}`}</p>
+          <p className="amount positive" data-testid="dashboard-incomes-amount">{isLoading ? '...' : `+${formatCurrency(summary.totalIncome)}`}</p>
         </div>
-        <div className="dashboard-card expenses-card">
+        <div className="dashboard-card expenses-card" data-testid="dashboard-expenses">
           <h2>Gastos del Mes</h2>
-          <p className="amount negative">{isLoading ? '...' : `-${formatCurrency(summary.totalExpense)}`}</p>
+          <p className="amount negative" data-testid="dashboard-expenses-amount">{isLoading ? '...' : `-${formatCurrency(summary.totalExpense)}`}</p>
         </div>
       </div>
 
@@ -76,7 +76,7 @@ const Dashboard = () => {
               <p className="summary-title">Distribución de gastos por categoría</p>
               <ul className="category-summary-list">
                 {summary.expensesByCategory.map((item) => (
-                  <li key={item.categoryId || item.name} className="category-item">
+                  <li key={item.categoryId || item.name} className="category-item" data-testid="dashboard-category-item">
                     <span className="cat-name">{item.name}</span>
                     <span className="cat-amount">{formatCurrency(item.amount)}</span>
                   </li>
@@ -84,7 +84,7 @@ const Dashboard = () => {
               </ul>
             </div>
           ) : (
-            <div className="empty-state">
+            <div className="empty-state" data-testid="dashboard-empty-state">
               <p>No hay actividad reciente para mostrar.</p>
               <p className="hint">Comienza agregando un ingreso o un gasto.</p>
             </div>

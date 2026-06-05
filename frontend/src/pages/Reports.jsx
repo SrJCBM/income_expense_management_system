@@ -146,6 +146,7 @@ const Reports = () => {
                 onChange={(e) => setMonth(Number(e.target.value))}
                 className="form-select filter-select"
                 aria-label="Filtrar por mes"
+                data-testid="report-month-select"
               >
                 {availableMonths.map((monthOption) => (
                   <option key={monthOption} value={monthOption}>
@@ -158,6 +159,7 @@ const Reports = () => {
                 onChange={(e) => setYear(Number(e.target.value))}
                 className="form-select filter-select"
                 aria-label="Filtrar por año"
+                data-testid="report-year-select"
               >
                 {filters.years.map((yearOption) => (
                   <option key={yearOption} value={yearOption}>
@@ -176,6 +178,7 @@ const Reports = () => {
                 aria-label="Descargar reporte financiero en formato PDF"
                 title="Descargar reporte financiero en PDF"
                 aria-busy={isExporting}
+                data-testid="export-pdf-button"
               >
                 {isExporting ? '⏳ Descargando...' : '📄 PDF'}
               </button>
@@ -186,6 +189,7 @@ const Reports = () => {
                 aria-label="Descargar reporte financiero en formato Excel"
                 title="Descargar reporte financiero en Excel"
                 aria-busy={isExporting}
+                data-testid="export-excel-button"
               >
                 {isExporting ? '⏳ Descargando...' : '📊 Excel'}
               </button>
@@ -221,15 +225,15 @@ const Reports = () => {
           <ReportCharts data={summary} />
           
           <div className="dashboard-grid">
-            <div className="dashboard-card incomes-card">
+            <div className="dashboard-card incomes-card" data-testid="summary-income">
               <h3>Ingresos</h3>
               <p className="amount positive">+${summary.totalIncome.toFixed(2)}</p>
             </div>
-            <div className="dashboard-card expenses-card">
+            <div className="dashboard-card expenses-card" data-testid="summary-expense">
               <h3>Gastos</h3>
               <p className="amount negative">-${summary.totalExpense.toFixed(2)}</p>
             </div>
-            <div className="dashboard-card summary-card">
+            <div className="dashboard-card summary-card" data-testid="summary-balance">
               <h3>Balance Neto</h3>
               <p className="amount">${summary.balance.toFixed(2)}</p>
             </div>
@@ -239,7 +243,7 @@ const Reports = () => {
             <h3>Gastos por Categoría</h3>
             <div className="category-bars">
               {summary.expensesByCategory.map((cat, idx) => (
-                <div key={idx} className="category-bar-item">
+                <div key={idx} className="category-bar-item" data-testid="category-bar-item">
                   <div className="bar-info flex-between">
                     <span className="cat-name">{cat.name}</span>
                     <span className="cat-amount">${cat.amount.toFixed(2)} ({cat.percentage}%)</span>

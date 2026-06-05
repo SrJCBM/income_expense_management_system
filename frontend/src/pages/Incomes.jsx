@@ -20,6 +20,7 @@ const Incomes = () => {
   const [categoriesError, setCategoriesError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const loadIncomeCategories = async () => {
     setCategoriesError(null);
@@ -56,8 +57,10 @@ const Incomes = () => {
 
     if (editingIncome) {
       await updateIncome(editingIncome.id || editingIncome._id, payload);
+      setSuccessMessage('Ingreso actualizado exitosamente.');
     } else {
       await addIncome(payload);
+      setSuccessMessage('Ingreso creado exitosamente.');
     }
 
     setShowForm(false);
@@ -77,12 +80,14 @@ const Incomes = () => {
   );
 
   const handleShowCreateForm = () => {
+    if (successMessage) setSuccessMessage('');
     resetForm();
     setEditingIncome(null);
     setShowForm(true);
   };
 
   const handleEdit = (income) => {
+    if (successMessage) setSuccessMessage('');
     setEditingIncome(income);
     setFieldValue('concept', income.concept || income.description || '');
     setFieldValue('amount', income.amount || '');
@@ -100,6 +105,7 @@ const Incomes = () => {
 
     try {
       await removeIncome(incomeId);
+      setSuccessMessage('Ingreso eliminado exitosamente.');
     } catch {
       // El error ya se expone por el hook en la UI
     }
@@ -122,22 +128,29 @@ const Incomes = () => {
           className="btn-primary"
           onClick={handleShowCreateForm}
           disabled={showForm}
+          data-testid="new-income-button"
         >
           + Nuevo Ingreso
         </button>
       </header>
+
+      {successMessage && (
+        <div className="alert alert-success" role="status" aria-live="polite" data-testid="success-message">
+          {successMessage}
+        </div>
+      )}
 
       {showForm ? (
         <div className="card form-card">
           <h3>{editingIncome ? 'Editar Ingreso' : 'Registrar Nuevo Ingreso'}</h3>
 
           {errors.general && (
-            <div className="alert alert-error" role="alert" aria-live="assertive">
+            <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="income-error-general">
               {errors.general}
             </div>
           )}
           {errors.submit && (
-            <div className="alert alert-error" role="alert" aria-live="assertive">
+            <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="income-error-general">
               {errors.submit}
             </div>
           )}
@@ -147,7 +160,7 @@ const Incomes = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={handleSubmit} noValidate data-testid="income-form">
             <div className="form-group">
               <label htmlFor="income-concept">Concepto *</label>
               <input
@@ -161,8 +174,9 @@ const Incomes = () => {
                 aria-required="true"
                 aria-invalid={!!errors.concept}
                 aria-describedby={errors.concept ? "concept-error" : undefined}
+                data-testid="income-concept"
               />
-              {errors.concept && <span id="concept-error" className="error-text" role="alert">{errors.concept}</span>}
+              {errors.concept && <span id="concept-error" className="error-text" role="alert" data-testid="income-error-concept">{errors.concept}</span>}
             </div>
 
             <div className="form-row">
@@ -181,8 +195,9 @@ const Incomes = () => {
                   aria-required="true"
                   aria-invalid={!!errors.amount}
                   aria-describedby={errors.amount ? "amount-error" : undefined}
+                  data-testid="income-amount"
                 />
-                {errors.amount && <span id="amount-error" className="error-text" role="alert">{errors.amount}</span>}
+                {errors.amount && <span id="amount-error" className="error-text" role="alert" data-testid="income-error-amount">{errors.amount}</span>}
               </div>
 
               <div className="form-group">
@@ -197,8 +212,9 @@ const Incomes = () => {
                   aria-required="true"
                   aria-invalid={!!errors.date}
                   aria-describedby={errors.date ? "date-error" : undefined}
+                  data-testid="income-date"
                 />
-                {errors.date && <span id="date-error" className="error-text" role="alert">{errors.date}</span>}
+                {errors.date && <span id="date-error" className="error-text" role="alert" data-testid="income-error-date">{errors.date}</span>}
               </div>
             </div>
 
@@ -214,6 +230,7 @@ const Incomes = () => {
                 aria-required="true"
                 aria-invalid={!!errors.categoryId}
                 aria-describedby={errors.categoryId ? "category-error" : undefined}
+                data-testid="income-category"
               >
                 <option value="">Selecciona una categoría</option>
                 {categories.map((category) => (
@@ -222,7 +239,7 @@ const Incomes = () => {
                   </option>
                 ))}
               </select>
-              {errors.categoryId && <span id="category-error" className="error-text" role="alert">{errors.categoryId}</span>}
+              {errors.categoryId && <span id="category-error" className="error-text" role="alert" data-testid="income-error-category">{errors.categoryId}</span>}
             </div>
 
             <div className="form-group">
@@ -235,6 +252,7 @@ const Incomes = () => {
                 placeholder="Información adicional (opcional)"
                 className="form-textarea"
                 disabled={isSubmitting}
+                data-testid="income-notes"
               ></textarea>
             </div>
 
@@ -244,10 +262,11 @@ const Incomes = () => {
                 className="btn-secondary"
                 onClick={handleCancel}
                 disabled={isSubmitting}
+                data-testid="income-cancel"
               >
                 Cancelar
               </button>
-              <button type="submit" className="btn-primary" disabled={isSubmitting} aria-busy={isSubmitting}>
+              <button type="submit" className="btn-primary" disabled={isSubmitting} aria-busy={isSubmitting} data-testid="income-submit">
                 {isSubmitting
                   ? 'Guardando...'
                   : editingIncome
@@ -270,7 +289,7 @@ const Incomes = () => {
               <p className="hint">Agrega un nuevo ingreso para comenzar.</p>
             </div>
           ) : (
-            <table className="data-table">
+            <table className="data-table" data-testid="income-list">
               <thead>
                 <tr>
                   <th>Fecha</th>
@@ -285,7 +304,7 @@ const Incomes = () => {
                   const incomeId = income.id || income._id;
 
                   return (
-                    <tr key={incomeId}>
+                    <tr key={incomeId} data-testid="income-item">
                       <td>{toDateInputValue(income.date)}</td>
                       <td>{income.concept}</td>
                       <td>{income.category?.name || 'Sin categoría'}</td>
@@ -295,6 +314,7 @@ const Incomes = () => {
                           className="btn-icon"
                           onClick={() => handleEdit(income)}
                           title="Editar"
+                          data-testid="edit-income"
                         >
                           ✏️
                         </button>
@@ -302,6 +322,7 @@ const Incomes = () => {
                           className="btn-icon"
                           onClick={() => handleDelete(incomeId)}
                           title="Eliminar"
+                          data-testid="delete-income"
                         >
                           🗑️
                         </button>

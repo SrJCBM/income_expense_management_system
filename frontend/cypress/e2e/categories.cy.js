@@ -108,6 +108,16 @@ describe('Gestión de Categorías', () => {
       .and('contain.text', 'El nombre y tipo de categoria son obligatorios');
   });
 
+  it('debería validar nombres que solo contienen símbolos (error de frontend)', () => {
+    cy.get('[data-testid="new-category-button"]').click();
+    cy.get('[data-testid="category-name"]').type('@@!!');
+    cy.get('[data-testid="category-submit"]').click();
+    
+    cy.get('[data-testid="category-error-name"]')
+      .should('be.visible')
+      .and('contain.text', 'El nombre debe incluir al menos una letra');
+  });
+
   it('debería validar nombres duplicados o inválidos (error del servidor)', () => {
     cy.intercept('POST', '**/api/categories', {
       statusCode: 400,

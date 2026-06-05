@@ -43,6 +43,10 @@ const Categories = () => {
       throw { validationErrors: { general: 'El nombre y tipo de categoria son obligatorios.' } };
     }
 
+    if (!/[A-Za-z]/.test(values.name)) {
+      throw { validationErrors: { name: 'El nombre debe incluir al menos una letra' } };
+    }
+
     if (!isAllowedIcon(values.icon)) {
       throw { validationErrors: { icon: 'Selecciona un icono de la lista.' } };
     }

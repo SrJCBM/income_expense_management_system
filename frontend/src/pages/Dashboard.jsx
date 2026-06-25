@@ -1,26 +1,34 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
+import { useSettings } from '../context/SettingsContext.jsx';
 import reportService from '../services/reportService.js';
+import budgetService from '../services/budgetService.js';
+import { getMonthName } from '../utils/formatters.js';
 import '../styles/pages/Dashboard.css';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { formatCurrency } = useSettings();
   const [summary, setSummary] = useState({
     totalIncome: 0,
     totalExpense: 0,
     balance: 0,
     expensesByCategory: [],
   });
+  const [budgetAlerts, setBudgetAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const now = new Date();
+  const currentPeriodLabel = `${getMonthName(now.getMonth() + 1)} ${now.getFullYear()}`;
+
   useEffect(() => {
-    const loadSummary = async () => {
+    const loadDashboard = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const now = new Date();
         const response = await reportService.getSummary(now.getMonth() + 1, now.getFullYear());
         setSummary(response.data || response);
       } catch (err) {
@@ -28,23 +36,32 @@ const Dashboard = () => {
       } finally {
         setIsLoading(false);
       }
+
+      // Las alertas de presupuesto son complementarias: no bloquean el dashboard si fallan
+      try {
+        const alertsResponse = await budgetService.getAlerts();
+        setBudgetAlerts(alertsResponse.data || []);
+      } catch {
+        setBudgetAlerts([]);
+      }
     };
 
-    loadSummary();
+    loadDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat('es-PE', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(Number(value || 0));
+  const savingsRate =
+    summary.totalIncome > 0
+      ? Math.round(((summary.totalIncome - summary.totalExpense) / summary.totalIncome) * 100)
+      : 0;
 
   return (
     <div className="dashboard-container">
       <header className="page-header">
         <h1>Panel de Control</h1>
-        <p className="subtitle">Bienvenido de nuevo, {user?.name || 'Usuario'}</p>
+        <p className="subtitle">
+          Bienvenido de nuevo, {user?.name || 'Usuario'} · Resumen de {currentPeriodLabel}
+        </p>
       </header>
 
       {error && (
@@ -53,34 +70,91 @@ const Dashboard = () => {
         </div>
       )}
 
+      {budgetAlerts.length > 0 && (
+        <div className="alert alert-warning" role="status" aria-live="polite" data-testid="budget-alerts">
+          <strong>Alertas de presupuesto:</strong>{' '}
+          {budgetAlerts.map((alert) => (
+            <span key={alert.id} className="budget-alert-item" data-testid="budget-alert-item">
+              {alert.category?.name || 'Categoría'}{' '}
+              {alert.isOverBudget ? 'excedido' : `al ${alert.percentageUsed}%`}.{' '}
+            </span>
+          ))}
+          <Link to="/budgets">Ver presupuestos</Link>
+        </div>
+      )}
+
       <div className="dashboard-grid">
         <div className="dashboard-card summary-card" data-testid="dashboard-balance">
           <h2>Balance Total</h2>
-          <p className="amount" data-testid="dashboard-balance-amount">{isLoading ? '...' : formatCurrency(summary.balance)}</p>
+          <p
+            className={`amount ${summary.netBalance >= 0 ? 'positive' : 'negative'}`}
+            data-testid="dashboard-balance-amount"
+            title="Ingresos históricos menos gastos históricos acumulados"
+          >
+            {isLoading ? '...' : formatCurrency(summary.netBalance ?? summary.balance)}
+          </p>
+          <small style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Acumulado histórico</small>
         </div>
         <div className="dashboard-card incomes-card" data-testid="dashboard-incomes">
           <h2>Ingresos del Mes</h2>
-          <p className="amount positive" data-testid="dashboard-incomes-amount">{isLoading ? '...' : `+${formatCurrency(summary.totalIncome)}`}</p>
+          <p className="amount positive" data-testid="dashboard-incomes-amount">
+            {isLoading ? '...' : `+${formatCurrency(summary.totalIncome)}`}
+          </p>
         </div>
         <div className="dashboard-card expenses-card" data-testid="dashboard-expenses">
           <h2>Gastos del Mes</h2>
-          <p className="amount negative" data-testid="dashboard-expenses-amount">{isLoading ? '...' : `-${formatCurrency(summary.totalExpense)}`}</p>
+          <p className="amount negative" data-testid="dashboard-expenses-amount">
+            {isLoading ? '...' : `-${formatCurrency(summary.totalExpense)}`}
+          </p>
+        </div>
+        <div className="dashboard-card savings-card" data-testid="dashboard-savings">
+          <h2>Tasa de Ahorro</h2>
+          <p
+            className={`amount ${savingsRate >= 0 ? 'positive' : 'negative'}`}
+            data-testid="dashboard-savings-amount"
+          >
+            {isLoading ? '...' : `${savingsRate}%`}
+          </p>
         </div>
       </div>
 
       <div className="dashboard-content">
         <div className="recent-activity">
-          <h2>Actividad Reciente</h2>
-          {summary.expensesByCategory?.length > 0 ? (
+          <div className="flex-between">
+            <h2>Gastos por Categoría</h2>
+            <Link to="/reports" className="dashboard-link">Ver reportes →</Link>
+          </div>
+          {isLoading ? (
+            <div>
+              <div className="skeleton-item"></div>
+              <div className="skeleton-item"></div>
+            </div>
+          ) : summary.expensesByCategory?.length > 0 ? (
             <div className="category-summary">
               <p className="summary-title">Distribución de gastos por categoría</p>
               <ul className="category-summary-list">
-                {summary.expensesByCategory.map((item) => (
-                  <li key={item.categoryId || item.name} className="category-item" data-testid="dashboard-category-item">
-                    <span className="cat-name">{item.name}</span>
-                    <span className="cat-amount">{formatCurrency(item.amount)}</span>
-                  </li>
-                ))}
+                {summary.expensesByCategory.map((item) => {
+                  const share =
+                    summary.totalExpense > 0
+                      ? Math.round((item.amount / summary.totalExpense) * 100)
+                      : 0;
+
+                  return (
+                    <li
+                      key={item.categoryId || item.name}
+                      className="category-item"
+                      data-testid="dashboard-category-item"
+                    >
+                      <span className="cat-name">{item.name}</span>
+                      <span className="cat-bar" aria-hidden="true">
+                        <span className="cat-bar-fill" style={{ width: `${share}%` }}></span>
+                      </span>
+                      <span className="cat-amount">
+                        {formatCurrency(item.amount)} <small>({share}%)</small>
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ) : (

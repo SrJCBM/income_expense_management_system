@@ -50,7 +50,9 @@ describe('CRUD de Ingresos (E2E)', () => {
     cy.get('[data-testid="income-list"]').should('be.visible');
     cy.get('[data-testid="income-item"]').should('have.length', 1);
     cy.get('[data-testid="income-item"]').first().should('contain', 'Salario Mensual');
-    cy.get('[data-testid="income-item"]').first().should('contain', '+$2500.00');
+    // formatCurrency con es-MX da "$2,500.00"; verificamos partes numéricas independientemente del separador
+    cy.get('[data-testid="income-item"]').first()
+      .find('td.positive').invoke('text').should('match', /\+.+2.500/);
   });
 
   it('Debe abrir el formulario de nuevo ingreso desde la lista', () => {

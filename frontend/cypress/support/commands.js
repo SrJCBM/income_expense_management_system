@@ -38,6 +38,11 @@ Cypress.Commands.add('mockProtectedApi', () => {
       },
     },
   }).as('getReportFilters');
+
+  cy.intercept('GET', '**/api/budgets/alerts*', {
+    statusCode: 200,
+    body: { success: true, data: [] },
+  }).as('getBudgetAlerts');
 });
 
 Cypress.Commands.add('seedSession', (token, user) => {

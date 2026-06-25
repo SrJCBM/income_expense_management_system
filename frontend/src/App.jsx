@@ -11,9 +11,10 @@ import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Expenses from './pages/Expenses.jsx';
 import Reports from './pages/Reports.jsx';
-// Importaciones futuras para Incomes y Categories, temporalmente usar un placeholder o Dashboard
-import Incomes from './pages/Incomes.jsx'; // Esto fallará si no existe, vamos a crearlo vacío
+import Incomes from './pages/Incomes.jsx';
 import Categories from './pages/Categories.jsx';
+import Budgets from './pages/Budgets.jsx';
+import Profile from './pages/Profile.jsx';
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/incomes" element={<Incomes />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
 

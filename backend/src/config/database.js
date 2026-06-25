@@ -34,6 +34,10 @@ const COLLECTION_DEFINITIONS = {
           isActive: {
             bsonType: 'bool',
           },
+          currency: {
+            bsonType: ['string', 'null'],
+            maxLength: 10,
+          },
           lastLoginAt: {
             bsonType: ['date', 'null'],
           },

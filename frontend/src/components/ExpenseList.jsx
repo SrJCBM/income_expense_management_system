@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { toDateInputValue } from '../utils/dateUtils.js';
+import { useSettings } from '../context/SettingsContext.jsx';
 
 const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
+  const { formatCurrency } = useSettings();
   const total = useMemo(
     () => (expenses || []).reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0),
     [expenses]
@@ -53,7 +55,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
               <td>{toDateInputValue(expense.date)}</td>
               <td>{expense.concept}</td>
               <td>{expense.category?.name || 'Sin categoría'}</td>
-              <td className="amount negative">-${parseFloat(expense.amount).toFixed(2)}</td>
+              <td className="amount negative">-{formatCurrency(expense.amount)}</td>
               <td className="actions-cell">
                 <button
                   className="btn-icon btn-edit"
@@ -79,7 +81,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
           <tr className="total-row">
             <td colSpan="3" className="total-label">Total gastos</td>
             <td className="amount negative" data-testid="expense-total">
-              -${total.toFixed(2)}
+              -{formatCurrency(total)}
             </td>
             <td></td>
           </tr>

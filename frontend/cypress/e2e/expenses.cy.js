@@ -160,3 +160,83 @@ describe('CRUD de Gastos (E2E)', () => {
     cy.get('[data-testid="success-message"]').should('contain', 'eliminado');
   });
 });
+
+describe('Búsqueda y Filtros Avanzados de Gastos (E2E)', () => {
+  beforeEach(() => {
+    cy.intercept('GET', '**/api/expenses*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleExpense] },
+    }).as('getExpenses');
+
+    cy.intercept('GET', '**/api/categories?type=expense*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleCategory] },
+    }).as('getExpenseCategories');
+
+    cy.visitWithSession('/expenses', TEST_TOKEN, TEST_USER);
+    cy.wait('@getExpenses');
+  });
+
+  it('Debe enviar el término de búsqueda al backend', () => {
+    cy.intercept('GET', '**/api/expenses?*search=Supermercado*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleExpense] },
+    }).as('searchExpenses');
+
+    cy.get('[data-testid="filter-search"]').type('Supermercado');
+    cy.get('[data-testid="apply-filters"]').click();
+
+    cy.wait('@searchExpenses').its('request.url').should('include', 'search=Supermercado');
+    cy.get('[data-testid="expense-item"]').should('have.length', 1);
+  });
+
+  it('Debe buscar al presionar Enter en el campo de búsqueda', () => {
+    cy.intercept('GET', '**/api/expenses?*search=*', {
+      statusCode: 200,
+      body: { success: true, data: [] },
+    }).as('searchExpenses');
+
+    cy.get('[data-testid="filter-search"]').type('inexistente{enter}');
+
+    cy.wait('@searchExpenses');
+    cy.get('[data-testid="expense-empty"]').should('be.visible');
+  });
+
+  it('Debe aplicar filtros avanzados de monto y orden', () => {
+    cy.get('[data-testid="toggle-advanced-filters"]').click();
+    cy.get('[data-testid="advanced-filters"]').should('be.visible');
+
+    cy.intercept('GET', '**/api/expenses?*minAmount=100*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleExpense] },
+    }).as('filteredExpenses');
+
+    cy.get('[data-testid="filter-min-amount"]').type('100');
+    cy.get('[data-testid="filter-max-amount"]').type('500');
+    cy.get('[data-testid="filter-sort"]').select('amount-desc');
+    cy.get('[data-testid="apply-filters"]').click();
+
+    cy.wait('@filteredExpenses')
+      .its('request.url')
+      .should('include', 'minAmount=100')
+      .and('include', 'maxAmount=500')
+      .and('include', 'sort=amount-desc');
+  });
+
+  it('Debe limpiar todos los filtros con el botón Limpiar', () => {
+    cy.get('[data-testid="filter-search"]').type('algo');
+    cy.get('[data-testid="toggle-advanced-filters"]').click();
+    cy.get('[data-testid="filter-min-amount"]').type('50');
+
+    cy.intercept('GET', '**/api/expenses*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleExpense] },
+    }).as('resetExpenses');
+
+    cy.get('[data-testid="clear-filters"]').click();
+
+    cy.wait('@resetExpenses').its('request.url').should('not.include', 'search=');
+    cy.get('[data-testid="filter-search"]').should('have.value', '');
+    cy.get('[data-testid="filter-min-amount"]').should('have.value', '');
+  });
+});

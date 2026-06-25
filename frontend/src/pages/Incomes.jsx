@@ -3,6 +3,7 @@ import { useIncomes } from '../hooks/useIncomes.js';
 import { useForm } from '../hooks/useForm.js';
 import categoryService from '../services/categoryService.js';
 import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
+import { useSettings } from '../context/SettingsContext.jsx';
 import '../styles/pages/Expenses.css';
 
 const Incomes = () => {
@@ -16,11 +17,36 @@ const Incomes = () => {
     removeIncome,
   } = useIncomes();
   
+  const { formatCurrency } = useSettings();
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [monthFilter, setMonthFilter] = useState('');
+
+  const handleApplyFilters = () => {
+    const filters = {};
+    if (searchFilter.trim()) filters.search = searchFilter.trim();
+    if (categoryFilter) filters.category = categoryFilter;
+    if (monthFilter) {
+      const [year, month] = String(monthFilter).split('-').map(Number);
+      if (year && month) {
+        filters.year = year;
+        filters.month = month;
+      }
+    }
+    fetchIncomes(filters);
+  };
+
+  const handleClearFilters = () => {
+    setSearchFilter('');
+    setCategoryFilter('');
+    setMonthFilter('');
+    fetchIncomes();
+  };
 
   const loadIncomeCategories = async () => {
     setCategoriesError(null);
@@ -137,6 +163,55 @@ const Incomes = () => {
       {successMessage && (
         <div className="alert alert-success" role="status" aria-live="polite" data-testid="success-message">
           {successMessage}
+        </div>
+      )}
+
+      {!showForm && (
+        <div className="filters-bar" data-testid="income-filters">
+          <input
+            type="search"
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
+            placeholder="Buscar por concepto o notas..."
+            className="filter-search"
+            data-testid="income-filter-search"
+            aria-label="Buscar ingresos"
+          />
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            data-testid="income-filter-category"
+            aria-label="Filtrar por categoría"
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((cat) => (
+              <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
+            ))}
+          </select>
+          <input
+            type="month"
+            value={monthFilter}
+            onChange={(e) => setMonthFilter(e.target.value)}
+            data-testid="income-filter-month"
+            aria-label="Filtrar por mes"
+          />
+          <button
+            type="button"
+            className="btn-secondary btn-filter"
+            onClick={handleApplyFilters}
+            data-testid="income-apply-filters"
+          >
+            Filtrar
+          </button>
+          <button
+            type="button"
+            className="btn-secondary btn-filter"
+            onClick={handleClearFilters}
+            data-testid="income-clear-filters"
+          >
+            Limpiar
+          </button>
         </div>
       )}
 
@@ -308,7 +383,7 @@ const Incomes = () => {
                       <td>{toDateInputValue(income.date)}</td>
                       <td>{income.concept}</td>
                       <td>{income.category?.name || 'Sin categoría'}</td>
-                      <td className="amount positive">+${parseFloat(income.amount).toFixed(2)}</td>
+                      <td className="amount positive">+{formatCurrency(income.amount)}</td>
                       <td className="actions-cell">
                         <button
                           className="btn-icon"

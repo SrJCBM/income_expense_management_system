@@ -23,15 +23,18 @@ const getMonthlySummary = async ({ userId, month, year }) => {
   const { startDate, endDate } = getPeriodRange(month, year);
   const userObjectId = new mongoose.Types.ObjectId(userId);
 
-  const [incomeAgg, expenseAgg, breakdownAgg] = await Promise.all([
+  const [incomeAgg, expenseAgg, breakdownAgg, allIncomeAgg, allExpenseAgg] = await Promise.all([
+    // Ingresos del mes
     Income.aggregate([
       { $match: { userId: userObjectId, date: { $gte: startDate, $lt: endDate } } },
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]),
+    // Gastos del mes
     Expense.aggregate([
       { $match: { userId: userObjectId, date: { $gte: startDate, $lt: endDate } } },
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]),
+    // Desglose por categoría del mes
     Expense.aggregate([
       { $match: { userId: userObjectId, date: { $gte: startDate, $lt: endDate } } },
       { $group: { _id: '$category', amount: { $sum: '$amount' } } },
@@ -51,11 +54,25 @@ const getMonthlySummary = async ({ userId, month, year }) => {
         },
       },
     ]),
+    // Total histórico de ingresos (todos los meses)
+    Income.aggregate([
+      { $match: { userId: userObjectId } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]),
+    // Total histórico de gastos (todos los meses)
+    Expense.aggregate([
+      { $match: { userId: userObjectId } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]),
   ]);
 
   const totalIncome = Number(incomeAgg[0]?.total || 0);
   const totalExpense = Number(expenseAgg[0]?.total || 0);
   const balance = totalIncome - totalExpense;
+
+  const allTimeIncome = Number(allIncomeAgg[0]?.total || 0);
+  const allTimeExpense = Number(allExpenseAgg[0]?.total || 0);
+  const netBalance = allTimeIncome - allTimeExpense;
 
   const expensesByCategory = breakdownAgg.map((item) => ({
     categoryId: item._id?.toString() || null,
@@ -73,6 +90,10 @@ const getMonthlySummary = async ({ userId, month, year }) => {
     totalExpense,
     balance,
     expensesByCategory,
+    // Balance acumulado histórico
+    netBalance,
+    allTimeIncome,
+    allTimeExpense,
   };
 };
 

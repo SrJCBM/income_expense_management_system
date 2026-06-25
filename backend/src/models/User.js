@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: true,
 		},
+		currency: {
+			type: String,
+			enum: ['USD', 'EUR', 'MXN', 'PEN', 'COP', 'ARS', 'CLP'],
+			default: 'USD',
+		},
 		lastLoginAt: {
 			type: Date,
 			default: null,

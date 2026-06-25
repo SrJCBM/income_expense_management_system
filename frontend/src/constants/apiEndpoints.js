@@ -17,8 +17,8 @@ export const API_ENDPOINTS = {
   // Users
   USERS: {
     PROFILE: `${BASE_URL}/users/profile`,
-    UPDATE: `${BASE_URL}/users/profile/update`,
-    DELETE: `${BASE_URL}/users/profile/delete`,
+    UPDATE: `${BASE_URL}/users/profile`,
+    PASSWORD: `${BASE_URL}/users/profile/password`,
   },
 
   // Expenses
@@ -52,6 +52,7 @@ export const API_ENDPOINTS = {
     CREATE: `${BASE_URL}/budgets`,
     UPDATE: (id) => `${BASE_URL}/budgets/${id}`,
     DELETE: (id) => `${BASE_URL}/budgets/${id}`,
+    ALERTS: `${BASE_URL}/budgets/alerts`,
   },
 
   // Reports

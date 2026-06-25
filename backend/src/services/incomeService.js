@@ -86,8 +86,41 @@ class IncomeService {
       }
     }
 
+    if (filters.startDate || filters.endDate) {
+      query.date = query.date || {};
+      if (filters.startDate) {
+        query.date.$gte = new Date(`${filters.startDate}T00:00:00`);
+      }
+      if (filters.endDate) {
+        query.date.$lte = new Date(`${filters.endDate}T23:59:59`);
+      }
+    }
+
+    const minAmount = Number(filters.minAmount);
+    const maxAmount = Number(filters.maxAmount);
+    if (!Number.isNaN(minAmount) && filters.minAmount !== undefined && filters.minAmount !== '') {
+      query.amount = { ...query.amount, $gte: minAmount };
+    }
+    if (!Number.isNaN(maxAmount) && filters.maxAmount !== undefined && filters.maxAmount !== '') {
+      query.amount = { ...query.amount, $lte: maxAmount };
+    }
+
+    if (filters.search && String(filters.search).trim()) {
+      const escaped = String(filters.search).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escaped, 'i');
+      query.$or = [{ description: searchRegex }, { notes: searchRegex }];
+    }
+
+    const sortOptions = {
+      'date-desc': { date: -1, createdAt: -1 },
+      'date-asc': { date: 1, createdAt: 1 },
+      'amount-desc': { amount: -1 },
+      'amount-asc': { amount: 1 },
+    };
+    const sort = sortOptions[filters.sort] || sortOptions['date-desc'];
+
     const incomes = await Income.find(query)
-      .sort({ date: -1, createdAt: -1 })
+      .sort(sort)
       .populate('category', 'name type color');
 
     return incomes.map(mapIncomeForResponse);

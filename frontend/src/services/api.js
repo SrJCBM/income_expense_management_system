@@ -38,8 +38,11 @@ api.interceptors.response.use(
       const url = error.config?.url ?? '';
       // Auth endpoints returning 401 mean wrong credentials, not session expiry.
       // Only force-logout when a protected route gets a 401 (token expired / revoked).
-      const isAuthEndpoint = /\/auth\/(login|register)(\?.*)?$/.test(url);
-      if (!isAuthEndpoint) {
+      // El cambio de contraseña también devuelve 401 si la contraseña actual es incorrecta.
+      const isCredentialEndpoint =
+        /\/auth\/(login|register)(\?.*)?$/.test(url) ||
+        /\/users\/profile\/password(\?.*)?$/.test(url);
+      if (!isCredentialEndpoint) {
         localStorage.removeItem('authToken');
         localStorage.removeItem('authUser');
         window.location.href = '/login';

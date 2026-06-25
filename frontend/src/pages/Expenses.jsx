@@ -12,6 +12,11 @@ const Expenses = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [monthFilter, setMonthFilter]       = useState('');
+  const [searchFilter, setSearchFilter]     = useState('');
+  const [minAmountFilter, setMinAmountFilter] = useState('');
+  const [maxAmountFilter, setMaxAmountFilter] = useState('');
+  const [sortOrder, setSortOrder]           = useState('date-desc');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const { categories, fetchCategories } = useCategories();
 
   useEffect(() => {
@@ -71,7 +76,21 @@ const Expenses = () => {
         }
       }
     }
+    if (searchFilter.trim()) filters.search = searchFilter.trim();
+    if (minAmountFilter) filters.minAmount = minAmountFilter;
+    if (maxAmountFilter) filters.maxAmount = maxAmountFilter;
+    if (sortOrder) filters.sort = sortOrder;
     fetchExpenses(filters);
+  };
+
+  const handleClearFilters = () => {
+    setCategoryFilter('');
+    setMonthFilter('');
+    setSearchFilter('');
+    setMinAmountFilter('');
+    setMaxAmountFilter('');
+    setSortOrder('date-desc');
+    fetchExpenses();
   };
 
   return (
@@ -98,35 +117,103 @@ const Expenses = () => {
       )}
 
       {!showForm && (
-      <div className="filters-bar" data-testid="expense-filters">
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          data-testid="filter-category"
-          aria-label="Filtrar por categoría"
-        >
-          <option value="">Todas las categorías</option>
-          {Array.isArray(categories) && categories.map((cat) => (
-            <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
-          ))}
-        </select>
+      <div className="filters-panel" data-testid="expense-filters">
+        <div className="filters-bar">
+          <input
+            type="search"
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
+            placeholder="Buscar por concepto o notas..."
+            className="filter-search"
+            data-testid="filter-search"
+            aria-label="Buscar gastos"
+          />
 
-        <input
-          type="month"
-          value={monthFilter}
-          onChange={(e) => setMonthFilter(e.target.value)}
-          data-testid="filter-month"
-          aria-label="Filtrar por mes"
-        />
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            data-testid="filter-category"
+            aria-label="Filtrar por categoría"
+          >
+            <option value="">Todas las categorías</option>
+            {Array.isArray(categories) && categories.map((cat) => (
+              <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
+            ))}
+          </select>
 
-        <button
-          type="button"
-          className="btn-secondary btn-filter"
-          onClick={handleApplyFilters}
-          data-testid="apply-filters"
-        >
-          Filtrar
-        </button>
+          <input
+            type="month"
+            value={monthFilter}
+            onChange={(e) => setMonthFilter(e.target.value)}
+            data-testid="filter-month"
+            aria-label="Filtrar por mes"
+          />
+
+          <button
+            type="button"
+            className="btn-secondary btn-filter"
+            onClick={() => setShowAdvancedFilters((show) => !show)}
+            aria-expanded={showAdvancedFilters}
+            data-testid="toggle-advanced-filters"
+          >
+            {showAdvancedFilters ? 'Menos filtros' : 'Más filtros'}
+          </button>
+
+          <button
+            type="button"
+            className="btn-secondary btn-filter"
+            onClick={handleApplyFilters}
+            data-testid="apply-filters"
+          >
+            Filtrar
+          </button>
+
+          <button
+            type="button"
+            className="btn-secondary btn-filter"
+            onClick={handleClearFilters}
+            data-testid="clear-filters"
+          >
+            Limpiar
+          </button>
+        </div>
+
+        {showAdvancedFilters && (
+          <div className="filters-bar filters-advanced" data-testid="advanced-filters">
+            <input
+              type="number"
+              value={minAmountFilter}
+              onChange={(e) => setMinAmountFilter(e.target.value)}
+              min="0"
+              step="0.01"
+              placeholder="Monto mínimo"
+              data-testid="filter-min-amount"
+              aria-label="Monto mínimo"
+            />
+            <input
+              type="number"
+              value={maxAmountFilter}
+              onChange={(e) => setMaxAmountFilter(e.target.value)}
+              min="0"
+              step="0.01"
+              placeholder="Monto máximo"
+              data-testid="filter-max-amount"
+              aria-label="Monto máximo"
+            />
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              data-testid="filter-sort"
+              aria-label="Ordenar por"
+            >
+              <option value="date-desc">Más recientes primero</option>
+              <option value="date-asc">Más antiguos primero</option>
+              <option value="amount-desc">Mayor monto primero</option>
+              <option value="amount-asc">Menor monto primero</option>
+            </select>
+          </div>
+        )}
       </div>
       )}
 

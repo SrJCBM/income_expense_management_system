@@ -29,7 +29,8 @@ import authRoutes from './src/routes/authRoutes.js';
 import expenseRoutes from './src/routes/expenseRoutes.js';
 import incomeRoutes from './src/routes/incomeRoutes.js';
 import categoryRoutes from './src/routes/categoryRoutes.js';
-// import budgetRoutes from './src/routes/budgetRoutes.js';
+import budgetRoutes from './src/routes/budgetRoutes.js';
+import userRoutes from './src/routes/userRoutes.js';
 import reportRoutes from './src/routes/reportRoutes.js';
 
 const app = express();
@@ -54,7 +55,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/incomes', incomeRoutes);
 app.use('/api/categories', categoryRoutes);
-// app.use('/api/budgets', budgetRoutes);
+app.use('/api/budgets', budgetRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 
 // ============================================

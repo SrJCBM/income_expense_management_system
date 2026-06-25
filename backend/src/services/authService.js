@@ -33,6 +33,7 @@ const sanitizeUser = (userDocument) => {
 		email: user.email,
 		name: user.name,
 		role: user.role,
+		currency: user.currency || 'USD',
 		createdAt: user.createdAt,
 		lastLoginAt: user.lastLoginAt || null,
 	};
@@ -115,6 +116,45 @@ class AuthService {
 		if (!user || !user.isActive) {
 			throw new NotFoundError('Usuario no encontrado');
 		}
+
+		return sanitizeUser(user);
+	}
+
+	async updateUserProfile(userId, { name, currency }) {
+		const user = await User.findById(userId);
+
+		if (!user || !user.isActive) {
+			throw new NotFoundError('Usuario no encontrado');
+		}
+
+		if (typeof name === 'string' && name.trim()) {
+			user.name = name.trim();
+		}
+
+		if (typeof currency === 'string' && currency.trim()) {
+			user.currency = currency.trim().toUpperCase();
+		}
+
+		await user.save();
+
+		return sanitizeUser(user);
+	}
+
+	async changeUserPassword(userId, { currentPassword, newPassword }) {
+		const user = await User.findById(userId).select('+password');
+
+		if (!user || !user.isActive) {
+			throw new NotFoundError('Usuario no encontrado');
+		}
+
+		const isValidPassword = await comparePasswords(currentPassword, user.password);
+
+		if (!isValidPassword) {
+			throw new AuthenticationError('La contraseña actual es incorrecta');
+		}
+
+		user.password = await hashPassword(newPassword);
+		await user.save();
 
 		return sanitizeUser(user);
 	}

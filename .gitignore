@@ -126,3 +126,17 @@ venv/
 env/
 ENV/
 cypress-mcp/
+
+# ============================================
+# INTERNAL MARKDOWN NOTES
+# ============================================
+# Local assistant instructions, one-off audits, scripts and build notes
+# that are not needed for a conventional public GitHub repository.
+agents.md
+CLAUDE.md
+AUDIT_GRAPHICS_ACCESSIBILITY.md
+docs/guion-video-cypress.md
+frontend/BUILD_CHECKLIST.md
+frontend/BUILD_QUICK_GUIDE.md
+frontend/ELECTRON_BUILD.md
+frontend/README_BUILD.md

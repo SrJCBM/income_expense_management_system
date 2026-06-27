@@ -46,7 +46,7 @@ const AuthBrand = ({ variant = 'login' }) => {
       <div className="auth-brand-content">
         <div className="auth-brand-logo">
           <div className="auth-brand-icon">💎</div>
-          <span className="auth-brand-name">Fin<span>Track</span></span>
+          <span className="auth-brand-name">Finance<span>App</span></span>
         </div>
 
         <h1 className="auth-brand-tagline">{v.tagline}</h1>

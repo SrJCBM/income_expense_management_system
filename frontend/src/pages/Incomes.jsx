@@ -1,14 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useIncomes } from '../hooks/useIncomes.js';
 import { useForm } from '../hooks/useForm.js';
+import Pagination from '../components/Pagination.jsx';
 import categoryService from '../services/categoryService.js';
 import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
 import { useSettings } from '../context/SettingsContext.jsx';
 import '../styles/pages/Expenses.css';
 
+const STORAGE_KEY = 'incomes_filters';
+
+const loadSavedFilters = () => {
+  try {
+    return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || null;
+  } catch {
+    return null;
+  }
+};
+
 const Incomes = () => {
   const {
     incomes,
+    pagination,
     isLoading,
     error,
     fetchIncomes,
@@ -16,19 +28,24 @@ const Incomes = () => {
     updateIncome,
     removeIncome,
   } = useIncomes();
-  
+
   const { formatCurrency } = useSettings();
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [searchFilter, setSearchFilter] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [monthFilter, setMonthFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const handleApplyFilters = () => {
-    const filters = {};
+  const saved = loadSavedFilters();
+  const [searchFilter, setSearchFilter]     = useState(saved?.searchFilter || '');
+  const [categoryFilter, setCategoryFilter] = useState(saved?.categoryFilter || '');
+  const [monthFilter, setMonthFilter]       = useState(saved?.monthFilter || '');
+
+  const activeFiltersRef = useRef({});
+
+  const buildFilters = (page = 1) => {
+    const filters = { page };
     if (searchFilter.trim()) filters.search = searchFilter.trim();
     if (categoryFilter) filters.category = categoryFilter;
     if (monthFilter) {
@@ -38,6 +55,14 @@ const Incomes = () => {
         filters.month = month;
       }
     }
+    return filters;
+  };
+
+  const handleApplyFilters = () => {
+    setCurrentPage(1);
+    const filters = buildFilters(1);
+    activeFiltersRef.current = filters;
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ searchFilter, categoryFilter, monthFilter }));
     fetchIncomes(filters);
   };
 
@@ -45,7 +70,17 @@ const Incomes = () => {
     setSearchFilter('');
     setCategoryFilter('');
     setMonthFilter('');
-    fetchIncomes();
+    setCurrentPage(1);
+    sessionStorage.removeItem(STORAGE_KEY);
+    activeFiltersRef.current = { page: 1 };
+    fetchIncomes({ page: 1 });
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    const filters = { ...activeFiltersRef.current, page: newPage };
+    activeFiltersRef.current = filters;
+    fetchIncomes(filters);
   };
 
   const loadIncomeCategories = async () => {
@@ -59,7 +94,9 @@ const Incomes = () => {
   };
 
   useEffect(() => {
-    fetchIncomes();
+    const filters = buildFilters(1);
+    activeFiltersRef.current = filters;
+    fetchIncomes(filters);
     loadIncomeCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -95,13 +132,7 @@ const Incomes = () => {
   };
 
   const { values, errors, isSubmitting, handleChange, handleSubmit, resetForm, setFieldValue } = useForm(
-    {
-      concept: '',
-      amount: '',
-      date: getTodayInputValue(),
-      categoryId: '',
-      notes: '',
-    },
+    { concept: '', amount: '', date: getTodayInputValue(), categoryId: '', notes: '' },
     handleIncomeSubmit
   );
 
@@ -124,11 +155,7 @@ const Incomes = () => {
   };
 
   const handleDelete = async (incomeId) => {
-    // Es posible que queramos reemplazar confirm nativo en el futuro por modal UI
-    if (!window.confirm('¿Estás seguro de eliminar este ingreso?')) {
-      return;
-    }
-
+    if (!window.confirm('¿Estás seguro de eliminar este ingreso?')) return;
     try {
       await removeIncome(incomeId);
       setSuccessMessage('Ingreso eliminado exitosamente.');
@@ -248,7 +275,7 @@ const Incomes = () => {
                 disabled={isSubmitting}
                 aria-required="true"
                 aria-invalid={!!errors.concept}
-                aria-describedby={errors.concept ? "concept-error" : undefined}
+                aria-describedby={errors.concept ? 'concept-error' : undefined}
                 data-testid="income-concept"
               />
               {errors.concept && <span id="concept-error" className="error-text" role="alert" data-testid="income-error-concept">{errors.concept}</span>}
@@ -269,7 +296,7 @@ const Incomes = () => {
                   disabled={isSubmitting}
                   aria-required="true"
                   aria-invalid={!!errors.amount}
-                  aria-describedby={errors.amount ? "amount-error" : undefined}
+                  aria-describedby={errors.amount ? 'amount-error' : undefined}
                   data-testid="income-amount"
                 />
                 {errors.amount && <span id="amount-error" className="error-text" role="alert" data-testid="income-error-amount">{errors.amount}</span>}
@@ -286,7 +313,7 @@ const Incomes = () => {
                   disabled={isSubmitting}
                   aria-required="true"
                   aria-invalid={!!errors.date}
-                  aria-describedby={errors.date ? "date-error" : undefined}
+                  aria-describedby={errors.date ? 'date-error' : undefined}
                   data-testid="income-date"
                 />
                 {errors.date && <span id="date-error" className="error-text" role="alert" data-testid="income-error-date">{errors.date}</span>}
@@ -304,7 +331,7 @@ const Incomes = () => {
                 disabled={isSubmitting || categories.length === 0}
                 aria-required="true"
                 aria-invalid={!!errors.categoryId}
-                aria-describedby={errors.categoryId ? "category-error" : undefined}
+                aria-describedby={errors.categoryId ? 'category-error' : undefined}
                 data-testid="income-category"
               >
                 <option value="">Selecciona una categoría</option>
@@ -341,12 +368,14 @@ const Incomes = () => {
               >
                 Cancelar
               </button>
-              <button type="submit" className="btn-primary" disabled={isSubmitting} aria-busy={isSubmitting} data-testid="income-submit">
-                {isSubmitting
-                  ? 'Guardando...'
-                  : editingIncome
-                    ? 'Actualizar Ingreso'
-                    : 'Crear Ingreso'}
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={isSubmitting}
+                aria-busy={isSubmitting}
+                data-testid="income-submit"
+              >
+                {isSubmitting ? 'Guardando...' : editingIncome ? 'Actualizar Ingreso' : 'Crear Ingreso'}
               </button>
             </div>
           </form>
@@ -377,7 +406,6 @@ const Incomes = () => {
               <tbody>
                 {incomes.map((income) => {
                   const incomeId = income.id || income._id;
-
                   return (
                     <tr key={incomeId} data-testid="income-item">
                       <td>{toDateInputValue(income.date)}</td>
@@ -385,22 +413,8 @@ const Incomes = () => {
                       <td>{income.category?.name || 'Sin categoría'}</td>
                       <td className="amount positive">+{formatCurrency(income.amount)}</td>
                       <td className="actions-cell">
-                        <button
-                          className="btn-icon"
-                          onClick={() => handleEdit(income)}
-                          title="Editar"
-                          data-testid="edit-income"
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="btn-icon"
-                          onClick={() => handleDelete(incomeId)}
-                          title="Eliminar"
-                          data-testid="delete-income"
-                        >
-                          🗑️
-                        </button>
+                        <button className="btn-icon" onClick={() => handleEdit(income)} title="Editar" data-testid="edit-income">✏️</button>
+                        <button className="btn-icon" onClick={() => handleDelete(incomeId)} title="Eliminar" data-testid="delete-income">🗑️</button>
                       </td>
                     </tr>
                   );
@@ -408,6 +422,12 @@ const Incomes = () => {
               </tbody>
             </table>
           )}
+          <Pagination
+            page={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            disabled={isLoading}
+          />
         </div>
       )}
 
@@ -417,9 +437,7 @@ const Incomes = () => {
 
       {!showForm && !categoriesError && categories.length === 0 && (
         <div className="card list-card">
-          <p className="hint">
-            No hay categorías de ingresos disponibles. Crea una en la sección de categorías.
-          </p>
+          <p className="hint">No hay categorías de ingresos disponibles. Crea una en la sección de categorías.</p>
         </div>
       )}
     </div>

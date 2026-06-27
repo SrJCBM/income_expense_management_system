@@ -3,7 +3,7 @@
  * Estructura base para controladores siguiendo Clean Code
  */
 
-import { successResponse } from '../utils/responseFormatter.js';
+import { successResponse, paginatedResponse } from '../utils/responseFormatter.js';
 import { asyncHandler } from '../middlewares/errorHandler.js';
 import expenseService from '../services/expenseService.js';
 
@@ -13,9 +13,9 @@ import expenseService from '../services/expenseService.js';
  * @param {Object} res - Response del servidor
  */
 export const getExpenses = asyncHandler(async (req, res) => {
-  const expenses = await expenseService.getUserExpenses(req.user.userId, req.query);
+  const result = await expenseService.getUserExpenses(req.user.userId, req.query);
 
-  res.status(200).json(successResponse(expenses, 'Gastos obtenidos'));
+  res.status(200).json(paginatedResponse(result.data, result.page, result.limit, result.total, 'Gastos obtenidos'));
 });
 
 /**

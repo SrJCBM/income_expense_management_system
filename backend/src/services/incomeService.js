@@ -119,11 +119,26 @@ class IncomeService {
     };
     const sort = sortOptions[filters.sort] || sortOptions['date-desc'];
 
-    const incomes = await Income.find(query)
-      .sort(sort)
-      .populate('category', 'name type color');
+    const page = Math.max(1, Number(filters.page) || 1);
+    const limit = Math.min(50, Math.max(1, Number(filters.limit) || 20));
+    const skip = (page - 1) * limit;
 
-    return incomes.map(mapIncomeForResponse);
+    const [incomes, total] = await Promise.all([
+      Income.find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .populate('category', 'name type color'),
+      Income.countDocuments(query),
+    ]);
+
+    return {
+      data: incomes.map(mapIncomeForResponse),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   // ← NUEVO

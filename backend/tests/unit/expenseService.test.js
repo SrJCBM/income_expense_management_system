@@ -232,9 +232,9 @@ describe('ExpenseService', () => {
 
 			const result = await expenseService.getUserExpenses(testUser._id);
 
-			expect(result).toHaveLength(2);
-			expect(result[0].userId.toString()).toBe(testUser._id.toString());
-			expect(result[1].userId.toString()).toBe(testUser._id.toString());
+			expect(result.data).toHaveLength(2);
+			expect(result.data[0].userId.toString()).toBe(testUser._id.toString());
+			expect(result.data[1].userId.toString()).toBe(testUser._id.toString());
 		});
 
 		/**
@@ -243,7 +243,7 @@ describe('ExpenseService', () => {
 		it('debe retornar lista vacía si el usuario no tiene gastos', async () => {
 			const result = await expenseService.getUserExpenses(testUser._id);
 
-			expect(result).toEqual([]);
+			expect(result.data).toEqual([]);
 		});
 
 		/**
@@ -280,9 +280,9 @@ describe('ExpenseService', () => {
 				category: testCategories.food._id,
 			});
 
-			expect(result).toHaveLength(1);
-			expect(result[0].description).toBe('Almuerzo');
-			expect(result[0].categoryId).toBe(
+			expect(result.data).toHaveLength(1);
+			expect(result.data[0].description).toBe('Almuerzo');
+			expect(result.data[0].categoryId).toBe(
 				testCategories.food._id.toString()
 			);
 		});
@@ -322,8 +322,8 @@ describe('ExpenseService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(2);
-			result.forEach((expense) => {
+			expect(result.data).toHaveLength(2);
+			result.data.forEach((expense) => {
 				expect(expense.date).toBeDefined();
 			});
 		});
@@ -364,9 +364,9 @@ describe('ExpenseService', () => {
 			const result = await expenseService.getUserExpenses(testUser._id);
 
 			// Debe estar ordenado por fecha descendente
-			expect(result[0].description).toBe('Gasto 2'); // 20
-			expect(result[1].description).toBe('Gasto 3'); // 15
-			expect(result[2].description).toBe('Gasto 1'); // 10
+			expect(result.data[0].description).toBe('Gasto 2'); // 20
+			expect(result.data[1].description).toBe('Gasto 3'); // 15
+			expect(result.data[2].description).toBe('Gasto 1'); // 10
 		});
 
 		/**
@@ -405,8 +405,8 @@ describe('ExpenseService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(1);
-			expect(result[0].description).toBe('Comida Mayo');
+			expect(result.data).toHaveLength(1);
+			expect(result.data[0].description).toBe('Comida Mayo');
 		});
 	});
 
@@ -709,9 +709,9 @@ describe('ExpenseService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(2);
-			expect(result[0].description).toMatch(/Gasto Abril/);
-			expect(result[1].description).toMatch(/Gasto Abril/);
+			expect(result.data).toHaveLength(2);
+			expect(result.data[0].description).toMatch(/Gasto Abril/);
+			expect(result.data[1].description).toMatch(/Gasto Abril/);
 		});
 
 		/**
@@ -749,10 +749,10 @@ describe('ExpenseService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(3);
+			expect(result.data).toHaveLength(3);
 
 			// Calcular total
-			const total = result.reduce((sum, expense) => sum + expense.amount, 0);
+			const total = result.data.reduce((sum, expense) => sum + expense.amount, 0);
 			expect(total).toBe(100);
 		});
 
@@ -775,7 +775,7 @@ describe('ExpenseService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(0);
+			expect(result.data).toHaveLength(0);
 		});
 
 		/**
@@ -805,8 +805,8 @@ describe('ExpenseService', () => {
 				year: 2023,
 			});
 
-			expect(resultMay2023).toHaveLength(1);
-			expect(resultMay2023[0].description).toBe('Gasto Mayo 2023');
+			expect(resultMay2023.data).toHaveLength(1);
+			expect(resultMay2023.data[0].description).toBe('Gasto Mayo 2023');
 
 			// Obtener gastos de Mayo 2024
 			const resultMay2024 = await expenseService.getUserExpenses(testUser._id, {
@@ -814,8 +814,8 @@ describe('ExpenseService', () => {
 				year: 2024,
 			});
 
-			expect(resultMay2024).toHaveLength(1);
-			expect(resultMay2024[0].description).toBe('Gasto Mayo 2024');
+			expect(resultMay2024.data).toHaveLength(1);
+			expect(resultMay2024.data[0].description).toBe('Gasto Mayo 2024');
 		});
 	});
 

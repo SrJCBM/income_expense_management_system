@@ -7,6 +7,26 @@ import budgetService from '../services/budgetService.js';
 import { getMonthName } from '../utils/formatters.js';
 import '../styles/pages/Dashboard.css';
 
+const calcTrend = (current, prev) => {
+  if (!prev || prev === 0) return null;
+  return Math.round(((current - prev) / prev) * 100);
+};
+
+const TrendBadge = ({ trend }) => {
+  if (trend === null || trend === 0) return null;
+  const up = trend > 0;
+  return (
+    <span style={{
+      fontSize: 11,
+      color: up ? '#10b981' : '#f87171',
+      display: 'block',
+      marginTop: 4,
+    }}>
+      {up ? '▲' : '▼'} {Math.abs(trend)}% vs mes anterior
+    </span>
+  );
+};
+
 const Dashboard = () => {
   const { user } = useAuth();
   const { formatCurrency } = useSettings();
@@ -16,12 +36,18 @@ const Dashboard = () => {
     balance: 0,
     expensesByCategory: [],
   });
+  const [prevSummary, setPrevSummary] = useState(null);
   const [budgetAlerts, setBudgetAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const now = new Date();
-  const currentPeriodLabel = `${getMonthName(now.getMonth() + 1)} ${now.getFullYear()}`;
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+  const currentPeriodLabel = `${getMonthName(currentMonth)} ${currentYear}`;
+
+  const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+  const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -29,15 +55,18 @@ const Dashboard = () => {
       setError(null);
 
       try {
-        const response = await reportService.getSummary(now.getMonth() + 1, now.getFullYear());
-        setSummary(response.data || response);
+        const [currentRes, prevRes] = await Promise.all([
+          reportService.getSummary(currentMonth, currentYear),
+          reportService.getSummary(prevMonth, prevYear),
+        ]);
+        setSummary(currentRes.data || currentRes);
+        setPrevSummary(prevRes.data || prevRes);
       } catch (err) {
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
 
-      // Las alertas de presupuesto son complementarias: no bloquean el dashboard si fallan
       try {
         const alertsResponse = await budgetService.getAlerts();
         setBudgetAlerts(alertsResponse.data || []);
@@ -54,6 +83,15 @@ const Dashboard = () => {
     summary.totalIncome > 0
       ? Math.round(((summary.totalIncome - summary.totalExpense) / summary.totalIncome) * 100)
       : 0;
+
+  const prevSavingsRate =
+    prevSummary?.totalIncome > 0
+      ? Math.round(((prevSummary.totalIncome - prevSummary.totalExpense) / prevSummary.totalIncome) * 100)
+      : 0;
+
+  const incomeTrend  = calcTrend(summary.totalIncome,  prevSummary?.totalIncome);
+  const expenseTrend = calcTrend(summary.totalExpense, prevSummary?.totalExpense);
+  const savingsTrend = calcTrend(savingsRate, prevSavingsRate);
 
   return (
     <div className="dashboard-container">
@@ -87,7 +125,7 @@ const Dashboard = () => {
         <div className="dashboard-card summary-card" data-testid="dashboard-balance">
           <h2>Balance Total</h2>
           <p
-            className={`amount ${summary.netBalance >= 0 ? 'positive' : 'negative'}`}
+            className={`amount ${(summary.netBalance ?? summary.balance) >= 0 ? 'positive' : 'negative'}`}
             data-testid="dashboard-balance-amount"
             title="Ingresos históricos menos gastos históricos acumulados"
           >
@@ -100,12 +138,14 @@ const Dashboard = () => {
           <p className="amount positive" data-testid="dashboard-incomes-amount">
             {isLoading ? '...' : `+${formatCurrency(summary.totalIncome)}`}
           </p>
+          {!isLoading && <TrendBadge trend={incomeTrend} />}
         </div>
         <div className="dashboard-card expenses-card" data-testid="dashboard-expenses">
           <h2>Gastos del Mes</h2>
           <p className="amount negative" data-testid="dashboard-expenses-amount">
             {isLoading ? '...' : `-${formatCurrency(summary.totalExpense)}`}
           </p>
+          {!isLoading && <TrendBadge trend={expenseTrend !== null ? -expenseTrend : null} />}
         </div>
         <div className="dashboard-card savings-card" data-testid="dashboard-savings">
           <h2>Tasa de Ahorro</h2>
@@ -115,6 +155,7 @@ const Dashboard = () => {
           >
             {isLoading ? '...' : `${savingsRate}%`}
           </p>
+          {!isLoading && <TrendBadge trend={savingsTrend} />}
         </div>
       </div>
 
@@ -138,13 +179,8 @@ const Dashboard = () => {
                     summary.totalExpense > 0
                       ? Math.round((item.amount / summary.totalExpense) * 100)
                       : 0;
-
                   return (
-                    <li
-                      key={item.categoryId || item.name}
-                      className="category-item"
-                      data-testid="dashboard-category-item"
-                    >
+                    <li key={item.categoryId || item.name} className="category-item" data-testid="dashboard-category-item">
                       <span className="cat-name">{item.name}</span>
                       <span className="cat-bar" aria-hidden="true">
                         <span className="cat-bar-fill" style={{ width: `${share}%` }}></span>

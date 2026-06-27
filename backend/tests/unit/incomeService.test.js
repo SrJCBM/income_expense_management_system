@@ -294,9 +294,9 @@ describe('IncomeService', () => {
 
 			const result = await incomeService.getUserIncomes(testUser._id);
 
-			expect(result).toHaveLength(2);
-			expect(result[0].userId.toString()).toBe(testUser._id.toString());
-			expect(result[1].userId.toString()).toBe(testUser._id.toString());
+			expect(result.data).toHaveLength(2);
+			expect(result.data[0].userId.toString()).toBe(testUser._id.toString());
+			expect(result.data[1].userId.toString()).toBe(testUser._id.toString());
 		});
 
 		/**
@@ -305,7 +305,7 @@ describe('IncomeService', () => {
 		it('debe retornar lista vacía si el usuario no tiene ingresos', async () => {
 			const result = await incomeService.getUserIncomes(testUser._id);
 
-			expect(result).toEqual([]);
+			expect(result.data).toEqual([]);
 		});
 
 		/**
@@ -342,9 +342,9 @@ describe('IncomeService', () => {
 				category: testCategories.freelance._id,
 			});
 
-			expect(result).toHaveLength(1);
-			expect(result[0].description).toBe('Proyecto freelance');
-			expect(result[0].categoryId).toBe(
+			expect(result.data).toHaveLength(1);
+			expect(result.data[0].description).toBe('Proyecto freelance');
+			expect(result.data[0].categoryId).toBe(
 				testCategories.freelance._id.toString()
 			);
 		});
@@ -384,8 +384,8 @@ describe('IncomeService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(2);
-			result.forEach((income) => {
+			expect(result.data).toHaveLength(2);
+			result.data.forEach((income) => {
 				expect(income.date).toBeDefined();
 			});
 		});
@@ -426,9 +426,9 @@ describe('IncomeService', () => {
 			const result = await incomeService.getUserIncomes(testUser._id);
 
 			// Debe estar ordenado por fecha descendente
-			expect(result[0].description).toBe('Ingreso 2'); // 20
-			expect(result[1].description).toBe('Ingreso 3'); // 15
-			expect(result[2].description).toBe('Ingreso 1'); // 10
+			expect(result.data[0].description).toBe('Ingreso 2'); // 20
+			expect(result.data[1].description).toBe('Ingreso 3'); // 15
+			expect(result.data[2].description).toBe('Ingreso 1'); // 10
 		});
 
 		/**
@@ -467,8 +467,8 @@ describe('IncomeService', () => {
 				year: 2024,
 			});
 
-			expect(result).toHaveLength(1);
-			expect(result[0].description).toBe('Salario Mayo');
+			expect(result.data).toHaveLength(1);
+			expect(result.data[0].description).toBe('Salario Mayo');
 		});
 	});
 
@@ -906,9 +906,9 @@ describe('IncomeService', () => {
 				{ month: 4, year: 2024 }
 			);
 
-			expect(aprilIncomes).toHaveLength(2);
-			expect(aprilIncomes[0].description).toMatch(/Abril/);
-			expect(aprilIncomes[1].description).toMatch(/Abril/);
+			expect(aprilIncomes.data).toHaveLength(2);
+			expect(aprilIncomes.data[0].description).toMatch(/Abril/);
+			expect(aprilIncomes.data[1].description).toMatch(/Abril/);
 		});
 
 		/**
@@ -951,9 +951,9 @@ describe('IncomeService', () => {
 			);
 
 			// Calcular total
-			const total = mayIncomes.reduce((sum, income) => sum + income.amount, 0);
+			const total = mayIncomes.data.reduce((sum, income) => sum + income.amount, 0);
 
-			expect(mayIncomes).toHaveLength(3);
+			expect(mayIncomes.data).toHaveLength(3);
 			expect(total).toBe(3300); // 2500 + 500 + 300
 		});
 
@@ -976,7 +976,7 @@ describe('IncomeService', () => {
 				{ month: 11, year: 2024 }
 			);
 
-			expect(novemberIncomes).toHaveLength(0);
+			expect(novemberIncomes.data).toHaveLength(0);
 		});
 
 		/**
@@ -1014,8 +1014,8 @@ describe('IncomeService', () => {
 				{ month: 4, year: 2024 }
 			);
 
-			expect(aprilIncomes).toHaveLength(2);
-			aprilIncomes.forEach((income) => {
+			expect(aprilIncomes.data).toHaveLength(2);
+			aprilIncomes.data.forEach((income) => {
 				const incomeDate = new Date(income.date);
 				expect(incomeDate.getMonth()).toBe(3); // Abril = 3 (0-indexed)
 			});

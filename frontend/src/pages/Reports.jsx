@@ -40,7 +40,8 @@ const Reports = () => {
   const [year, setYear] = useState(new Date().getFullYear());
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [filtersLoading, setFiltersLoading] = useState(true);
-  
+  const [yearlyData, setYearlyData] = useState(null);
+
   // Hook para exportación con feedback
   const { isExporting, exportError, exportSuccess, handleExportPDF, handleExportExcel } = useExport();
 
@@ -123,6 +124,13 @@ const Reports = () => {
 
     fetchReports();
   }, [month, year, filtersLoading]);
+
+  useEffect(() => {
+    if (!year) return;
+    reportService.getYearlyReport(year)
+      .then((res) => setYearlyData(res?.data || null))
+      .catch(() => setYearlyData(null));
+  }, [year]);
 
   const availableMonths = filters.monthsByYear?.[year] || [];
 
@@ -222,7 +230,7 @@ const Reports = () => {
         </div>
       ) : summary && (
         <div className="reports-content">
-          <ReportCharts data={summary} />
+          <ReportCharts data={summary} yearlyData={yearlyData} />
           
           <div className="dashboard-grid">
             <div className="dashboard-card incomes-card" data-testid="summary-income">

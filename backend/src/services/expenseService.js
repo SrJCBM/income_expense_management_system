@@ -110,11 +110,26 @@ class ExpenseService {
     };
     const sort = sortOptions[filters.sort] || sortOptions['date-desc'];
 
-    const expenses = await Expense.find(query)
-      .sort(sort)
-      .populate('category', 'name type color');
+    const page = Math.max(1, Number(filters.page) || 1);
+    const limit = Math.min(50, Math.max(1, Number(filters.limit) || 20));
+    const skip = (page - 1) * limit;
 
-    return expenses.map(mapExpenseForResponse);
+    const [expenses, total] = await Promise.all([
+      Expense.find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .populate('category', 'name type color'),
+      Expense.countDocuments(query),
+    ]);
+
+    return {
+      data: expenses.map(mapExpenseForResponse),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**

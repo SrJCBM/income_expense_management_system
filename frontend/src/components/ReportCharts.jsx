@@ -2,6 +2,8 @@ import React from 'react';
 import {
   BarChart,
   Bar,
+  LineChart,
+  Line,
   PieChart,
   Pie,
   Cell,
@@ -81,6 +83,45 @@ const renderPieLabel = ({ cx, cy, midAngle, outerRadius, name, percentage }) => 
   );
 };
 
+const MONTH_SHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+const TrendTooltip = ({ active, payload, label, formatter }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: '#0f172a',
+      border: '1px solid rgba(255,255,255,0.12)',
+      borderRadius: 10,
+      padding: '10px 14px',
+      fontSize: 13,
+      color: '#f8fafc',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+      pointerEvents: 'none',
+    }}>
+      <p style={{ color: '#94a3b8', marginBottom: 6, fontSize: 12 }}>{label}</p>
+      {payload.map((entry, i) => (
+        <p key={i} style={{ color: entry.color, fontWeight: 600 }}>
+          {entry.name}: {formatter ? formatter(entry.value) : entry.value}
+        </p>
+      ))}
+    </div>
+  );
+};
+
+const TrendLegend = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', gap: 20, paddingTop: 14 }}>
+    {[
+      { name: 'Ingresos', color: '#10b981' },
+      { name: 'Gastos', color: '#f87171' },
+    ].map((item) => (
+      <span key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#94a3b8' }}>
+        <span style={{ width: 24, height: 2, background: item.color, display: 'inline-block', borderRadius: 1 }} />
+        {item.name}
+      </span>
+    ))}
+  </div>
+);
+
 const BarLegend = ({ items }) => (
   <div style={{ display: 'flex', justifyContent: 'center', gap: 20, paddingTop: 14 }}>
     {items.map((d) => (
@@ -92,7 +133,7 @@ const BarLegend = ({ items }) => (
   </div>
 );
 
-const ReportCharts = ({ data }) => {
+const ReportCharts = ({ data, yearlyData = null }) => {
   const { formatCurrency } = useSettings();
 
   if (!data || !data.expensesByCategory || data.expensesByCategory.length === 0) {
@@ -237,6 +278,33 @@ const ReportCharts = ({ data }) => {
           </tbody>
         </table>
       </section>
+
+      {yearlyData && yearlyData.months?.some((m) => m.income > 0 || m.expense > 0) && (
+        <section className="chart-wrapper" aria-labelledby="trend-chart-title">
+          <h3 id="trend-chart-title">Tendencia Anual {yearlyData.year}</h3>
+          <div className="chart-visualization">
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart
+                data={yearlyData.months.map((m) => ({
+                  name: MONTH_SHORT[m.month - 1],
+                  income: m.income,
+                  expense: m.expense,
+                }))}
+                margin={{ top: 8, right: 16, left: 8, bottom: 0 }}
+                aria-hidden="true"
+              >
+                <CartesianGrid stroke={GRID_STROKE} strokeDasharray="" fill="transparent" vertical={false} />
+                <XAxis dataKey="name" tick={TICK_STYLE} axisLine={{ stroke: GRID_STROKE }} tickLine={false} />
+                <YAxis tick={TICK_STYLE} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} width={90} />
+                <Tooltip content={<TrendTooltip formatter={formatCurrency} />} />
+                <Line type="monotone" dataKey="income" name="Ingresos" stroke="#10b981" strokeWidth={2} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="expense" name="Gastos" stroke="#f87171" strokeWidth={2} dot={{ r: 3, fill: '#f87171' }} activeDot={{ r: 5 }} />
+              </LineChart>
+            </ResponsiveContainer>
+            <TrendLegend />
+          </div>
+        </section>
+      )}
     </div>
   );
 };

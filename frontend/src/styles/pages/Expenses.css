@@ -350,6 +350,22 @@
   line-height: 1.5;
 }
 
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0 4px;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted);
+  min-width: 110px;
+  text-align: center;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .form-row { grid-template-columns: 1fr; gap: 0; }

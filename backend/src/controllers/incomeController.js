@@ -2,18 +2,14 @@
  * Controlador de Ingresos
  */
 
-import { successResponse } from '../utils/responseFormatter.js';
+import { successResponse, paginatedResponse } from '../utils/responseFormatter.js';
 import { asyncHandler } from '../middlewares/errorHandler.js';
 import incomeService from '../services/incomeService.js';
 
 export const getIncomes = asyncHandler(async (req, res) => {
-  const incomes = await incomeService.getUserIncomes(req.user.userId, {
-    month: req.query.month,
-    year: req.query.year,
-    category: req.query.category,
-  });
+  const result = await incomeService.getUserIncomes(req.user.userId, req.query);
 
-  res.status(200).json(successResponse(incomes, 'Ingresos obtenidos'));
+  res.status(200).json(paginatedResponse(result.data, result.page, result.limit, result.total, 'Ingresos obtenidos'));
 });
 
 // ← NUEVO: faltaba este endpoint, los tests GET /:id lo necesitan

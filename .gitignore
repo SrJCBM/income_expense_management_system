@@ -140,3 +140,8 @@ frontend/BUILD_CHECKLIST.md
 frontend/BUILD_QUICK_GUIDE.md
 frontend/ELECTRON_BUILD.md
 frontend/README_BUILD.md
+
+# ============================================
+# SUPERPOWERS (AI-generated specs & plans)
+# ============================================
+docs/superpowers/

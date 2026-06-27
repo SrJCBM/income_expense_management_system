@@ -16,7 +16,10 @@ const ALL_ICONS = [
   '🐕','🐈','🌿','🌺','🌳','💇','💆','👶','🧴','🪞',
   '📌','⭐','🏆','❤️','✨','🔴','🟡','🟢','🟣','🔵',
   '🚬','🍸','🥃','🎰','🃏','🎳','🏋️','🧗','🤿','🎻',
+  '🍽️','🧾','🧑‍💻','🛍️',
 ];
+
+const displayIcon = (icon) => (ALL_ICONS.includes(icon) ? icon : ALL_ICONS[0]);
 
 const IconPicker = ({ value, onChange, disabled }) => (
   <div className="icon-picker" role="radiogroup" aria-label="Seleccionar ícono">
@@ -136,8 +139,6 @@ const Categories = () => {
     resetForm();
     setEditingCategory(null);
   };
-
-  const displayIcon = (icon) => (ALL_ICONS.includes(icon) ? icon : ALL_ICONS[0]);
 
   return (
     <div className="expenses-container">

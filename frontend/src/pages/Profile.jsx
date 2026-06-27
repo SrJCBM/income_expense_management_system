@@ -353,7 +353,7 @@ const Profile = () => {
           <button
             type="button"
             className="btn-danger"
-            onClick={() => setShowResetConfirm(true)}
+            onClick={() => { setShowResetConfirm(true); setResetMessage(''); setResetError(''); }}
             data-testid="reset-data-btn"
           >
             🗑️ Restablecer todos los datos

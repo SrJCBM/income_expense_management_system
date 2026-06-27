@@ -1,47 +1,8 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { useForm } from '../hooks/useForm.js';
+import AuthBrand from '../components/AuthBrand.jsx';
 import '../styles/Auth.css';
-
-const BrandPanel = () => (
-  <aside className="auth-brand" aria-hidden="true">
-    <div className="auth-brand-content">
-      <div className="auth-brand-logo">
-        <div className="auth-brand-icon">💎</div>
-        <span className="auth-brand-name">Fin<span>Track</span></span>
-      </div>
-
-      <h1 className="auth-brand-tagline">
-        Cada peso<br />con <em>propósito</em>
-      </h1>
-
-      <ul className="auth-brand-features">
-        <li><span className="auth-feature-dot" />Registra ingresos y gastos al instante</li>
-        <li><span className="auth-feature-dot" />Presupuestos con alertas en tiempo real</li>
-        <li><span className="auth-feature-dot" />Reportes y análisis visuales del mes</li>
-      </ul>
-
-      <div className="auth-preview-card">
-        <p className="auth-preview-label">Balance del mes</p>
-        <p className="auth-preview-amount">+$3,240.00</p>
-        <div className="auth-preview-bars">
-          <div className="auth-preview-bar-row">
-            <span>Ingresos</span>
-            <div className="auth-preview-bar-track">
-              <div className="auth-preview-bar-fill" style={{ width: '78%', background: '#10b981' }} />
-            </div>
-          </div>
-          <div className="auth-preview-bar-row">
-            <span>Gastos</span>
-            <div className="auth-preview-bar-track">
-              <div className="auth-preview-bar-fill" style={{ width: '45%', background: '#f87171' }} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </aside>
-);
 
 const Login = () => {
   const { login, isLoading, error: authError } = useAuth();
@@ -68,7 +29,7 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <BrandPanel />
+      <AuthBrand variant="login" />
 
       <div className="auth-form-side">
         <div className="auth-card" role="main" aria-labelledby="login-title">

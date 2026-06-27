@@ -1,53 +1,8 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { useForm } from '../hooks/useForm.js';
+import AuthBrand from '../components/AuthBrand.jsx';
 import '../styles/Auth.css';
-
-const BrandPanel = () => (
-  <aside className="auth-brand" aria-hidden="true">
-    <div className="auth-brand-content">
-      <div className="auth-brand-logo">
-        <div className="auth-brand-icon">💎</div>
-        <span className="auth-brand-name">Fin<span>Track</span></span>
-      </div>
-
-      <h1 className="auth-brand-tagline">
-        Empieza hoy.<br /><em>Sin excusas.</em>
-      </h1>
-
-      <ul className="auth-brand-features">
-        <li><span className="auth-feature-dot" />Configura tu moneda preferida desde el inicio</li>
-        <li><span className="auth-feature-dot" />Categorías personalizables con colores e íconos</li>
-        <li><span className="auth-feature-dot" />Exporta tus datos a PDF o Excel cuando quieras</li>
-      </ul>
-
-      <div className="auth-preview-card">
-        <p className="auth-preview-label">Gastos por categoría</p>
-        <p className="auth-preview-amount" style={{ color: '#f87171' }}>$1,850.00</p>
-        <div className="auth-preview-bars">
-          <div className="auth-preview-bar-row">
-            <span>Vivienda</span>
-            <div className="auth-preview-bar-track">
-              <div className="auth-preview-bar-fill" style={{ width: '62%', background: '#6366f1' }} />
-            </div>
-          </div>
-          <div className="auth-preview-bar-row">
-            <span>Comida</span>
-            <div className="auth-preview-bar-track">
-              <div className="auth-preview-bar-fill" style={{ width: '34%', background: '#ec4899' }} />
-            </div>
-          </div>
-          <div className="auth-preview-bar-row">
-            <span>Transporte</span>
-            <div className="auth-preview-bar-track">
-              <div className="auth-preview-bar-fill" style={{ width: '20%', background: '#f59e0b' }} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </aside>
-);
 
 const Register = () => {
   const { register, isLoading, error: authError } = useAuth();
@@ -88,7 +43,7 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      <BrandPanel />
+      <AuthBrand variant="register" />
 
       <div className="auth-form-side">
         <div className="auth-card" role="main" aria-labelledby="register-title">

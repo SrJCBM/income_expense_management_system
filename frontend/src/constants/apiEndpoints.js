@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
     PROFILE: `${BASE_URL}/users/profile`,
     UPDATE: `${BASE_URL}/users/profile`,
     PASSWORD: `${BASE_URL}/users/profile/password`,
+    RESET_DATA: `${BASE_URL}/users/data`,
   },
 
   // Expenses

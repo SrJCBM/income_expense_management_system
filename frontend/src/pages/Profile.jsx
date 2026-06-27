@@ -18,6 +18,11 @@ const Profile = () => {
   const [profileError, setProfileError] = useState('');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
+  const [resetError, setResetError] = useState('');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
   const [passwordValues, setPasswordValues] = useState({
     currentPassword: '',
     newPassword: '',
@@ -120,6 +125,21 @@ const Profile = () => {
       );
     } finally {
       setIsSavingPassword(false);
+    }
+  };
+
+  const handleResetData = async () => {
+    setIsResetting(true);
+    setResetError('');
+    setResetMessage('');
+    try {
+      await userService.resetAllData();
+      setResetMessage('Todos tus datos han sido eliminados.');
+      setShowResetConfirm(false);
+    } catch (err) {
+      setResetError(err.message || 'Error al restablecer los datos.');
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -309,6 +329,63 @@ const Profile = () => {
           </form>
         </section>
       </div>
+
+      {/* Zona de peligro */}
+      <section className="card profile-card profile-danger-zone" aria-labelledby="danger-zone-title">
+        <h3 id="danger-zone-title" className="danger-title">Zona de peligro</h3>
+        <p className="danger-desc">
+          Elimina todos tus gastos, ingresos, presupuestos y categorías de forma permanente.
+          Esta acción no se puede deshacer.
+        </p>
+
+        {resetMessage && (
+          <div className="alert alert-success" role="status" aria-live="polite">
+            {resetMessage}
+          </div>
+        )}
+        {resetError && (
+          <div className="alert alert-error" role="alert" aria-live="assertive">
+            {resetError}
+          </div>
+        )}
+
+        {!showResetConfirm ? (
+          <button
+            type="button"
+            className="btn-danger"
+            onClick={() => setShowResetConfirm(true)}
+            data-testid="reset-data-btn"
+          >
+            🗑️ Restablecer todos los datos
+          </button>
+        ) : (
+          <div className="danger-confirm">
+            <p className="danger-confirm-text">
+              ¿Estás seguro? Se eliminarán <strong>todos</strong> tus registros financieros.
+            </p>
+            <div className="danger-confirm-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => setShowResetConfirm(false)}
+                disabled={isResetting}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={handleResetData}
+                disabled={isResetting}
+                aria-busy={isResetting}
+                data-testid="reset-data-confirm"
+              >
+                {isResetting ? 'Eliminando...' : 'Sí, eliminar todo'}
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
     </div>
   );
 };

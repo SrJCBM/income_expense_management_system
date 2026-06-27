@@ -61,6 +61,15 @@ class UserService {
       handleRequestError(error, 'Error al cambiar la contraseña');
     }
   }
+
+  async resetAllData() {
+    try {
+      const response = await api.delete(API_ENDPOINTS.USERS.RESET_DATA);
+      return response.data;
+    } catch (error) {
+      handleRequestError(error, 'Error al restablecer los datos');
+    }
+  }
 }
 
 export default new UserService();

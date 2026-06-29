@@ -8,12 +8,8 @@ import { API_ENDPOINTS } from '../constants/apiEndpoints.js';
 
 const AUTH_TOKEN_KEY = 'authToken';
 const AUTH_USER_KEY = 'authUser';
-const API_FALLBACK_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
 const buildNetworkError = () =>
-  new Error(
-    `No se pudo conectar con el backend. Verifica que el API esté activo en ${API_FALLBACK_URL}.`
-  );
+  new Error('No se pudo conectar con el servidor. Por favor intenta de nuevo en unos momentos.');
 
 const mapBackendValidationErrors = (errors = []) => {
   const mappedErrors = {};

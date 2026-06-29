@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useSettings } from '../context/SettingsContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const GRID_STROKE = 'rgba(255,255,255,0.07)';
 const TICK_STYLE = { fill: '#64748b', fontSize: 12, fontFamily: 'Inter, sans-serif' };
@@ -83,8 +84,6 @@ const renderPieLabel = ({ cx, cy, midAngle, outerRadius, name, percentage }) => 
   );
 };
 
-const MONTH_SHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-
 const TrendTooltip = ({ active, payload, label, formatter }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -108,19 +107,22 @@ const TrendTooltip = ({ active, payload, label, formatter }) => {
   );
 };
 
-const TrendLegend = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', gap: 20, paddingTop: 14 }}>
-    {[
-      { name: 'Ingresos', color: '#10b981' },
-      { name: 'Gastos', color: '#f87171' },
-    ].map((item) => (
-      <span key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#94a3b8' }}>
-        <span style={{ width: 24, height: 2, background: item.color, display: 'inline-block', borderRadius: 1 }} />
-        {item.name}
-      </span>
-    ))}
-  </div>
-);
+const TrendLegend = () => {
+  const { t } = useLanguage();
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: 20, paddingTop: 14 }}>
+      {[
+        { name: t('reports.income'), color: '#10b981' },
+        { name: t('reports.expense'), color: '#f87171' },
+      ].map((item) => (
+        <span key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#94a3b8' }}>
+          <span style={{ width: 24, height: 2, background: item.color, display: 'inline-block', borderRadius: 1 }} />
+          {item.name}
+        </span>
+      ))}
+    </div>
+  );
+};
 
 const BarLegend = ({ items }) => (
   <div style={{ display: 'flex', justifyContent: 'center', gap: 20, paddingTop: 14 }}>
@@ -135,6 +137,8 @@ const BarLegend = ({ items }) => (
 
 const ReportCharts = ({ data, yearlyData = null }) => {
   const { formatCurrency } = useSettings();
+  const { t } = useLanguage();
+  const MONTH_SHORT = t('months.short');
 
   if (!data || !data.expensesByCategory || data.expensesByCategory.length === 0) {
     return null;
@@ -148,18 +152,18 @@ const ReportCharts = ({ data, yearlyData = null }) => {
   }));
 
   const incomeExpenseData = [
-    { name: 'Ingresos', amount: data.totalIncome, fill: '#10b981' },
-    { name: 'Gastos',   amount: data.totalExpense, fill: '#f87171' },
+    { name: t('reports.income'), amount: data.totalIncome, fill: '#10b981' },
+    { name: t('reports.expense'), amount: data.totalExpense, fill: '#f87171' },
   ];
 
-  const barChartAria = `Ingresos ${formatCurrency(data.totalIncome)} vs Gastos ${formatCurrency(data.totalExpense)}. Balance: ${formatCurrency(data.balance)}`;
-  const pieChartAria = `Distribución de gastos. ${chartData.map((c) => `${c.name}: ${c.percentage}%`).join('. ')}`;
+  const barChartAria = `${t('reports.income')} ${formatCurrency(data.totalIncome)} vs ${t('reports.expense')} ${formatCurrency(data.totalExpense)}. ${t('reports.balance')}: ${formatCurrency(data.balance)}`;
+  const pieChartAria = `${t('reports.distributionByCategory')}. ${chartData.map((c) => `${c.name}: ${c.percentage}%`).join('. ')}`;
 
   return (
     <div className="charts-container">
       {/* Barras: Ingresos vs Gastos */}
       <section className="chart-wrapper" aria-labelledby="bar-chart-title">
-        <h3 id="bar-chart-title">Ingresos vs Gastos</h3>
+        <h3 id="bar-chart-title">{t('reports.incomeVsExpense')}</h3>
         <div role="img" aria-label={barChartAria} aria-describedby="bar-chart-table" className="chart-visualization">
           <ResponsiveContainer width="100%" height={280}>
             <BarChart
@@ -200,12 +204,12 @@ const ReportCharts = ({ data, yearlyData = null }) => {
           <BarLegend items={incomeExpenseData} />
         </div>
         <table className="sr-only" id="bar-chart-table">
-          <caption>Ingresos vs Gastos</caption>
-          <thead><tr><th>Concepto</th><th>Monto</th></tr></thead>
+          <caption>{t('reports.incomeVsExpense')}</caption>
+          <thead><tr><th>{t('reports.colConcept')}</th><th>{t('reports.colAmount')}</th></tr></thead>
           <tbody>
-            <tr><td>Ingresos</td><td>{formatCurrency(data.totalIncome)}</td></tr>
-            <tr><td>Gastos</td><td>{formatCurrency(data.totalExpense)}</td></tr>
-            <tr><td>Balance</td><td>{formatCurrency(data.balance)}</td></tr>
+            <tr><td>{t('reports.income')}</td><td>{formatCurrency(data.totalIncome)}</td></tr>
+            <tr><td>{t('reports.expense')}</td><td>{formatCurrency(data.totalExpense)}</td></tr>
+            <tr><td>{t('reports.balance')}</td><td>{formatCurrency(data.balance)}</td></tr>
           </tbody>
         </table>
       </section>
@@ -213,7 +217,7 @@ const ReportCharts = ({ data, yearlyData = null }) => {
       {/* Donut: Distribución por categoría */}
       {chartData.length > 0 && (
         <section className="chart-wrapper" aria-labelledby="pie-chart-title">
-          <h3 id="pie-chart-title">Distribución de Gastos por Categoría</h3>
+          <h3 id="pie-chart-title">{t('reports.distributionByCategory')}</h3>
           <div role="img" aria-label={pieChartAria} aria-describedby="pie-chart-table" className="chart-visualization">
             <ResponsiveContainer width="100%" height={320}>
               <PieChart aria-hidden="true">
@@ -237,8 +241,8 @@ const ReportCharts = ({ data, yearlyData = null }) => {
             </ResponsiveContainer>
           </div>
           <table className="sr-only" id="pie-chart-table">
-            <caption>Gastos por categoría</caption>
-            <thead><tr><th>Categoría</th><th>Monto</th><th>%</th></tr></thead>
+            <caption>{t('reports.expensesByCategory')}</caption>
+            <thead><tr><th>{t('reports.colCategory')}</th><th>{t('reports.colAmount')}</th><th>%</th></tr></thead>
             <tbody>
               {chartData.map((row, i) => (
                 <tr key={i}><td>{row.name}</td><td>{formatCurrency(row.amount)}</td><td>{row.percentage}%</td></tr>
@@ -250,13 +254,13 @@ const ReportCharts = ({ data, yearlyData = null }) => {
 
       {/* Tabla de resumen */}
       <section className="chart-wrapper" aria-labelledby="summary-title">
-        <h3 id="summary-title">Resumen Detallado</h3>
-        <table className="summary-table" role="table" aria-label="Resumen de gastos por categoría">
+        <h3 id="summary-title">{t('reports.detailedSummary')}</h3>
+        <table className="summary-table" role="table" aria-label={t('reports.summaryAriaLabel')}>
           <thead>
             <tr>
-              <th scope="col">Categoría</th>
-              <th scope="col" className="text-right">Monto</th>
-              <th scope="col" className="text-right">Porcentaje</th>
+              <th scope="col">{t('reports.colCategory')}</th>
+              <th scope="col" className="text-right">{t('reports.colAmount')}</th>
+              <th scope="col" className="text-right">{t('reports.colPercentage')}</th>
             </tr>
           </thead>
           <tbody>
@@ -271,7 +275,7 @@ const ReportCharts = ({ data, yearlyData = null }) => {
               </tr>
             ))}
             <tr className="summary-total">
-              <td><strong>Total</strong></td>
+              <td><strong>{t('reports.total')}</strong></td>
               <td className="text-right"><strong>{formatCurrency(data.totalExpense)}</strong></td>
               <td className="text-right"><strong>100%</strong></td>
             </tr>
@@ -281,7 +285,7 @@ const ReportCharts = ({ data, yearlyData = null }) => {
 
       {yearlyData && yearlyData.months?.some((m) => m.income > 0 || m.expense > 0) && (
         <section className="chart-wrapper" aria-labelledby="trend-chart-title">
-          <h3 id="trend-chart-title">Tendencia Anual {yearlyData.year}</h3>
+          <h3 id="trend-chart-title">{`${t('reports.annualTrend')} ${yearlyData.year}`}</h3>
           <div className="chart-visualization">
             <ResponsiveContainer width="100%" height={280}>
               <LineChart
@@ -297,8 +301,8 @@ const ReportCharts = ({ data, yearlyData = null }) => {
                 <XAxis dataKey="name" tick={TICK_STYLE} axisLine={{ stroke: GRID_STROKE }} tickLine={false} />
                 <YAxis tick={TICK_STYLE} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v)} width={90} />
                 <Tooltip content={<TrendTooltip formatter={formatCurrency} />} />
-                <Line type="monotone" dataKey="income" name="Ingresos" stroke="#10b981" strokeWidth={2} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 5 }} />
-                <Line type="monotone" dataKey="expense" name="Gastos" stroke="#f87171" strokeWidth={2} dot={{ r: 3, fill: '#f87171' }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="income" name={t('reports.income')} stroke="#10b981" strokeWidth={2} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 5 }} />
+                <Line type="monotone" dataKey="expense" name={t('reports.expense')} stroke="#f87171" strokeWidth={2} dot={{ r: 3, fill: '#f87171' }} activeDot={{ r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
             <TrendLegend />

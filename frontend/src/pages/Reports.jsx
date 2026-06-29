@@ -3,6 +3,7 @@ import '../styles/pages/Reports.css';
 import reportService from '../services/reportService.js';
 import ReportCharts from '../components/ReportCharts.jsx';
 import { useExport } from '../hooks/useExport.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const DEFAULT_SUMMARY = {
   totalIncome: 0,
@@ -11,21 +12,6 @@ const DEFAULT_SUMMARY = {
   expensesByCategory: [],
 };
 
-const MONTH_LABELS = [
-  'Enero',
-  'Febrero',
-  'Marzo',
-  'Abril',
-  'Mayo',
-  'Junio',
-  'Julio',
-  'Agosto',
-  'Septiembre',
-  'Octubre',
-  'Noviembre',
-  'Diciembre',
-];
-
 const DEFAULT_FILTERS = {
   years: [new Date().getFullYear()],
   monthsByYear: {},
@@ -33,6 +19,9 @@ const DEFAULT_FILTERS = {
 };
 
 const Reports = () => {
+  const { t } = useLanguage();
+  const monthLabels = t('months.long');
+
   const [summary, setSummary] = useState(DEFAULT_SUMMARY);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -143,8 +132,8 @@ const Reports = () => {
     <div className="reports-container">
       <header className="page-header flex-between">
         <div>
-          <h1>Reportes y Análisis</h1>
-          <p className="subtitle">Visualiza el estado de tus finanzas</p>
+          <h1>{t('reports.title')}</h1>
+          <p className="subtitle">{t('reports.subtitle')}</p>
         </div>
         <div className="header-controls">
           {filters.hasData && (
@@ -153,12 +142,12 @@ const Reports = () => {
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
                 className="form-select filter-select"
-                aria-label="Filtrar por mes"
+                aria-label={t('reports.filterByMonth')}
                 data-testid="report-month-select"
               >
                 {availableMonths.map((monthOption) => (
                   <option key={monthOption} value={monthOption}>
-                    {MONTH_LABELS[monthOption - 1]}
+                    {monthLabels[monthOption - 1]}
                   </option>
                 ))}
               </select>
@@ -166,7 +155,7 @@ const Reports = () => {
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
                 className="form-select filter-select"
-                aria-label="Filtrar por año"
+                aria-label={t('reports.filterByYear')}
                 data-testid="report-year-select"
               >
                 {filters.years.map((yearOption) => (
@@ -188,7 +177,7 @@ const Reports = () => {
                 aria-busy={isExporting}
                 data-testid="export-pdf-button"
               >
-                {isExporting ? '⏳ Descargando...' : '📄 PDF'}
+                {isExporting ? t('reports.exporting') : t('reports.exportPDF')}
               </button>
               <button
                 onClick={() => handleExportExcel(summary, month, year)}
@@ -199,7 +188,7 @@ const Reports = () => {
                 aria-busy={isExporting}
                 data-testid="export-excel-button"
               >
-                {isExporting ? '⏳ Descargando...' : '📊 Excel'}
+                {isExporting ? t('reports.exporting') : t('reports.exportExcel')}
               </button>
             </div>
           )}
@@ -209,13 +198,13 @@ const Reports = () => {
       {/* Feedback de Exportación */}
       {exportError && (
         <div className="alert alert-error" role="alert" aria-live="polite">
-          ⚠️ Error: {exportError}. Por favor intenta de nuevo.
+          {t('reports.exportError')}{exportError}{t('reports.exportRetry')}
         </div>
       )}
-      
+
       {exportSuccess && (
         <div className="alert alert-success" role="alert" aria-live="polite">
-          ✅ Reporte descargado exitosamente
+          {t('reports.exportSuccess')}
         </div>
       )}
 
@@ -225,30 +214,30 @@ const Reports = () => {
         <div className="alert alert-error">{error}</div>
       ) : !hasReportData ? (
         <div className="card list-card">
-          <h3>Aún no hay datos para reportes</h3>
-          <p className="hint">Cuando registres ingresos y gastos, verás aquí tu análisis financiero.</p>
+          <h3>{t('reports.noData')}</h3>
+          <p className="hint">{t('reports.noDataHint')}</p>
         </div>
       ) : summary && (
         <div className="reports-content">
           <ReportCharts data={summary} yearlyData={yearlyData} />
-          
+
           <div className="dashboard-grid">
             <div className="dashboard-card incomes-card" data-testid="summary-income">
-              <h3>Ingresos</h3>
+              <h3>{t('reports.income')}</h3>
               <p className="amount positive">+${summary.totalIncome.toFixed(2)}</p>
             </div>
             <div className="dashboard-card expenses-card" data-testid="summary-expense">
-              <h3>Gastos</h3>
+              <h3>{t('reports.expense')}</h3>
               <p className="amount negative">-${summary.totalExpense.toFixed(2)}</p>
             </div>
             <div className="dashboard-card summary-card" data-testid="summary-balance">
-              <h3>Balance Neto</h3>
+              <h3>{t('reports.balance')}</h3>
               <p className="amount">${summary.balance.toFixed(2)}</p>
             </div>
           </div>
 
           <div className="card list-card">
-            <h3>Gastos por Categoría</h3>
+            <h3>{t('reports.expensesByCategory')}</h3>
             <div className="category-bars">
               {summary.expensesByCategory.map((cat, idx) => (
                 <div key={idx} className="category-bar-item" data-testid="category-bar-item">
@@ -257,11 +246,11 @@ const Reports = () => {
                     <span className="cat-amount">${cat.amount.toFixed(2)} ({cat.percentage}%)</span>
                   </div>
                   <div className="progress-track">
-                    <div 
-                      className="progress-fill" 
-                      style={{ 
-                        width: `${cat.percentage}%`, 
-                        backgroundColor: cat.color 
+                    <div
+                      className="progress-fill"
+                      style={{
+                        width: `${cat.percentage}%`,
+                        backgroundColor: cat.color
                       }}
                     ></div>
                   </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useCategories } from '../hooks/useCategories.js';
 import { useForm } from '../hooks/useForm.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Categories.css';
 
@@ -21,26 +22,30 @@ const ALL_ICONS = [
 
 const displayIcon = (icon) => (ALL_ICONS.includes(icon) ? icon : ALL_ICONS[0]);
 
-const IconPicker = ({ value, onChange, disabled }) => (
-  <div className="icon-picker" role="radiogroup" aria-label="Seleccionar ícono">
-    {ALL_ICONS.map((icon) => (
-      <button
-        key={icon}
-        type="button"
-        role="radio"
-        aria-checked={value === icon}
-        className={`icon-btn${value === icon ? ' icon-btn-selected' : ''}`}
-        onClick={() => !disabled && onChange(icon)}
-        disabled={disabled}
-        title={icon}
-      >
-        {icon}
-      </button>
-    ))}
-  </div>
-);
+const IconPicker = ({ value, onChange, disabled }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="icon-picker" role="radiogroup" aria-label={t('categories.selectIconLabel')}>
+      {ALL_ICONS.map((icon) => (
+        <button
+          key={icon}
+          type="button"
+          role="radio"
+          aria-checked={value === icon}
+          className={`icon-btn${value === icon ? ' icon-btn-selected' : ''}`}
+          onClick={() => !disabled && onChange(icon)}
+          disabled={disabled}
+          title={icon}
+        >
+          {icon}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 const Categories = () => {
+  const { t } = useLanguage();
   const {
     categories,
     isLoading,
@@ -62,15 +67,15 @@ const Categories = () => {
 
   const handleCategorySubmit = async (values) => {
     if (!values.name || !values.type) {
-      throw { validationErrors: { general: 'El nombre y tipo de categoría son obligatorios.' } };
+      throw { validationErrors: { general: t('categories.errorRequired') } };
     }
 
     if (!/[A-Za-z]/.test(values.name)) {
-      throw { validationErrors: { name: 'El nombre debe incluir al menos una letra' } };
+      throw { validationErrors: { name: t('categories.errorNameLetter') } };
     }
 
     if (!values.icon || !ALL_ICONS.includes(values.icon)) {
-      throw { validationErrors: { icon: 'Selecciona un ícono.' } };
+      throw { validationErrors: { icon: t('categories.errorIconRequired') } };
     }
 
     const payload = {
@@ -83,10 +88,10 @@ const Categories = () => {
 
     if (editingCategory) {
       await updateCategory(editingCategory.id || editingCategory._id, payload);
-      setSuccessMessage('Categoría actualizada exitosamente.');
+      setSuccessMessage(t('categories.successEdit'));
     } else {
       await addCategory(payload);
-      setSuccessMessage('Categoría creada exitosamente.');
+      setSuccessMessage(t('categories.successCreate'));
     }
 
     setShowForm(false);
@@ -124,11 +129,11 @@ const Categories = () => {
   };
 
   const handleDeleteClick = async (category) => {
-    if (!window.confirm(`¿Eliminar la categoría "${category.name}"?`)) return;
+    if (!window.confirm(t('categories.confirmDelete'))) return;
 
     try {
       await removeCategory(category.id || category._id);
-      setSuccessMessage('Categoría eliminada exitosamente.');
+      setSuccessMessage(t('categories.successDelete'));
     } catch {
       // El error ya se maneja desde el hook.
     }
@@ -144,8 +149,8 @@ const Categories = () => {
     <div className="expenses-container">
       <header className="page-header flex-between">
         <div>
-          <h1>Gestionar Categorías</h1>
-          <p className="subtitle">Organiza tus transacciones</p>
+          <h1>{t('categories.title')}</h1>
+          <p className="subtitle">{t('categories.subtitle')}</p>
         </div>
         <button
           className="btn-primary"
@@ -153,7 +158,7 @@ const Categories = () => {
           disabled={showForm}
           data-testid="new-category-button"
         >
-          + Nueva Categoría
+          {t('categories.newButton')}
         </button>
       </header>
 
@@ -165,7 +170,7 @@ const Categories = () => {
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingCategory ? 'Editar Categoría' : 'Crear Categoría'}</h3>
+          <h3>{editingCategory ? t('categories.formTitleEdit') : t('categories.formTitleCreate')}</h3>
 
           {errors.general && (
             <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="category-error-general">
@@ -181,14 +186,14 @@ const Categories = () => {
           <form onSubmit={handleSubmit} noValidate data-testid="category-form">
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="category-name">Nombre *</label>
+                <label htmlFor="category-name">{t('categories.fieldName')} *</label>
                 <input
                   id="category-name"
                   type="text"
                   name="name"
                   value={values.name}
                   onChange={handleChange}
-                  placeholder="Ej. Alimentación"
+                  placeholder={t('categories.fieldNamePlaceholder')}
                   disabled={isSubmitting}
                   aria-required="true"
                   aria-invalid={!!errors.name}
@@ -199,7 +204,7 @@ const Categories = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="category-type">Tipo *</label>
+                <label htmlFor="category-type">{t('categories.fieldType')} *</label>
                 <select
                   id="category-type"
                   name="type"
@@ -210,14 +215,14 @@ const Categories = () => {
                   aria-required="true"
                   data-testid="category-type"
                 >
-                  <option value="expense">Gasto</option>
-                  <option value="income">Ingreso</option>
+                  <option value="expense">{t('categories.typeExpense')}</option>
+                  <option value="income">{t('categories.typeIncome')}</option>
                 </select>
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="category-color">Color</label>
+              <label htmlFor="category-color">{t('categories.fieldColor')}</label>
               <input
                 id="category-color"
                 type="color"
@@ -231,7 +236,7 @@ const Categories = () => {
             </div>
 
             <div className="form-group">
-              <label>Ícono</label>
+              <label>{t('categories.fieldIcon')}</label>
               <input
                 type="hidden"
                 name="icon"
@@ -247,14 +252,14 @@ const Categories = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="category-description">Descripción</label>
+              <label htmlFor="category-description">{t('categories.fieldDescription')}</label>
               <textarea
                 id="category-description"
                 name="description"
                 value={values.description}
                 onChange={handleChange}
                 className="form-textarea"
-                placeholder="Describe para qué usarás esta categoría (opcional)"
+                placeholder={t('categories.fieldDescriptionPlaceholder')}
                 disabled={isSubmitting}
                 data-testid="category-description"
               />
@@ -268,7 +273,7 @@ const Categories = () => {
                 disabled={isSubmitting}
                 data-testid="category-cancel"
               >
-                Cancelar
+                {t('categories.cancelButton')}
               </button>
               <button
                 type="submit"
@@ -278,10 +283,10 @@ const Categories = () => {
                 data-testid="category-submit"
               >
                 {isSubmitting
-                  ? 'Guardando...'
+                  ? t('categories.submitting')
                   : editingCategory
-                    ? 'Actualizar Categoría'
-                    : 'Crear Categoría'}
+                    ? t('categories.submitEdit')
+                    : t('categories.submitCreate')}
               </button>
             </div>
           </form>
@@ -295,18 +300,18 @@ const Categories = () => {
           ) : categories.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🏷️</div>
-              <h3>No tienes categorías registradas</h3>
-              <p className="hint">Crea una categoría para organizar tus movimientos.</p>
+              <h3>{t('categories.emptyTitle')}</h3>
+              <p className="hint">{t('categories.emptyHint')}</p>
             </div>
           ) : (
             <table className="data-table" data-testid="category-list">
               <thead>
                 <tr>
-                  <th>Nombre</th>
-                  <th>Tipo</th>
-                  <th>Descripción</th>
-                  <th>Color</th>
-                  <th>Acciones</th>
+                  <th>{t('categories.colName')}</th>
+                  <th>{t('categories.colType')}</th>
+                  <th>{t('categories.colDescription')}</th>
+                  <th>{t('categories.colColor')}</th>
+                  <th>{t('categories.colActions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -318,8 +323,8 @@ const Categories = () => {
                         <span style={{ marginRight: '0.5rem' }}>{displayIcon(category.icon)}</span>
                         {category.name}
                       </td>
-                      <td>{category.type === 'income' ? 'Ingreso' : 'Gasto'}</td>
-                      <td>{category.description || 'Sin descripción'}</td>
+                      <td>{category.type === 'income' ? t('categories.typeIncome') : t('categories.typeExpense')}</td>
+                      <td>{category.description || t('categories.noDescription')}</td>
                       <td>
                         <span style={{
                           display: 'inline-block',
@@ -333,13 +338,13 @@ const Categories = () => {
                         <button
                           className="btn-icon"
                           onClick={() => handleEditClick(category)}
-                          title="Editar"
+                          title={t('categories.editTitle')}
                           data-testid="edit-category"
                         >✏️</button>
                         <button
                           className="btn-icon"
                           onClick={() => handleDeleteClick(category)}
-                          title="Eliminar"
+                          title={t('categories.deleteTitle')}
                           data-testid="delete-category"
                         >🗑️</button>
                       </td>

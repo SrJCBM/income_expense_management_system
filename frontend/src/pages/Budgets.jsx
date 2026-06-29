@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useBudgets } from '../hooks/useBudgets.js';
 import { useCategories } from '../hooks/useCategories.js';
 import { useSettings } from '../context/SettingsContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { getMonthName } from '../utils/formatters.js';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Budgets.css';
@@ -14,6 +15,7 @@ const getCurrentPeriod = () => {
 const emptyForm = { categoryId: '', limitAmount: '', alertThreshold: '80' };
 
 const Budgets = () => {
+  const { t } = useLanguage();
   const { budgets, isLoading, error, fetchBudgets, addBudget, updateBudget, removeBudget } = useBudgets();
   const { categories, fetchCategories } = useCategories();
   const { formatCurrency } = useSettings();
@@ -75,12 +77,12 @@ const Budgets = () => {
     setFormError('');
 
     if (!formValues.categoryId) {
-      setFormError('Selecciona una categoría.');
+      setFormError(t('budgets.fieldCategoryRequired'));
       return;
     }
 
     if (!formValues.limitAmount || Number(formValues.limitAmount) <= 0) {
-      setFormError('El monto límite debe ser mayor a 0.');
+      setFormError(t('budgets.errorAmount'));
       return;
     }
 
@@ -96,10 +98,10 @@ const Budgets = () => {
     try {
       if (editingBudget) {
         await updateBudget(editingBudget.id, payload);
-        setSuccessMessage('Presupuesto actualizado exitosamente.');
+        setSuccessMessage(t('budgets.successEdit'));
       } else {
         await addBudget(payload);
-        setSuccessMessage('Presupuesto creado exitosamente.');
+        setSuccessMessage(t('budgets.successCreate'));
       }
       setShowForm(false);
       setEditingBudget(null);
@@ -115,13 +117,13 @@ const Budgets = () => {
   };
 
   const handleDelete = async (budget) => {
-    if (!window.confirm('¿Estás seguro de eliminar este presupuesto?')) {
+    if (!window.confirm(t('budgets.confirmDelete'))) {
       return;
     }
 
     try {
       await removeBudget(budget.id);
-      setSuccessMessage('Presupuesto eliminado exitosamente.');
+      setSuccessMessage(t('budgets.successDelete'));
     } catch {
       // El error ya se expone por el hook en la UI
     }
@@ -143,10 +145,8 @@ const Budgets = () => {
     <div className="budgets-container">
       <header className="page-header flex-between">
         <div>
-          <h1>Presupuestos</h1>
-          <p className="subtitle">
-            Define límites de gasto por categoría para {getMonthName(period.month)} {period.year}
-          </p>
+          <h1>{t('budgets.title')}</h1>
+          <p className="subtitle">{t('budgets.subtitle')}</p>
         </div>
         <button
           className="btn-primary"
@@ -154,7 +154,7 @@ const Budgets = () => {
           disabled={showForm}
           data-testid="new-budget-button"
         >
-          + Nuevo Presupuesto
+          {t('budgets.newButton')}
         </button>
       </header>
 
@@ -166,21 +166,21 @@ const Budgets = () => {
 
       {!showForm && (
         <div className="filters-bar" data-testid="budget-filters">
-          <label htmlFor="budget-period" className="filter-label">Período</label>
+          <label htmlFor="budget-period" className="filter-label">{t('budgets.period')}</label>
           <input
             id="budget-period"
             type="month"
             value={periodInputValue}
             onChange={handlePeriodChange}
             data-testid="budget-period"
-            aria-label="Seleccionar período"
+            aria-label={t('budgets.selectPeriodLabel')}
           />
         </div>
       )}
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingBudget ? 'Editar Presupuesto' : 'Crear Nuevo Presupuesto'}</h3>
+          <h3>{editingBudget ? t('budgets.formTitleEdit') : t('budgets.formTitleCreate')}</h3>
 
           {formError && (
             <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="budget-error">
@@ -190,7 +190,7 @@ const Budgets = () => {
 
           <form onSubmit={handleSubmit} noValidate data-testid="budget-form">
             <div className="form-group">
-              <label htmlFor="budget-category">Categoría de gasto *</label>
+              <label htmlFor="budget-category">{t('budgets.fieldCategoryExpense')} *</label>
               <select
                 id="budget-category"
                 name="categoryId"
@@ -201,7 +201,7 @@ const Budgets = () => {
                 aria-required="true"
                 data-testid="budget-category"
               >
-                <option value="">Selecciona una categoría</option>
+                <option value="">{t('budgets.fieldCategoryDefault')}</option>
                 {Array.isArray(categories) && categories.map((category) => (
                   <option key={category.id || category._id} value={category.id || category._id}>
                     {category.name}
@@ -212,7 +212,7 @@ const Budgets = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="budget-limit">Monto límite *</label>
+                <label htmlFor="budget-limit">{t('budgets.fieldLimitAmount')} *</label>
                 <input
                   id="budget-limit"
                   type="number"
@@ -229,7 +229,7 @@ const Budgets = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="budget-threshold">Umbral de alerta (%)</label>
+                <label htmlFor="budget-threshold">{t('budgets.fieldThreshold')}</label>
                 <input
                   id="budget-threshold"
                   type="number"
@@ -253,7 +253,7 @@ const Budgets = () => {
                 disabled={isSubmitting}
                 data-testid="budget-cancel"
               >
-                Cancelar
+                {t('budgets.cancelButton')}
               </button>
               <button
                 type="submit"
@@ -263,10 +263,10 @@ const Budgets = () => {
                 data-testid="budget-submit"
               >
                 {isSubmitting
-                  ? 'Guardando...'
+                  ? t('budgets.submitting')
                   : editingBudget
-                    ? 'Actualizar Presupuesto'
-                    : 'Crear Presupuesto'}
+                    ? t('budgets.submitEdit')
+                    : t('budgets.submitCreate')}
               </button>
             </div>
           </form>
@@ -279,14 +279,14 @@ const Budgets = () => {
         </div>
       ) : error ? (
         <div className="alert alert-error" role="alert" data-testid="budget-list-error">
-          Error al cargar los presupuestos: {error}
+          {t('budgets.errorLoad')}{error}
         </div>
       ) : budgets.length === 0 ? (
         <div className="card list-card">
           <div className="empty-state" data-testid="budget-empty">
             <div className="empty-icon">🎯</div>
-            <h3>No tienes presupuestos para este período</h3>
-            <p className="hint">Crea un presupuesto para controlar tus gastos por categoría.</p>
+            <h3>{t('budgets.emptyTitle')}</h3>
+            <p className="hint">{t('budgets.emptyHint')}</p>
           </div>
         </div>
       ) : (
@@ -294,6 +294,7 @@ const Budgets = () => {
           {budgets.map((budget) => {
             const state = getProgressState(budget);
             const percentage = Math.min(budget.percentageUsed ?? 0, 100);
+            const categoryName = budget.category?.name || t('budgets.noCategory');
 
             return (
               <article key={budget.id} className={`budget-card budget-${state}`} data-testid="budget-item">
@@ -303,13 +304,13 @@ const Budgets = () => {
                     style={{ backgroundColor: budget.category?.color || 'var(--primary-color)' }}
                     aria-hidden="true"
                   ></span>
-                  <h3 className="budget-category-name">{budget.category?.name || 'Sin categoría'}</h3>
+                  <h3 className="budget-category-name">{categoryName}</h3>
                   <div className="actions-cell">
                     <button
                       className="btn-icon btn-edit"
                       onClick={() => openEditForm(budget)}
-                      title="Editar presupuesto"
-                      aria-label={`Editar presupuesto de ${budget.category?.name || 'categoría'}`}
+                      title={t('budgets.editBudgetTitle')}
+                      aria-label={`${t('budgets.editBudgetTitle')} ${categoryName}`}
                       data-testid="edit-budget"
                     >
                       ✏️
@@ -317,8 +318,8 @@ const Budgets = () => {
                     <button
                       className="btn-icon btn-delete"
                       onClick={() => handleDelete(budget)}
-                      title="Eliminar presupuesto"
-                      aria-label={`Eliminar presupuesto de ${budget.category?.name || 'categoría'}`}
+                      title={t('budgets.deleteBudgetTitle')}
+                      aria-label={`${t('budgets.deleteBudgetTitle')} ${categoryName}`}
                       data-testid="delete-budget"
                     >
                       🗑️
@@ -332,26 +333,26 @@ const Budgets = () => {
                   aria-valuenow={budget.percentageUsed ?? 0}
                   aria-valuemin="0"
                   aria-valuemax="100"
-                  aria-label={`Progreso del presupuesto de ${budget.category?.name || 'categoría'}`}
+                  aria-label={`${t('budgets.progressLabel')} ${categoryName}`}
                 >
                   <div className="budget-progress-fill" style={{ width: `${percentage}%` }}></div>
                 </div>
 
                 <div className="budget-amounts">
                   <span data-testid="budget-spent">
-                    Gastado: <strong>{formatCurrency(budget.spentAmount)}</strong>
+                    {t('budgets.spent')}: <strong>{formatCurrency(budget.spentAmount)}</strong>
                   </span>
                   <span data-testid="budget-limit-amount">
-                    Límite: <strong>{formatCurrency(budget.limitAmount)}</strong>
+                    {t('budgets.colLimit')}: <strong>{formatCurrency(budget.limitAmount)}</strong>
                   </span>
                 </div>
 
                 <p className="budget-status" data-testid="budget-status">
                   {budget.isOverBudget
-                    ? `Excedido por ${formatCurrency(budget.spentAmount - budget.limitAmount)}`
+                    ? `${t('budgets.statusOver')} ${formatCurrency(budget.spentAmount - budget.limitAmount)}`
                     : budget.isNearLimit
-                      ? `Cerca del límite (${budget.percentageUsed}%)`
-                      : `Disponible: ${formatCurrency(budget.remainingAmount)} (${budget.percentageUsed}% usado)`}
+                      ? `${t('budgets.statusNear')} (${budget.percentageUsed}%)`
+                      : `${t('budgets.statusAvailable')}: ${formatCurrency(budget.remainingAmount)} (${budget.percentageUsed}% ${t('budgets.statusUsed')})`}
                 </p>
               </article>
             );

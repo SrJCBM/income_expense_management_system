@@ -99,12 +99,12 @@ const Profile = () => {
     setPasswordError('');
 
     if (!passwordValues.currentPassword) {
-      setPasswordError(t('profile.fieldCurrentPassword'));
+      setPasswordError(t('profile.errorCurrentPasswordRequired'));
       return;
     }
 
     if (passwordValues.newPassword.length < 8) {
-      setPasswordError(t('profile.errorNameMin'));
+      setPasswordError(t('profile.errorPasswordMin'));
       return;
     }
 

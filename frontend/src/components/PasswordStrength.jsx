@@ -32,12 +32,12 @@ const PasswordStrength = ({ password }) => {
       <span className="strength-label" style={{ color }}>
         {t(`password.strength.${level}`)}
       </span>
-      <ul className="strength-rules" aria-label="Requisitos de contraseña">
+      <ul className="strength-rules" aria-label={t('common.passwordRequirements')}>
         {rules.map((rule) => (
           <li
             key={rule.key}
             className={rule.met ? 'rule-met' : 'rule-unmet'}
-            aria-label={`${rule.met ? 'Cumplido' : 'Pendiente'}: ${t(`password.rules.${rule.key}`)}`}
+            aria-label={`${rule.met ? t('common.ruleMet') : t('common.rulePending')}: ${t(`password.rules.${rule.key}`)}`}
           >
             <span aria-hidden="true">{rule.met ? '✓' : '✗'}</span>{' '}
             {t(`password.rules.${rule.key}`)}

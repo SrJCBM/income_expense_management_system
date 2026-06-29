@@ -35,7 +35,7 @@ const Layout = () => {
           <h2>Finance<span>App</span></h2>
         </div>
         <div className="sidebar-divider" />
-        <nav className="sidebar-nav" aria-label={t('nav.dashboard')}>
+        <nav className="sidebar-nav" aria-label={t('common.mainNav')}>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -61,8 +61,8 @@ const Layout = () => {
             <button
               className="btn-lang-toggle"
               onClick={toggleLang}
-              aria-label="Cambiar idioma"
-              title="Cambiar idioma"
+              aria-label={t('common.changeLang')}
+              title={t('common.changeLang')}
             >
               {t('lang.toggle')}
             </button>
@@ -89,7 +89,7 @@ const Layout = () => {
             className="btn-menu-toggle"
             onClick={() => setIsMobileNavOpen((open) => !open)}
             aria-expanded={isMobileNavOpen}
-            aria-label={isMobileNavOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-label={isMobileNavOpen ? t('common.closeMenu') : t('common.openMenu')}
             data-testid="mobile-menu-toggle"
           >
             ☰
@@ -98,7 +98,7 @@ const Layout = () => {
           <button
             className="btn-lang-toggle"
             onClick={toggleLang}
-            aria-label="Cambiar idioma"
+            aria-label={t('common.changeLang')}
           >
             {t('lang.toggle')}
           </button>

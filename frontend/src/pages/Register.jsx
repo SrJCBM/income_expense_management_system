@@ -54,7 +54,7 @@ const Register = () => {
 
       <div className="auth-form-side">
         <div className="auth-lang-toggle">
-          <button className="btn-lang-toggle" onClick={toggleLang} aria-label="Cambiar idioma">
+          <button className="btn-lang-toggle" onClick={toggleLang} aria-label={t('common.changeLang')}>
             {t('lang.toggle')}
           </button>
         </div>
@@ -125,6 +125,8 @@ const Register = () => {
                 disabled={isFormDisabled}
                 ariaInvalid={!!errors.password}
                 ariaDescribedBy={errors.password ? 'password-error' : undefined}
+                dataTestId="password-input"
+                ariaRequired
               />
               <PasswordStrength password={values.password} />
               {errors.password && (
@@ -143,6 +145,8 @@ const Register = () => {
                 disabled={isFormDisabled}
                 ariaInvalid={!!errors.confirmPassword}
                 ariaDescribedBy={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                dataTestId="confirm-password-input"
+                ariaRequired
               />
               {errors.confirmPassword && (
                 <span id="confirmPassword-error" className="error-text" role="alert">

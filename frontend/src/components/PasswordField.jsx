@@ -10,6 +10,8 @@ const PasswordField = ({
   placeholder = '',
   ariaInvalid = false,
   ariaDescribedBy,
+  dataTestId,
+  ariaRequired = false,
 }) => {
   const { t } = useLanguage();
   const [show, setShow] = useState(false);
@@ -26,6 +28,9 @@ const PasswordField = ({
         disabled={disabled}
         aria-invalid={ariaInvalid}
         aria-describedby={ariaDescribedBy}
+        data-testid={dataTestId || undefined}
+        required={ariaRequired || undefined}
+        aria-required={ariaRequired || undefined}
       />
       <button
         type="button"

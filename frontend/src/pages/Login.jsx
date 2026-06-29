@@ -37,7 +37,7 @@ const Login = () => {
 
       <div className="auth-form-side">
         <div className="auth-lang-toggle">
-          <button className="btn-lang-toggle" onClick={toggleLang} aria-label="Cambiar idioma">
+          <button className="btn-lang-toggle" onClick={toggleLang} aria-label={t('common.changeLang')}>
             {t('lang.toggle')}
           </button>
         </div>
@@ -87,6 +87,8 @@ const Login = () => {
                 disabled={isFormDisabled}
                 ariaInvalid={!!errors.password}
                 ariaDescribedBy={errors.password ? 'password-error' : undefined}
+                dataTestId="password-input"
+                ariaRequired
               />
               {errors.password && (
                 <span id="password-error" className="error-text" role="alert">{errors.password}</span>

@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 import { useForm } from '../hooks/useForm.js';
 import { useCategories } from '../hooks/useCategories.js';
 import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting }) => {
   const isEdit = !!initialData;
+  const { t } = useLanguage();
   const { categories, isLoading: isLoadingCategories, error: categoriesError, fetchCategories } = useCategories();
 
   useEffect(() => {
@@ -14,13 +16,13 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
 
   const handleSubmitForm = async (values) => {
     if (!values.amount || !values.concept || !values.date) {
-      throw { validationErrors: { general: 'Por favor, completa los campos obligatorios.' } };
+      throw { validationErrors: { general: t('expenses.errorRequiredFields') } };
     }
     if (Number(values.amount) <= 0) {
-      throw { validationErrors: { amount: 'El monto debe ser mayor a 0.' } };
+      throw { validationErrors: { amount: t('expenses.errorAmount') } };
     }
     if (!values.categoryId) {
-      throw { validationErrors: { categoryId: 'Selecciona una categoría para el gasto.' } };
+      throw { validationErrors: { categoryId: t('expenses.errorCategory') } };
     }
     await onSubmit({
       ...values,
@@ -56,14 +58,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
       )}
 
       <div className="form-group">
-        <label htmlFor="concept">Concepto *</label>
+        <label htmlFor="concept">{t('expenses.fieldConcept')} *</label>
         <input
           type="text"
           id="concept"
           name="concept"
           value={values.concept}
           onChange={handleChange}
-          placeholder="Ej. Supermercado"
+          placeholder={t('expenses.fieldConceptPlaceholder')}
           disabled={loading}
           aria-required="true"
           aria-invalid={!!errors.concept}
@@ -79,14 +81,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="amount">Monto ($) *</label>
+          <label htmlFor="amount">{t('expenses.fieldAmount')} ($) *</label>
           <input
             type="number"
             id="amount"
             name="amount"
             value={values.amount}
             onChange={handleChange}
-            placeholder="0.00"
+            placeholder={t('expenses.fieldAmountPlaceholder')}
             step="0.01"
             min="0"
             disabled={loading}
@@ -103,7 +105,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
         </div>
 
         <div className="form-group">
-          <label htmlFor="date">Fecha *</label>
+          <label htmlFor="date">{t('expenses.fieldDate')} *</label>
           <input
             type="date"
             id="date"
@@ -125,7 +127,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
       </div>
 
       <div className="form-group">
-        <label htmlFor="categoryId">Categoría *</label>
+        <label htmlFor="categoryId">{t('expenses.fieldCategory')} *</label>
         <select
           id="categoryId"
           name="categoryId"
@@ -138,7 +140,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           aria-invalid={!!errors.categoryId}
           aria-describedby={errors.categoryId ? 'categoryId-error' : undefined}
         >
-          <option value="">{isLoadingCategories ? 'Cargando categorías...' : 'Selecciona una categoría'}</option>
+          <option value="">{isLoadingCategories ? 'Cargando categorías...' : t('expenses.fieldCategoryDefault')}</option>
           {categories.map((category) => (
             <option key={category.id || category._id} value={category.id || category._id}>
               {category.name}
@@ -158,13 +160,13 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
       </div>
 
       <div className="form-group">
-        <label htmlFor="notes">Notas Adicionales</label>
+        <label htmlFor="notes">{t('expenses.fieldNotes')}</label>
         <textarea
           id="notes"
           name="notes"
           value={values.notes}
           onChange={handleChange}
-          placeholder="Detalles del gasto (opcional)"
+          placeholder={t('expenses.fieldNotesPlaceholder')}
           disabled={loading}
           className="form-textarea"
           data-testid="expense-notes"
@@ -179,7 +181,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           disabled={loading}
           data-testid="expense-cancel"
         >
-          Cancelar
+          {t('expenses.cancelButton')}
         </button>
         <button
           type="submit"
@@ -188,7 +190,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           aria-busy={loading}
           data-testid="expense-submit"
         >
-          {loading ? 'Guardando...' : isEdit ? 'Actualizar Gasto' : 'Crear Gasto'}
+          {loading ? t('expenses.submitting') : isEdit ? t('expenses.submitEdit') : t('expenses.submitCreate')}
         </button>
       </div>
     </form>

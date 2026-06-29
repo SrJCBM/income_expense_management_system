@@ -4,6 +4,7 @@ import ExpenseList from '../components/ExpenseList.jsx';
 import ExpenseForm from '../components/ExpenseForm.jsx';
 import Pagination from '../components/Pagination.jsx';
 import { useCategories } from '../hooks/useCategories.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'expenses_filters';
@@ -17,6 +18,7 @@ const loadSavedFilters = () => {
 };
 
 const Expenses = () => {
+  const { t } = useLanguage();
   const { expenses, pagination, isLoading, error, fetchExpenses, addExpense, updateExpense, removeExpense } = useExpenses();
   const [showForm, setShowForm]             = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
@@ -68,19 +70,19 @@ const Expenses = () => {
   const handleFormSubmit = async (data) => {
     if (editingExpense) {
       await updateExpense(editingExpense.id || editingExpense._id, data);
-      setSuccessMessage('Gasto actualizado exitosamente.');
+      setSuccessMessage(t('expenses.successEdit'));
       setEditingExpense(null);
     } else {
       await addExpense(data);
-      setSuccessMessage('Gasto creado exitosamente.');
+      setSuccessMessage(t('expenses.successCreate'));
     }
     setShowForm(false);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar este gasto?')) {
+    if (window.confirm(t('expenses.confirmDelete'))) {
       await removeExpense(id);
-      setSuccessMessage('Gasto eliminado exitosamente.');
+      setSuccessMessage(t('expenses.successDelete'));
     }
   };
 
@@ -135,8 +137,8 @@ const Expenses = () => {
     <div className="expenses-container">
       <header className="page-header flex-between">
         <div>
-          <h1>Gestionar Gastos</h1>
-          <p className="subtitle">Lleva el control de todos tus egresos</p>
+          <h1>{t('expenses.title')}</h1>
+          <p className="subtitle">{t('expenses.subtitle')}</p>
         </div>
         <button
           className="btn-primary"
@@ -144,7 +146,7 @@ const Expenses = () => {
           disabled={showForm}
           data-testid="new-expense-button"
         >
-          + Nuevo Gasto
+          {t('expenses.newButton')}
         </button>
       </header>
 
@@ -162,7 +164,7 @@ const Expenses = () => {
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
-              placeholder="Buscar por concepto o notas..."
+              placeholder={t('expenses.searchPlaceholder')}
               className="filter-search"
               data-testid="filter-search"
               aria-label="Buscar gastos"
@@ -173,7 +175,7 @@ const Expenses = () => {
               data-testid="filter-category"
               aria-label="Filtrar por categoría"
             >
-              <option value="">Todas las categorías</option>
+              <option value="">{t('expenses.allCategories')}</option>
               {Array.isArray(categories) && categories.map((cat) => (
                 <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
               ))}
@@ -200,7 +202,7 @@ const Expenses = () => {
               onClick={handleApplyFilters}
               data-testid="apply-filters"
             >
-              Filtrar
+              {t('expenses.filterButton')}
             </button>
             <button
               type="button"
@@ -208,7 +210,7 @@ const Expenses = () => {
               onClick={handleClearFilters}
               data-testid="clear-filters"
             >
-              Limpiar
+              {t('expenses.clearButton')}
             </button>
           </div>
 
@@ -252,7 +254,7 @@ const Expenses = () => {
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingExpense ? 'Editar Gasto' : 'Registrar Nuevo Gasto'}</h3>
+          <h3>{editingExpense ? t('expenses.formTitleEdit') : t('expenses.formTitleCreate')}</h3>
           <ExpenseForm
             initialData={editingExpense}
             onSubmit={handleFormSubmit}

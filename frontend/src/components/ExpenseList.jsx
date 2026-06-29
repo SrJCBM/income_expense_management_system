@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 import { toDateInputValue } from '../utils/dateUtils.js';
 import { useSettings } from '../context/SettingsContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
   const { formatCurrency } = useSettings();
+  const { t } = useLanguage();
   const total = useMemo(
     () => (expenses || []).reduce((sum, expense) => sum + parseFloat(expense.amount || 0), 0),
     [expenses]
@@ -22,7 +24,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
   if (error) {
     return (
       <div className="alert alert-error" data-testid="expense-list-error">
-        Error al cargar los gastos: {error}
+        {t('expenses.errorLoad')}{error}
       </div>
     );
   }
@@ -31,8 +33,8 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
     return (
       <div className="empty-state" data-testid="expense-empty">
         <div className="empty-icon">📭</div>
-        <h3>No tienes gastos registrados</h3>
-        <p className="hint">Agrega un nuevo gasto para comenzar a llevar el control.</p>
+        <h3>{t('expenses.emptyTitle')}</h3>
+        <p className="hint">{t('expenses.emptyHint')}</p>
       </div>
     );
   }
@@ -42,11 +44,11 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
       <table className="data-table">
         <thead>
           <tr>
-            <th>Fecha</th>
-            <th>Concepto</th>
-            <th>Categoría</th>
-            <th>Monto</th>
-            <th>Acciones</th>
+            <th>{t('expenses.colDate')}</th>
+            <th>{t('expenses.colConcept')}</th>
+            <th>{t('expenses.colCategory')}</th>
+            <th>{t('expenses.colAmount')}</th>
+            <th>{t('expenses.colActions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -54,13 +56,13 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
             <tr key={expense.id || expense._id} data-testid="expense-item">
               <td>{toDateInputValue(expense.date)}</td>
               <td>{expense.concept}</td>
-              <td>{expense.category?.name || 'Sin categoría'}</td>
+              <td>{expense.category?.name || t('expenses.noCategory')}</td>
               <td className="amount negative">-{formatCurrency(expense.amount)}</td>
               <td className="actions-cell">
                 <button
                   className="btn-icon btn-edit"
                   onClick={() => onEdit(expense)}
-                  title="Editar"
+                  title={t('expenses.editTitle')}
                   data-testid="edit-expense"
                 >
                   ✏️
@@ -68,7 +70,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
                 <button
                   className="btn-icon btn-delete"
                   onClick={() => onDelete(expense.id || expense._id)}
-                  title="Eliminar"
+                  title={t('expenses.deleteTitle')}
                   data-testid="delete-expense"
                 >
                   🗑️
@@ -79,7 +81,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
         </tbody>
         <tfoot>
           <tr className="total-row">
-            <td colSpan="3" className="total-label">Total gastos</td>
+            <td colSpan="3" className="total-label">{t('expenses.totalLabel')}</td>
             <td className="amount negative" data-testid="expense-total">
               -{formatCurrency(total)}
             </td>

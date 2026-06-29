@@ -24,7 +24,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
   if (error) {
     return (
       <div className="alert alert-error" data-testid="expense-list-error">
-        {t('expenses.errorLoad')}{error}
+        {t('expenses.errorLoad')} {error}
       </div>
     );
   }

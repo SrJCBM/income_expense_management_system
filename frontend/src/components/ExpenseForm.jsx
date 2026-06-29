@@ -140,7 +140,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
           aria-invalid={!!errors.categoryId}
           aria-describedby={errors.categoryId ? 'categoryId-error' : undefined}
         >
-          <option value="">{isLoadingCategories ? 'Cargando categorías...' : t('expenses.fieldCategoryDefault')}</option>
+          <option value="">{isLoadingCategories ? t('expenses.loadingCategories') : t('expenses.fieldCategoryDefault')}</option>
           {categories.map((category) => (
             <option key={category.id || category._id} value={category.id || category._id}>
               {category.name}

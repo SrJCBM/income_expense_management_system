@@ -194,7 +194,7 @@ const Expenses = () => {
               aria-expanded={showAdvancedFilters}
               data-testid="toggle-advanced-filters"
             >
-              {showAdvancedFilters ? 'Menos filtros' : 'Más filtros'}
+              {showAdvancedFilters ? t('expenses.filterLess') : t('expenses.filterMore')}
             </button>
             <button
               type="button"
@@ -222,9 +222,9 @@ const Expenses = () => {
                 onChange={(e) => setMinAmountFilter(e.target.value)}
                 min="0"
                 step="0.01"
-                placeholder="Monto mínimo"
+                placeholder={t('expenses.amountMin')}
                 data-testid="filter-min-amount"
-                aria-label="Monto mínimo"
+                aria-label={t('expenses.amountMin')}
               />
               <input
                 type="number"
@@ -232,9 +232,9 @@ const Expenses = () => {
                 onChange={(e) => setMaxAmountFilter(e.target.value)}
                 min="0"
                 step="0.01"
-                placeholder="Monto máximo"
+                placeholder={t('expenses.amountMax')}
                 data-testid="filter-max-amount"
-                aria-label="Monto máximo"
+                aria-label={t('expenses.amountMax')}
               />
               <select
                 value={sortOrder}
@@ -242,10 +242,10 @@ const Expenses = () => {
                 data-testid="filter-sort"
                 aria-label="Ordenar por"
               >
-                <option value="date-desc">Más recientes primero</option>
-                <option value="date-asc">Más antiguos primero</option>
-                <option value="amount-desc">Mayor monto primero</option>
-                <option value="amount-asc">Menor monto primero</option>
+                <option value="date-desc">{t('expenses.sortNewest')}</option>
+                <option value="date-asc">{t('expenses.sortOldest')}</option>
+                <option value="amount-desc">{t('expenses.sortAmountDesc')}</option>
+                <option value="amount-asc">{t('expenses.sortAmountAsc')}</option>
               </select>
             </div>
           )}

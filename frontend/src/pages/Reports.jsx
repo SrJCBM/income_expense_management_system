@@ -172,8 +172,8 @@ const Reports = () => {
                 onClick={() => handleExportPDF(summary, month, year)}
                 className="btn-secondary"
                 disabled={isExporting}
-                aria-label="Descargar reporte financiero en formato PDF"
-                title="Descargar reporte financiero en PDF"
+                aria-label={t('reports.exportPDFLabel')}
+                title={t('reports.exportPDFTitle')}
                 aria-busy={isExporting}
                 data-testid="export-pdf-button"
               >
@@ -183,8 +183,8 @@ const Reports = () => {
                 onClick={() => handleExportExcel(summary, month, year)}
                 className="btn-secondary"
                 disabled={isExporting}
-                aria-label="Descargar reporte financiero en formato Excel"
-                title="Descargar reporte financiero en Excel"
+                aria-label={t('reports.exportExcelLabel')}
+                title={t('reports.exportExcelTitle')}
                 aria-busy={isExporting}
                 data-testid="export-excel-button"
               >

@@ -332,6 +332,10 @@ export default {
     total: 'Total',
     colCategory: 'Categoría',
     summaryAriaLabel: 'Resumen de gastos por categoría',
+    exportPDFLabel: 'Descargar reporte financiero en formato PDF',
+    exportPDFTitle: 'Descargar reporte financiero en PDF',
+    exportExcelLabel: 'Descargar reporte financiero en formato Excel',
+    exportExcelTitle: 'Descargar reporte financiero en Excel',
   },
   profile: {
     title: 'Mi Perfil',

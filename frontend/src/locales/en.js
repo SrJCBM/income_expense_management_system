@@ -332,6 +332,10 @@ export default {
     total: 'Total',
     colCategory: 'Category',
     summaryAriaLabel: 'Expense summary by category',
+    exportPDFLabel: 'Download financial report in PDF format',
+    exportPDFTitle: 'Download financial report as PDF',
+    exportExcelLabel: 'Download financial report in Excel format',
+    exportExcelTitle: 'Download financial report as Excel',
   },
   profile: {
     title: 'My Profile',

@@ -211,7 +211,7 @@ const Profile = () => {
                 aria-readonly="true"
                 data-testid="profile-email"
               />
-              <span className="hint-text">El email no se puede modificar.</span>
+              <span className="hint-text">{t('profile.emailHint')}</span>
             </div>
 
             <div className="form-group">
@@ -231,7 +231,7 @@ const Profile = () => {
                 ))}
               </select>
               <span className="hint-text">
-                Todos los montos de la aplicación se mostrarán en esta moneda.
+                {t('profile.currencyHint')}
               </span>
             </div>
 
@@ -298,7 +298,7 @@ const Profile = () => {
                 aria-required="true"
                 data-testid="new-password"
               />
-              <span className="hint-text">Mínimo 8 caracteres.</span>
+              <span className="hint-text">{t('profile.passwordMinHint')}</span>
             </div>
 
             <div className="form-group">
@@ -362,7 +362,7 @@ const Profile = () => {
         ) : (
           <div className="danger-confirm">
             <p className="danger-confirm-text">
-              ¿Estás seguro? Se eliminarán <strong>todos</strong> tus registros financieros.
+              {t('profile.resetConfirmText')}
             </p>
             <div className="danger-confirm-actions">
               <button

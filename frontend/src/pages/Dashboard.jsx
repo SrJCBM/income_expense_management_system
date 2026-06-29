@@ -115,7 +115,7 @@ const Dashboard = () => {
           <strong>{t('dashboard.budgetAlerts')}:</strong>{' '}
           {budgetAlerts.map((alert) => (
             <span key={alert.id} className="budget-alert-item" data-testid="budget-alert-item">
-              {alert.category?.name || 'Categoría'}{' '}
+              {alert.category?.name || t('dashboard.noCategory')}{' '}
               {alert.isOverBudget ? t('dashboard.over') : t('dashboard.near')}{' '}
               ({alert.percentageUsed}%).{' '}
             </span>
@@ -130,11 +130,11 @@ const Dashboard = () => {
           <p
             className={`amount ${(summary.netBalance ?? summary.balance) >= 0 ? 'positive' : 'negative'}`}
             data-testid="dashboard-balance-amount"
-            title="Ingresos históricos menos gastos históricos acumulados"
+            title={t('dashboard.balanceTooltip')}
           >
             {isLoading ? '...' : formatCurrency(summary.netBalance ?? summary.balance)}
           </p>
-          <small style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Acumulado histórico</small>
+          <small style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{t('dashboard.historicLabel')}</small>
         </div>
         <div className="dashboard-card incomes-card" data-testid="dashboard-incomes">
           <h2>{t('dashboard.income')}</h2>
@@ -166,7 +166,7 @@ const Dashboard = () => {
         <div className="recent-activity">
           <div className="flex-between">
             <h2>{t('dashboard.expensesByCategory')}</h2>
-            <Link to="/reports" className="dashboard-link">Ver reportes →</Link>
+            <Link to="/reports" className="dashboard-link">{t('dashboard.viewReports')}</Link>
           </div>
           {isLoading ? (
             <div>
@@ -175,7 +175,7 @@ const Dashboard = () => {
             </div>
           ) : summary.expensesByCategory?.length > 0 ? (
             <div className="category-summary">
-              <p className="summary-title">Distribución de gastos por categoría</p>
+              <p className="summary-title">{t('dashboard.expenseDistribution')}</p>
               <ul className="category-summary-list">
                 {summary.expensesByCategory.map((item) => {
                   const share =

@@ -107,6 +107,11 @@ export default {
     errorLoad: 'Error loading dashboard',
     over: 'Over limit',
     near: 'Near limit',
+    noCategory: 'Category',
+    balanceTooltip: 'Historical income minus accumulated historical expenses',
+    historicLabel: 'Historical accumulated',
+    viewReports: 'View reports →',
+    expenseDistribution: 'Expense distribution by category',
   },
   expenses: {
     title: 'Manage Expenses',
@@ -314,6 +319,10 @@ export default {
     successReset: 'Data reset successfully.',
     errorNameMin: 'Name must be at least 2 characters.',
     errorPasswordMismatch: 'Passwords do not match.',
+    emailHint: 'Email cannot be modified.',
+    currencyHint: 'All amounts in the app will be displayed in this currency.',
+    passwordMinHint: 'Minimum 8 characters.',
+    resetConfirmText: 'Are you sure? This will delete all your financial records.',
   },
   pagination: {
     previous: '← Previous',

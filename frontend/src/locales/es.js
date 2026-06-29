@@ -107,6 +107,11 @@ export default {
     errorLoad: 'Error al cargar el dashboard',
     over: 'Sobre el límite',
     near: 'Cerca del límite',
+    noCategory: 'Categoría',
+    balanceTooltip: 'Ingresos históricos menos gastos históricos acumulados',
+    historicLabel: 'Acumulado histórico',
+    viewReports: 'Ver reportes →',
+    expenseDistribution: 'Distribución de gastos por categoría',
   },
   expenses: {
     title: 'Gestionar Gastos',
@@ -314,6 +319,10 @@ export default {
     successReset: 'Datos restablecidos exitosamente.',
     errorNameMin: 'El nombre debe tener al menos 2 caracteres.',
     errorPasswordMismatch: 'Las contraseñas no coinciden.',
+    emailHint: 'El email no se puede modificar.',
+    currencyHint: 'Todos los montos de la aplicación se mostrarán en esta moneda.',
+    passwordMinHint: 'Mínimo 8 caracteres.',
+    resetConfirmText: '¿Estás seguro? Se eliminarán todos tus registros financieros.',
   },
   pagination: {
     previous: '← Anterior',

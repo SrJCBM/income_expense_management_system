@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import userService from '../services/userService.js';
 import authService from '../services/authService.js';
 import { useSettings, SUPPORTED_CURRENCIES } from '../context/SettingsContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { formatDate } from '../utils/formatters.js';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Profile.css';
 
 const Profile = () => {
   const { currency, setCurrency } = useSettings();
+  const { t } = useLanguage();
 
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +44,7 @@ const Profile = () => {
         setProfile(data);
         setProfileValues({ name: data.name || '', currency: data.currency || currency });
       } catch (err) {
-        setLoadError(err.message || 'Error al cargar el perfil');
+        setLoadError(err.message || t('profile.errorLoad'));
       } finally {
         setIsLoading(false);
       }
@@ -58,7 +60,7 @@ const Profile = () => {
     setProfileError('');
 
     if (!profileValues.name.trim() || profileValues.name.trim().length < 2) {
-      setProfileError('El nombre debe tener al menos 2 caracteres.');
+      setProfileError(t('profile.errorNameMin'));
       return;
     }
 
@@ -81,7 +83,7 @@ const Profile = () => {
         );
       }
 
-      setProfileMessage('Perfil actualizado exitosamente.');
+      setProfileMessage(t('profile.successProfile'));
     } catch (err) {
       setProfileError(
         err.validationErrors ? Object.values(err.validationErrors).join(' ') : err.message
@@ -97,17 +99,17 @@ const Profile = () => {
     setPasswordError('');
 
     if (!passwordValues.currentPassword) {
-      setPasswordError('Ingresa tu contraseña actual.');
+      setPasswordError(t('profile.fieldCurrentPassword'));
       return;
     }
 
     if (passwordValues.newPassword.length < 8) {
-      setPasswordError('La nueva contraseña debe tener al menos 8 caracteres.');
+      setPasswordError(t('profile.errorNameMin'));
       return;
     }
 
     if (passwordValues.newPassword !== passwordValues.confirmPassword) {
-      setPasswordError('Las contraseñas no coinciden.');
+      setPasswordError(t('profile.errorPasswordMismatch'));
       return;
     }
 
@@ -118,7 +120,7 @@ const Profile = () => {
         newPassword: passwordValues.newPassword,
       });
       setPasswordValues({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      setPasswordMessage('Contraseña actualizada exitosamente.');
+      setPasswordMessage(t('profile.successPassword'));
     } catch (err) {
       setPasswordError(
         err.validationErrors ? Object.values(err.validationErrors).join(' ') : err.message
@@ -134,10 +136,10 @@ const Profile = () => {
     setResetMessage('');
     try {
       await userService.resetAllData();
-      setResetMessage('Todos tus datos han sido eliminados.');
+      setResetMessage(t('profile.successReset'));
       setShowResetConfirm(false);
     } catch (err) {
-      setResetError(err.message || 'Error al restablecer los datos.');
+      setResetError(err.message || t('profile.errorLoad'));
     } finally {
       setIsResetting(false);
     }
@@ -165,13 +167,13 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <header className="page-header">
-        <h1>Mi Perfil</h1>
-        <p className="subtitle">Administra tu información personal y preferencias</p>
+        <h1>{t('profile.title')}</h1>
+        <p className="subtitle">{t('profile.subtitle')}</p>
       </header>
 
       <div className="profile-grid">
         <section className="card profile-card" aria-labelledby="profile-info-title">
-          <h3 id="profile-info-title">Información personal</h3>
+          <h3 id="profile-info-title">{t('profile.sectionPersonal')}</h3>
 
           {profileMessage && (
             <div className="alert alert-success" role="status" aria-live="polite" data-testid="profile-success">
@@ -186,7 +188,7 @@ const Profile = () => {
 
           <form onSubmit={handleProfileSubmit} noValidate data-testid="profile-form">
             <div className="form-group">
-              <label htmlFor="profile-name">Nombre *</label>
+              <label htmlFor="profile-name">{t('profile.fieldName')} *</label>
               <input
                 id="profile-name"
                 type="text"
@@ -199,7 +201,7 @@ const Profile = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="profile-email">Email</label>
+              <label htmlFor="profile-email">{t('profile.fieldEmail')}</label>
               <input
                 id="profile-email"
                 type="email"
@@ -213,7 +215,7 @@ const Profile = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="profile-currency">Moneda preferida</label>
+              <label htmlFor="profile-currency">{t('profile.fieldCurrency')}</label>
               <select
                 id="profile-currency"
                 className="form-select"
@@ -235,7 +237,7 @@ const Profile = () => {
 
             {profile?.createdAt && (
               <p className="profile-meta" data-testid="profile-member-since">
-                Miembro desde: {formatDate(profile.createdAt)}
+                {t('profile.memberSince')}: {formatDate(profile.createdAt)}
               </p>
             )}
 
@@ -247,14 +249,14 @@ const Profile = () => {
                 aria-busy={isSavingProfile}
                 data-testid="profile-save"
               >
-                {isSavingProfile ? 'Guardando...' : 'Guardar Cambios'}
+                {isSavingProfile ? t('profile.savingProfile') : t('profile.saveProfile')}
               </button>
             </div>
           </form>
         </section>
 
         <section className="card profile-card" aria-labelledby="profile-password-title">
-          <h3 id="profile-password-title">Cambiar contraseña</h3>
+          <h3 id="profile-password-title">{t('profile.sectionPassword')}</h3>
 
           {passwordMessage && (
             <div className="alert alert-success" role="status" aria-live="polite" data-testid="password-success">
@@ -269,7 +271,7 @@ const Profile = () => {
 
           <form onSubmit={handlePasswordSubmit} noValidate data-testid="password-form">
             <div className="form-group">
-              <label htmlFor="current-password">Contraseña actual *</label>
+              <label htmlFor="current-password">{t('profile.fieldCurrentPassword')} *</label>
               <input
                 id="current-password"
                 type="password"
@@ -285,7 +287,7 @@ const Profile = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="new-password">Nueva contraseña *</label>
+              <label htmlFor="new-password">{t('profile.fieldNewPassword')} *</label>
               <input
                 id="new-password"
                 type="password"
@@ -300,7 +302,7 @@ const Profile = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirm-password">Confirmar nueva contraseña *</label>
+              <label htmlFor="confirm-password">{t('profile.fieldConfirmPassword')} *</label>
               <input
                 id="confirm-password"
                 type="password"
@@ -323,19 +325,18 @@ const Profile = () => {
                 aria-busy={isSavingPassword}
                 data-testid="password-save"
               >
-                {isSavingPassword ? 'Guardando...' : 'Cambiar Contraseña'}
+                {isSavingPassword ? t('profile.savingPassword') : t('profile.savePassword')}
               </button>
             </div>
           </form>
         </section>
       </div>
 
-      {/* Zona de peligro */}
+      {/* Danger Zone */}
       <section className="card profile-card profile-danger-zone" aria-labelledby="danger-zone-title">
-        <h3 id="danger-zone-title" className="danger-title">Zona de peligro</h3>
+        <h3 id="danger-zone-title" className="danger-title">{t('profile.sectionDanger')}</h3>
         <p className="danger-desc">
-          Elimina todos tus gastos, ingresos, presupuestos y categorías de forma permanente.
-          Esta acción no se puede deshacer.
+          {t('profile.resetDataDesc')}
         </p>
 
         {resetMessage && (
@@ -356,7 +357,7 @@ const Profile = () => {
             onClick={() => { setShowResetConfirm(true); setResetMessage(''); setResetError(''); }}
             data-testid="reset-data-btn"
           >
-            🗑️ Restablecer todos los datos
+            🗑️ {t('profile.resetButton')}
           </button>
         ) : (
           <div className="danger-confirm">
@@ -370,7 +371,7 @@ const Profile = () => {
                 onClick={() => setShowResetConfirm(false)}
                 disabled={isResetting}
               >
-                Cancelar
+                {t('profile.cancelReset')}
               </button>
               <button
                 type="button"
@@ -380,7 +381,7 @@ const Profile = () => {
                 aria-busy={isResetting}
                 data-testid="reset-data-confirm"
               >
-                {isResetting ? 'Eliminando...' : 'Sí, eliminar todo'}
+                {isResetting ? '...' : t('profile.resetConfirmButton')}
               </button>
             </div>
           </div>

@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import App from './App.jsx';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 import { SettingsProvider } from './context/SettingsContext.jsx';
 import './styles/index.css';
 
@@ -20,9 +21,11 @@ root.render(
         v7_relativeSplatPath: true,
       }}
     >
-      <SettingsProvider>
-        <App />
-      </SettingsProvider>
+      <LanguageProvider>
+        <SettingsProvider>
+          <App />
+        </SettingsProvider>
+      </LanguageProvider>
     </HashRouter>
   </React.StrictMode>
 );

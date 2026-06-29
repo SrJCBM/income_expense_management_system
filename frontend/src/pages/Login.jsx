@@ -1,11 +1,15 @@
+// frontend/src/pages/Login.jsx
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { useForm } from '../hooks/useForm.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import AuthBrand from '../components/AuthBrand.jsx';
+import PasswordField from '../components/PasswordField.jsx';
 import '../styles/Auth.css';
 
 const Login = () => {
   const { login, isLoading, error: authError } = useAuth();
+  const { t, toggleLang } = useLanguage();
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (values) => {
@@ -13,7 +17,7 @@ const Login = () => {
     const password = values.password.trim();
 
     if (!email || !password) {
-      throw { validationErrors: { general: 'Por favor, completa todos los campos para continuar.' } };
+      throw { validationErrors: { general: t('auth.login.errorRequired') } };
     }
 
     await login(email, password);
@@ -32,10 +36,16 @@ const Login = () => {
       <AuthBrand variant="login" />
 
       <div className="auth-form-side">
+        <div className="auth-lang-toggle">
+          <button className="btn-lang-toggle" onClick={toggleLang} aria-label="Cambiar idioma">
+            {t('lang.toggle')}
+          </button>
+        </div>
+
         <div className="auth-card" role="main" aria-labelledby="login-title">
           <div className="auth-header">
-            <h2 id="login-title">Bienvenido de nuevo</h2>
-            <p>Ingresa tus credenciales para acceder</p>
+            <h2 id="login-title">{t('auth.login.title')}</h2>
+            <p>{t('auth.login.subtitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form" noValidate>
@@ -46,14 +56,14 @@ const Login = () => {
             )}
 
             <div className="form-group">
-              <label htmlFor="email">Correo electrónico</label>
+              <label htmlFor="email">{t('auth.login.emailLabel')}</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={values.email}
                 onChange={handleChange}
-                placeholder="tu@email.com"
+                placeholder={t('auth.login.emailPlaceholder')}
                 disabled={isFormDisabled}
                 required
                 aria-required="true"
@@ -61,26 +71,26 @@ const Login = () => {
                 aria-describedby={errors.email ? 'email-error' : undefined}
                 data-testid="email-input"
               />
-              {errors.email && <span id="email-error" className="error-text" role="alert">{errors.email}</span>}
+              {errors.email && (
+                <span id="email-error" className="error-text" role="alert">{errors.email}</span>
+              )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Contraseña</label>
-              <input
-                type="password"
+              <label htmlFor="password">{t('auth.login.passwordLabel')}</label>
+              <PasswordField
                 id="password"
                 name="password"
                 value={values.password}
                 onChange={handleChange}
                 placeholder="••••••••"
                 disabled={isFormDisabled}
-                required
-                aria-required="true"
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? 'password-error' : undefined}
-                data-testid="password-input"
+                ariaInvalid={!!errors.password}
+                ariaDescribedBy={errors.password ? 'password-error' : undefined}
               />
-              {errors.password && <span id="password-error" className="error-text" role="alert">{errors.password}</span>}
+              {errors.password && (
+                <span id="password-error" className="error-text" role="alert">{errors.password}</span>
+              )}
             </div>
 
             <button
@@ -90,12 +100,12 @@ const Login = () => {
               aria-busy={isFormDisabled}
               data-testid="login-button"
             >
-              {isFormDisabled ? 'Autenticando...' : 'Iniciar Sesión'}
+              {isFormDisabled ? t('auth.login.submitting') : t('auth.login.submit')}
             </button>
           </form>
 
           <div className="auth-footer">
-            <p>¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link></p>
+            <p>{t('auth.login.noAccount')} <Link to="/register">{t('auth.login.registerLink')}</Link></p>
           </div>
         </div>
       </div>

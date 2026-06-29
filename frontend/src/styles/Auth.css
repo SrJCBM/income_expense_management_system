@@ -330,3 +330,15 @@
 
 .rule-met  { color: #10b981; }
 .rule-unmet { color: var(--text-muted); }
+
+/* ── Auth language toggle ── */
+.auth-form-side {
+  position: relative;
+}
+
+.auth-lang-toggle {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}

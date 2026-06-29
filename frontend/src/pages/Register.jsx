@@ -1,30 +1,37 @@
+// frontend/src/pages/Register.jsx
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { useForm } from '../hooks/useForm.js';
+import { useLanguage } from '../context/LanguageContext.jsx';
+import { checkRules } from '../utils/passwordRules.js';
 import AuthBrand from '../components/AuthBrand.jsx';
+import PasswordField from '../components/PasswordField.jsx';
+import PasswordStrength from '../components/PasswordStrength.jsx';
 import '../styles/Auth.css';
 
 const Register = () => {
   const { register, isLoading, error: authError } = useAuth();
+  const { t, toggleLang } = useLanguage();
   const navigate = useNavigate();
 
   const handleRegisterSubmit = async (values) => {
     const trimmedName = values.name.trim();
 
     if (!trimmedName || !values.email.trim() || !values.password.trim()) {
-      throw { validationErrors: { general: 'Por favor, completa todos los campos requeridos.' } };
+      throw { validationErrors: { general: t('auth.register.errorRequired') } };
     }
 
     if (!/[A-Za-z]/.test(trimmedName)) {
-      throw { validationErrors: { name: 'El nombre debe incluir al menos una letra.' } };
+      throw { validationErrors: { name: t('auth.register.errorNameInvalid') } };
     }
 
     if (values.password !== values.confirmPassword) {
-      throw { validationErrors: { confirmPassword: 'Las contraseñas no coinciden. Por favor verifica.' } };
+      throw { validationErrors: { confirmPassword: t('auth.register.errorPasswordMismatch') } };
     }
 
-    if (values.password.length < 8) {
-      throw { validationErrors: { password: 'La contraseña debe tener al menos 8 caracteres.' } };
+    const allMet = checkRules(values.password).every((r) => r.met);
+    if (!allMet) {
+      throw { validationErrors: { password: t('password.errorWeak') } };
     }
 
     const { confirmPassword, ...userData } = values;
@@ -46,10 +53,16 @@ const Register = () => {
       <AuthBrand variant="register" />
 
       <div className="auth-form-side">
+        <div className="auth-lang-toggle">
+          <button className="btn-lang-toggle" onClick={toggleLang} aria-label="Cambiar idioma">
+            {t('lang.toggle')}
+          </button>
+        </div>
+
         <div className="auth-card" role="main" aria-labelledby="register-title">
           <div className="auth-header">
-            <h2 id="register-title">Crear cuenta</h2>
-            <p>Únete y toma el control de tus finanzas</p>
+            <h2 id="register-title">{t('auth.register.title')}</h2>
+            <p>{t('auth.register.subtitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form" noValidate>
@@ -60,14 +73,14 @@ const Register = () => {
             )}
 
             <div className="form-group">
-              <label htmlFor="name">Nombre completo</label>
+              <label htmlFor="name">{t('auth.register.nameLabel')}</label>
               <input
                 type="text"
                 id="name"
                 name="name"
                 value={values.name}
                 onChange={handleChange}
-                placeholder="Ej. Juan Pérez"
+                placeholder={t('auth.register.namePlaceholder')}
                 disabled={isFormDisabled}
                 required
                 aria-required="true"
@@ -75,18 +88,20 @@ const Register = () => {
                 aria-describedby={errors.name ? 'name-error' : undefined}
                 data-testid="name-input"
               />
-              {errors.name && <span id="name-error" className="error-text" role="alert">{errors.name}</span>}
+              {errors.name && (
+                <span id="name-error" className="error-text" role="alert" data-testid="register-error-name">{errors.name}</span>
+              )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Correo electrónico</label>
+              <label htmlFor="email">{t('auth.register.emailLabel')}</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={values.email}
                 onChange={handleChange}
-                placeholder="tu@email.com"
+                placeholder={t('auth.register.emailPlaceholder')}
                 disabled={isFormDisabled}
                 required
                 aria-required="true"
@@ -94,43 +109,40 @@ const Register = () => {
                 aria-describedby={errors.email ? 'email-error' : undefined}
                 data-testid="email-input"
               />
-              {errors.email && <span id="email-error" className="error-text" role="alert">{errors.email}</span>}
+              {errors.email && (
+                <span id="email-error" className="error-text" role="alert">{errors.email}</span>
+              )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">Contraseña</label>
-              <input
-                type="password"
+              <label htmlFor="password">{t('auth.register.passwordLabel')}</label>
+              <PasswordField
                 id="password"
                 name="password"
                 value={values.password}
                 onChange={handleChange}
-                placeholder="Mínimo 8 caracteres"
+                placeholder={t('auth.register.passwordPlaceholder')}
                 disabled={isFormDisabled}
-                required
-                aria-required="true"
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? 'password-error' : undefined}
-                data-testid="password-input"
+                ariaInvalid={!!errors.password}
+                ariaDescribedBy={errors.password ? 'password-error' : undefined}
               />
-              {errors.password && <span id="password-error" className="error-text" role="alert">{errors.password}</span>}
+              <PasswordStrength password={values.password} />
+              {errors.password && (
+                <span id="password-error" className="error-text" role="alert" data-testid="register-error-password">{errors.password}</span>
+              )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirmar contraseña</label>
-              <input
-                type="password"
+              <label htmlFor="confirmPassword">{t('auth.register.confirmLabel')}</label>
+              <PasswordField
                 id="confirmPassword"
                 name="confirmPassword"
                 value={values.confirmPassword}
                 onChange={handleChange}
-                placeholder="Repite tu contraseña"
+                placeholder={t('auth.register.confirmPlaceholder')}
                 disabled={isFormDisabled}
-                required
-                aria-required="true"
-                aria-invalid={!!errors.confirmPassword}
-                aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
-                data-testid="confirm-password-input"
+                ariaInvalid={!!errors.confirmPassword}
+                ariaDescribedBy={errors.confirmPassword ? 'confirmPassword-error' : undefined}
               />
               {errors.confirmPassword && (
                 <span id="confirmPassword-error" className="error-text" role="alert">
@@ -146,12 +158,12 @@ const Register = () => {
               aria-busy={isFormDisabled}
               data-testid="register-button"
             >
-              {isFormDisabled ? 'Creando tu cuenta...' : 'Crear Cuenta'}
+              {isFormDisabled ? t('auth.register.submitting') : t('auth.register.submit')}
             </button>
           </form>
 
           <div className="auth-footer">
-            <p>¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link></p>
+            <p>{t('auth.register.hasAccount')} <Link to="/login">{t('auth.register.loginLink')}</Link></p>
           </div>
         </div>
       </div>

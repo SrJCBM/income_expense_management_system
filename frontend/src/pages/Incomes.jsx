@@ -205,13 +205,13 @@ const Incomes = () => {
             placeholder={t('incomes.searchPlaceholder')}
             className="filter-search"
             data-testid="income-filter-search"
-            aria-label={t('incomes.searchPlaceholder')}
+            aria-label={t('incomes.searchLabel')}
           />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             data-testid="income-filter-category"
-            aria-label={t('incomes.allCategories')}
+            aria-label={t('incomes.filterCategoryLabel')}
           >
             <option value="">{t('incomes.allCategories')}</option>
             {categories.map((cat) => (
@@ -223,7 +223,7 @@ const Incomes = () => {
             value={monthFilter}
             onChange={(e) => setMonthFilter(e.target.value)}
             data-testid="income-filter-month"
-            aria-label={t('incomes.filterButton')}
+            aria-label={t('incomes.filterMonthLabel')}
           />
           <button
             type="button"

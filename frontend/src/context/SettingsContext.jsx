@@ -33,7 +33,7 @@ export const SettingsProvider = ({ children }) => {
 
   const formatCurrency = useCallback(
     (value) =>
-      new Intl.NumberFormat('es-MX', {
+      new Intl.NumberFormat('es-EC', {
         style: 'currency',
         currency,
         minimumFractionDigits: 2,

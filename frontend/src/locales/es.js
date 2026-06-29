@@ -67,7 +67,7 @@ export default {
     },
     brand: {
       login: {
-        tagline1: 'Cada peso',
+        tagline1: 'Cada dólar',
         tagline2: 'con ',
         taglineEm: 'propósito',
         feature1: 'Registra ingresos y gastos al instante',

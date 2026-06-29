@@ -210,6 +210,7 @@ export default {
     errorRequired: 'Completa concepto, monto, fecha y categoría.',
     errorAmount: 'El monto debe ser mayor a 0.',
     noCategoriesHint: 'No hay categorías de ingresos disponibles. Crea una en la sección de categorías.',
+    errorLoad: 'Error al cargar los ingresos:',
   },
   categories: {
     title: 'Gestionar Categorías',

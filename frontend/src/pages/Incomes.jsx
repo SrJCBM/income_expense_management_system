@@ -5,6 +5,7 @@ import Pagination from '../components/Pagination.jsx';
 import categoryService from '../services/categoryService.js';
 import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
 import { useSettings } from '../context/SettingsContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'incomes_filters';
@@ -30,6 +31,7 @@ const Incomes = () => {
   } = useIncomes();
 
   const { formatCurrency } = useSettings();
+  const { t } = useLanguage();
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -103,11 +105,11 @@ const Incomes = () => {
 
   const handleIncomeSubmit = async (values) => {
     if (!values.concept || !values.amount || !values.date || !values.categoryId) {
-      throw { validationErrors: { general: 'Completa concepto, monto, fecha y categoría.' } };
+      throw { validationErrors: { general: t('incomes.errorRequired') } };
     }
 
     if (Number(values.amount) <= 0) {
-      throw { validationErrors: { amount: 'El monto debe ser mayor a 0.' } };
+      throw { validationErrors: { amount: t('incomes.errorAmount') } };
     }
 
     const payload = {
@@ -120,10 +122,10 @@ const Incomes = () => {
 
     if (editingIncome) {
       await updateIncome(editingIncome.id || editingIncome._id, payload);
-      setSuccessMessage('Ingreso actualizado exitosamente.');
+      setSuccessMessage(t('incomes.successEdit'));
     } else {
       await addIncome(payload);
-      setSuccessMessage('Ingreso creado exitosamente.');
+      setSuccessMessage(t('incomes.successCreate'));
     }
 
     setShowForm(false);
@@ -155,10 +157,10 @@ const Incomes = () => {
   };
 
   const handleDelete = async (incomeId) => {
-    if (!window.confirm('¿Estás seguro de eliminar este ingreso?')) return;
+    if (!window.confirm(t('incomes.confirmDelete'))) return;
     try {
       await removeIncome(incomeId);
-      setSuccessMessage('Ingreso eliminado exitosamente.');
+      setSuccessMessage(t('incomes.successDelete'));
     } catch {
       // El error ya se expone por el hook en la UI
     }
@@ -174,8 +176,8 @@ const Incomes = () => {
     <div className="expenses-container">
       <header className="page-header flex-between">
         <div>
-          <h1>Gestionar Ingresos</h1>
-          <p className="subtitle">Lleva el control de todas tus entradas de dinero</p>
+          <h1>{t('incomes.title')}</h1>
+          <p className="subtitle">{t('incomes.subtitle')}</p>
         </div>
         <button
           className="btn-primary"
@@ -183,7 +185,7 @@ const Incomes = () => {
           disabled={showForm}
           data-testid="new-income-button"
         >
-          + Nuevo Ingreso
+          {t('incomes.newButton')}
         </button>
       </header>
 
@@ -200,18 +202,18 @@ const Incomes = () => {
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
-            placeholder="Buscar por concepto o notas..."
+            placeholder={t('incomes.searchPlaceholder')}
             className="filter-search"
             data-testid="income-filter-search"
-            aria-label="Buscar ingresos"
+            aria-label={t('incomes.searchPlaceholder')}
           />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             data-testid="income-filter-category"
-            aria-label="Filtrar por categoría"
+            aria-label={t('incomes.allCategories')}
           >
-            <option value="">Todas las categorías</option>
+            <option value="">{t('incomes.allCategories')}</option>
             {categories.map((cat) => (
               <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
             ))}
@@ -221,7 +223,7 @@ const Incomes = () => {
             value={monthFilter}
             onChange={(e) => setMonthFilter(e.target.value)}
             data-testid="income-filter-month"
-            aria-label="Filtrar por mes"
+            aria-label={t('incomes.filterButton')}
           />
           <button
             type="button"
@@ -229,7 +231,7 @@ const Incomes = () => {
             onClick={handleApplyFilters}
             data-testid="income-apply-filters"
           >
-            Filtrar
+            {t('incomes.filterButton')}
           </button>
           <button
             type="button"
@@ -237,14 +239,14 @@ const Incomes = () => {
             onClick={handleClearFilters}
             data-testid="income-clear-filters"
           >
-            Limpiar
+            {t('incomes.clearButton')}
           </button>
         </div>
       )}
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingIncome ? 'Editar Ingreso' : 'Registrar Nuevo Ingreso'}</h3>
+          <h3>{editingIncome ? t('incomes.formTitleEdit') : t('incomes.formTitleCreate')}</h3>
 
           {errors.general && (
             <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="income-error-general">
@@ -264,14 +266,14 @@ const Incomes = () => {
 
           <form onSubmit={handleSubmit} noValidate data-testid="income-form">
             <div className="form-group">
-              <label htmlFor="income-concept">Concepto *</label>
+              <label htmlFor="income-concept">{t('incomes.fieldConcept')} *</label>
               <input
                 id="income-concept"
                 type="text"
                 name="concept"
                 value={values.concept}
                 onChange={handleChange}
-                placeholder="Ej. Pago de salario"
+                placeholder={t('incomes.fieldConceptPlaceholder')}
                 disabled={isSubmitting}
                 aria-required="true"
                 aria-invalid={!!errors.concept}
@@ -283,7 +285,7 @@ const Incomes = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="income-amount">Monto *</label>
+                <label htmlFor="income-amount">{t('incomes.fieldAmount')} *</label>
                 <input
                   id="income-amount"
                   type="number"
@@ -303,7 +305,7 @@ const Incomes = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="income-date">Fecha *</label>
+                <label htmlFor="income-date">{t('incomes.fieldDate')} *</label>
                 <input
                   id="income-date"
                   type="date"
@@ -321,7 +323,7 @@ const Incomes = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="income-category">Categoría *</label>
+              <label htmlFor="income-category">{t('incomes.fieldCategory')} *</label>
               <select
                 id="income-category"
                 name="categoryId"
@@ -334,7 +336,7 @@ const Incomes = () => {
                 aria-describedby={errors.categoryId ? 'category-error' : undefined}
                 data-testid="income-category"
               >
-                <option value="">Selecciona una categoría</option>
+                <option value="">{t('incomes.fieldCategoryDefault')}</option>
                 {categories.map((category) => (
                   <option key={category.id || category._id} value={category.id || category._id}>
                     {category.name}
@@ -345,13 +347,13 @@ const Incomes = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="income-notes">Notas</label>
+              <label htmlFor="income-notes">{t('incomes.fieldNotes')}</label>
               <textarea
                 id="income-notes"
                 name="notes"
                 value={values.notes}
                 onChange={handleChange}
-                placeholder="Información adicional (opcional)"
+                placeholder={t('incomes.fieldNotesPlaceholder')}
                 className="form-textarea"
                 disabled={isSubmitting}
                 data-testid="income-notes"
@@ -366,7 +368,7 @@ const Incomes = () => {
                 disabled={isSubmitting}
                 data-testid="income-cancel"
               >
-                Cancelar
+                {t('incomes.cancelButton')}
               </button>
               <button
                 type="submit"
@@ -375,7 +377,7 @@ const Incomes = () => {
                 aria-busy={isSubmitting}
                 data-testid="income-submit"
               >
-                {isSubmitting ? 'Guardando...' : editingIncome ? 'Actualizar Ingreso' : 'Crear Ingreso'}
+                {isSubmitting ? t('incomes.submitting') : editingIncome ? t('incomes.submitEdit') : t('incomes.submitCreate')}
               </button>
             </div>
           </form>
@@ -385,22 +387,22 @@ const Incomes = () => {
           {isLoading ? (
             <div className="skeleton-item"></div>
           ) : error ? (
-            <div className="alert alert-error">{error}</div>
+            <div className="alert alert-error">{t('incomes.errorLoad')} {error}</div>
           ) : incomes.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">📈</div>
-              <h3>No tienes ingresos registrados</h3>
-              <p className="hint">Agrega un nuevo ingreso para comenzar.</p>
+              <h3>{t('incomes.emptyTitle')}</h3>
+              <p className="hint">{t('incomes.emptyHint')}</p>
             </div>
           ) : (
             <table className="data-table" data-testid="income-list">
               <thead>
                 <tr>
-                  <th>Fecha</th>
-                  <th>Concepto</th>
-                  <th>Categoría</th>
-                  <th>Monto</th>
-                  <th>Acciones</th>
+                  <th>{t('incomes.colDate')}</th>
+                  <th>{t('incomes.colConcept')}</th>
+                  <th>{t('incomes.colCategory')}</th>
+                  <th>{t('incomes.colAmount')}</th>
+                  <th>{t('incomes.colActions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -410,11 +412,11 @@ const Incomes = () => {
                     <tr key={incomeId} data-testid="income-item">
                       <td>{toDateInputValue(income.date)}</td>
                       <td>{income.concept}</td>
-                      <td>{income.category?.name || 'Sin categoría'}</td>
+                      <td>{income.category?.name || t('incomes.noCategory')}</td>
                       <td className="amount positive">+{formatCurrency(income.amount)}</td>
                       <td className="actions-cell">
-                        <button className="btn-icon" onClick={() => handleEdit(income)} title="Editar" data-testid="edit-income">✏️</button>
-                        <button className="btn-icon" onClick={() => handleDelete(incomeId)} title="Eliminar" data-testid="delete-income">🗑️</button>
+                        <button className="btn-icon" onClick={() => handleEdit(income)} title={t('incomes.editTitle')} data-testid="edit-income">✏️</button>
+                        <button className="btn-icon" onClick={() => handleDelete(incomeId)} title={t('incomes.deleteTitle')} data-testid="delete-income">🗑️</button>
                       </td>
                     </tr>
                   );
@@ -437,7 +439,7 @@ const Incomes = () => {
 
       {!showForm && !categoriesError && categories.length === 0 && (
         <div className="card list-card">
-          <p className="hint">No hay categorías de ingresos disponibles. Crea una en la sección de categorías.</p>
+          <p className="hint">{t('incomes.noCategoriesHint')}</p>
         </div>
       )}
     </div>

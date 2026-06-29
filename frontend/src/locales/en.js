@@ -210,6 +210,7 @@ export default {
     errorRequired: 'Please fill in concept, amount, date and category.',
     errorAmount: 'Amount must be greater than 0.',
     noCategoriesHint: 'No income categories available. Create one in the categories section.',
+    errorLoad: 'Error loading income:',
   },
   categories: {
     title: 'Manage Categories',

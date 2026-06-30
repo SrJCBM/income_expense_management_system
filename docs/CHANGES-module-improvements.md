@@ -123,9 +123,88 @@ Las tarjetas del Dashboard mostraban cifras absolutas sin contexto. Saber que ga
 
 ---
 
-## 5. Corrección de nombre de marca
+## 5. Corrección de nombre de marca (AuthBrand)
 
 **AuthBrand.jsx**: El nombre de la aplicación cambió de "FinTrack" a "FinanceApp" para reflejar el nombre real del proyecto.
+
+---
+
+---
+
+## Pruebas realizadas
+
+### Paginación — backend (Vitest + mongodb-memory-server)
+
+Archivos: `backend/tests/unit/expenseService.pagination.test.js`, `backend/tests/unit/incomeService.pagination.test.js`
+
+Estas pruebas insertan registros directamente en la base de datos en memoria y verifican el comportamiento del servicio antes de que el controlador o la respuesta HTTP intervengan.
+
+**ExpenseService — pagination** (3 tests)
+
+| Test | Qué verifica |
+|------|-------------|
+| `returns first page with totalPages` | Con 25 gastos y `limit: 10`, la primera página retorna exactamente 10 registros, `total: 25`, `page: 1`, `limit: 10`, `totalPages: 3` |
+| `returns second page correctly` | Con `page: 2, limit: 10` retorna los siguientes 10 registros y `page: 2` |
+| `defaults to page 1, limit 20 when not provided` | Sin parámetros de paginación, el servicio usa `page: 1` y `limit: 20` por defecto |
+
+**IncomeService — pagination** (2 tests)
+
+| Test | Qué verifica |
+|------|-------------|
+| `returns first page with totalPages` | Con 25 ingresos y `limit: 10`, primera página retorna 10 registros con `totalPages: 3` |
+| `defaults to page 1, limit 20 when not provided` | Sin parámetros, el servicio usa `page: 1` y `limit: 20` |
+
+---
+
+### Servicios completos — comportamiento existente actualizado (Vitest)
+
+Los tests unitarios de `expenseService.test.js` e `incomeService.test.js` ya existían. Se actualizaron para leer `result.data` (array) en lugar de `result` directamente, porque la respuesta del servicio cambió de un array plano a un objeto paginado `{ data, total, page, limit, totalPages }`.
+
+**ExpenseService** — 26 tests en 5 suites:
+
+| Suite | Tests |
+|-------|-------|
+| `createExpense` | Datos válidos, userId correcto, monto negativo, categoría inexistente, fecha inválida, notas y tags |
+| `getUserExpenses` | Solo gastos del usuario, lista vacía, filtro por categoría, filtro por mes/año, orden descendente, múltiples filtros combinados |
+| `updateExpense` | Actualizar monto, actualizar descripción, actualizar categoría, gasto inexistente, usuario no propietario, campos no modificados |
+| `deleteExpense` | Eliminar exitosamente + verificar en BD, gasto inexistente, otro usuario no puede eliminar, retorna info del eliminado |
+| `getExpensesByMonth` | Mes específico, cálculo de total, mes sin gastos, años diferentes |
+
+**IncomeService** — 34 tests en 6 suites:
+
+| Suite | Tests |
+|-------|-------|
+| `createIncome` | Datos válidos, userId correcto, monto negativo, monto cero, categoría de tipo expense rechazada, categoría inexistente, fecha inválida, notas, sin categoría |
+| `getUserIncomes` | Solo ingresos del usuario, lista vacía, filtro por categoría, filtro por mes/año, orden descendente, múltiples filtros combinados |
+| `updateIncome` | Actualizar monto, descripción, categoría válida, cambio a categoría expense rechazado, ingreso inexistente, usuario no propietario, campos no modificados |
+| `deleteIncome` | Eliminar exitosamente + verificar en BD, ingreso inexistente, otro usuario no puede eliminar, retorna info del eliminado |
+| `Validación de categorías income` | Solo acepta tipo salary, acepta tipo freelance, rechaza tipo expense, rechaza categoría de otro usuario |
+| `Cálculos mensuales` | Mes específico, total mensual correcto ($3,300), mes sin ingresos, sin incluir meses adyacentes |
+
+---
+
+### Cobertura de los cambios de UI/frontend
+
+El frontend no tiene tests unitarios para los nuevos componentes (`Pagination`, `TrendBadge`, `calcTrend`). La verificación se hizo de forma manual:
+
+**Paginación UI**
+- Navegar a Gastos/Ingresos con más de 20 registros → aparecen botones Anterior/Siguiente y el indicador "Página X de Y"
+- Con ≤20 registros → el componente `Pagination` no se renderiza (retorna `null`)
+- Cambiar de página conserva los filtros activos
+
+**Persistencia de filtros**
+- Aplicar filtros en Gastos, navegar al Dashboard, volver a Gastos → filtros restaurados
+- Limpiar filtros → `sessionStorage` borrado, lista sin filtros
+- Cerrar la pestaña y reabrir → filtros no persisten (comportamiento correcto de `sessionStorage`)
+
+**Gráfico de tendencia anual**
+- Sección Reports con datos del año → aparece el `LineChart` con dos líneas (verde/rojo)
+- Sin datos en el año seleccionado → la sección no se renderiza
+
+**Badges de tendencia en Dashboard**
+- Mes con datos previos → badge `▲ +X%` o `▼ -X%` debajo del monto
+- Primer mes sin histórico → badge no aparece (evita `+∞%`)
+- Gasto que subió → badge rojo (no verde), gasto que bajó → badge verde
 
 ---
 

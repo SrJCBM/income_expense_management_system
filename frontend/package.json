@@ -1,9 +1,30 @@
 {
-  "name": "income-expense-frontend",
+  "name": "financeapp-frontend",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
+  "description": "FinanceApp frontend and Electron desktop client for personal income, expense, budget and report management.",
   "type": "module",
   "main": "electron/main.cjs",
+  "author": "Ricardo Lainez",
+  "license": "MIT",
+  "homepage": "https://github.com/Ricardo-lainez/income_expense_management_system#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ricardo-lainez/income_expense_management_system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ricardo-lainez/income_expense_management_system/issues"
+  },
+  "keywords": [
+    "finance",
+    "income",
+    "expense",
+    "budget",
+    "reports",
+    "offline",
+    "electron",
+    "react"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -46,7 +67,7 @@
   },
   "build": {
     "appId": "com.incomeexpense.desktop",
-    "productName": "Income Expense Manager",
+    "productName": "FinanceApp",
     "files": [
       "dist/**/*",
       "electron/**/*",
@@ -83,7 +104,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Income Expense Manager"
+      "shortcutName": "FinanceApp"
     }
   }
 }

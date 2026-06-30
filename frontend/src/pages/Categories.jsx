@@ -5,20 +5,21 @@ import { useLanguage } from '../context/LanguageContext.jsx';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Categories.css';
 
-const ALL_ICONS = [
-  '💰','💳','🏦','📈','📉','💎','🪙','💵','🤑','💸',
-  '🍔','🍕','🍣','🥗','🍺','🍷','☕','🍰','🥤','🍎',
-  '🚗','🚌','✈️','🚂','🚕','🛵','🚲','⛽','🛞','🗺️',
-  '🏠','🏡','💡','🔧','🪴','🧹','📦','🔑','🛒','🧰',
-  '💊','🏥','💪','🧘','🩺','🦷','👓','🩹','🏃','🧬',
-  '📚','🎓','📝','🔬','🎨','✏️','📐','🏫','📖','🧪',
-  '💼','💻','📊','📱','📞','🖥️','⌨️','📋','📁','🗂️',
-  '🎮','🎬','🎵','🎭','📺','🎲','⚽','🎸','🎯','🎪',
-  '🐕','🐈','🌿','🌺','🌳','💇','💆','👶','🧴','🪞',
-  '📌','⭐','🏆','❤️','✨','🔴','🟡','🟢','🟣','🔵',
-  '🚬','🍸','🥃','🎰','🃏','🎳','🏋️','🧗','🤿','🎻',
-  '🍽️','🧾','🧑‍💻','🛍️',
+const ICON_GROUPS = [
+  { key: 'finance', icons: ['💰','💳','🏦','📈','📉','💎','🪙','💵','🤑','💸'] },
+  { key: 'food', icons: ['🍔','🍕','🍣','🥗','🍺','🍷','☕','🍰','🥤','🍎','🍽️'] },
+  { key: 'transport', icons: ['🚗','🚌','✈️','🚂','🚕','🛵','🚲','⛽','🛞','🗺️'] },
+  { key: 'home', icons: ['🏠','🏡','💡','🔧','🪴','🧹','📦','🔑','🛒','🧰'] },
+  { key: 'health', icons: ['💊','🏥','💪','🧘','🩺','🦷','👓','🩹','🏃','🧬'] },
+  { key: 'education', icons: ['📚','🎓','📝','🔬','🎨','✏️','📐','🏫','📖','🧪'] },
+  { key: 'work', icons: ['💼','💻','📊','📱','📞','🖥️','⌨️','📋','📁','🗂️','🧑‍💻'] },
+  { key: 'entertainment', icons: ['🎮','🎬','🎵','🎭','📺','🎲','⚽','🎸','🎯','🎪'] },
+  { key: 'personal', icons: ['🐕','🐈','🌿','🌺','🌳','💇','💆','👶','🧴','🪞','🛍️'] },
+  { key: 'habits', icons: ['🚬','🍸','🥃','🎰','🃏','🎳','🏋️','🧗','🤿','🎻'] },
+  { key: 'general', icons: ['📌','⭐','🏆','❤️','✨','🔴','🟡','🟢','🟣','🔵','🧾'] },
 ];
+
+const ALL_ICONS = ICON_GROUPS.flatMap((group) => group.icons);
 
 const displayIcon = (icon) => (ALL_ICONS.includes(icon) ? icon : ALL_ICONS[0]);
 
@@ -26,19 +27,26 @@ const IconPicker = ({ value, onChange, disabled }) => {
   const { t } = useLanguage();
   return (
     <div className="icon-picker" role="radiogroup" aria-label={t('categories.selectIconLabel')}>
-      {ALL_ICONS.map((icon) => (
-        <button
-          key={icon}
-          type="button"
-          role="radio"
-          aria-checked={value === icon}
-          className={`icon-btn${value === icon ? ' icon-btn-selected' : ''}`}
-          onClick={() => !disabled && onChange(icon)}
-          disabled={disabled}
-          title={icon}
-        >
-          {icon}
-        </button>
+      {ICON_GROUPS.map((group) => (
+        <section key={group.key} className="icon-group">
+          <h4>{t(`categories.iconGroups.${group.key}`)}</h4>
+          <div className="icon-group-grid">
+            {group.icons.map((icon) => (
+              <button
+                key={icon}
+                type="button"
+                role="radio"
+                aria-checked={value === icon}
+                className={`icon-btn${value === icon ? ' icon-btn-selected' : ''}`}
+                onClick={() => !disabled && onChange(icon)}
+                disabled={disabled}
+                title={icon}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+        </section>
       ))}
     </div>
   );

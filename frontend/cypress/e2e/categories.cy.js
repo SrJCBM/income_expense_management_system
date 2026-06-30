@@ -37,7 +37,8 @@ describe('Gestión de Categorías', () => {
     cy.get('[data-testid="category-name"]').type('Suscripciones');
     cy.get('[data-testid="category-type"]').select('expense');
     cy.get('[data-testid="category-color"]').invoke('val', '#ff0000').trigger('change');
-    cy.get('[data-testid="category-icon"]').select('🧾');
+    cy.contains('.icon-btn', '🧾').click();
+    cy.get('[data-testid="category-icon"]').should('have.value', '🧾');
     cy.get('[data-testid="category-description"]').type('Netflix, Spotify, etc.');
     
     cy.get('[data-testid="category-submit"]').click();
@@ -48,7 +49,7 @@ describe('Gestión de Categorías', () => {
       icon: '🧾'
     });
     
-    cy.get('[data-testid="success-message"]').should('contain.text', 'Categoria creada exitosamente');
+    cy.get('[data-testid="success-message"]').should('contain.text', 'Categoría creada exitosamente.');
   });
 
   it('debería editar una categoría existente', () => {
@@ -73,7 +74,7 @@ describe('Gestión de Categorías', () => {
       name: 'Alimentación Modificada'
     });
     
-    cy.get('[data-testid="success-message"]').should('contain.text', 'Categoria actualizada exitosamente');
+    cy.get('[data-testid="success-message"]').should('contain.text', 'Categoría actualizada exitosamente.');
   });
 
   it('debería eliminar una categoría tras confirmar', () => {
@@ -88,7 +89,7 @@ describe('Gestión de Categorías', () => {
     cy.get('[data-testid="delete-category"]').first().click();
     
     cy.wait('@deleteCategory');
-    cy.get('[data-testid="success-message"]').should('contain.text', 'Categoria eliminada exitosamente');
+    cy.get('[data-testid="success-message"]').should('contain.text', 'Categoría eliminada exitosamente.');
   });
 
   it('debería cancelar la creación de una categoría', () => {
@@ -105,7 +106,7 @@ describe('Gestión de Categorías', () => {
     
     cy.get('[data-testid="category-error-general"]')
       .should('be.visible')
-      .and('contain.text', 'El nombre y tipo de categoria son obligatorios');
+      .and('contain.text', 'El nombre y tipo son obligatorios.');
   });
 
   it('debería validar nombres que solo contienen símbolos (error de frontend)', () => {

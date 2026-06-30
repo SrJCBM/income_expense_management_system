@@ -229,6 +229,33 @@ describe('IncomeService', () => {
 			expect(result.notes).toBe(incomeData.notes);
 		});
 
+		it('debe devolver el ingreso existente al repetir el mismo clientRequestId', async () => {
+			const incomeData = {
+				description: 'Pago offline',
+				amount: 450.25,
+				category: testCategories.freelance._id,
+				date: new Date('2024-05-12'),
+				clientRequestId: 'income-offline-001',
+			};
+
+			const firstResult = await incomeService.createIncome(testUser._id, incomeData);
+			const secondResult = await incomeService.createIncome(testUser._id, {
+				...incomeData,
+				description: 'Pago offline duplicado',
+				amount: 900,
+			});
+
+			const savedIncomes = await Income.find({
+				userId: testUser._id,
+				clientRequestId: 'income-offline-001',
+			});
+
+			expect(secondResult.id).toBe(firstResult.id);
+			expect(secondResult.description).toBe('Pago offline');
+			expect(secondResult.amount).toBe(450.25);
+			expect(savedIncomes).toHaveLength(1);
+		});
+
 		/**
 		 * Test 9: Debe fallar si no se proporciona categoría
 		 */

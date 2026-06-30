@@ -34,6 +34,11 @@ const incomeSchema = new mongoose.Schema(
       index: true,
     },
     notes: String,
+    clientRequestId: {
+      type: String,
+      trim: true,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -41,6 +46,10 @@ const incomeSchema = new mongoose.Schema(
 );
 
 incomeSchema.index({ userId: 1, date: -1 });
+incomeSchema.index(
+  { userId: 1, clientRequestId: 1 },
+  { unique: true, partialFilterExpression: { clientRequestId: { $type: 'string' } } }
+);
 
 const Income = mongoose.model('Income', incomeSchema);
 

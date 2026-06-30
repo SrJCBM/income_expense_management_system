@@ -92,6 +92,9 @@
 .sidebar-footer {
   padding: 12px;
   border-top: 1px solid var(--surface-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .user-info {
@@ -187,6 +190,8 @@
 .topbar-mobile h2 {
   font-weight: 700;
   font-size: 16px;
+  flex: 1;
+  text-align: center;
 }
 
 /* Content area */
@@ -282,7 +287,95 @@
 
 /* Ensure topbar-mobile has space for the toggle */
 .topbar-mobile {
-  display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+/* ── Connection status ── */
+.connection-card {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 10px 12px;
+}
+
+.connection-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.connection-state,
+.connection-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.connection-state strong,
+.connection-pill span {
+  font-weight: 700;
+}
+
+.connection-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  flex-shrink: 0;
+}
+
+.connection-offline .connection-dot {
+  background: var(--danger-light);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.14);
+}
+
+.connection-pending {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.connection-pill {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-pill);
+  background: rgba(255, 255, 255, 0.055);
+  padding: 6px 9px;
+  white-space: nowrap;
+}
+
+.connection-pill strong {
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.2);
+  color: #dbe4ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+@media (max-width: 420px) {
+  .topbar-mobile {
+    gap: 8px;
+    padding-inline: 12px;
+  }
+
+  .topbar-mobile h2 {
+    font-size: 14px;
+  }
+
+  .connection-pill {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
 }

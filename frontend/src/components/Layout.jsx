@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import ConnectionStatusCard from './ConnectionStatusCard.jsx';
 import '../styles/Layout.css';
 
 const Layout = () => {
@@ -50,6 +51,7 @@ const Layout = () => {
           ))}
         </nav>
         <div className="sidebar-footer">
+          <ConnectionStatusCard />
           <div className="user-info">
             <div className="user-avatar">
               {(user?.name || 'U').charAt(0).toUpperCase()}
@@ -102,6 +104,7 @@ const Layout = () => {
           >
             {t('lang.toggle')}
           </button>
+          <ConnectionStatusCard compact />
         </header>
         <div className="content-wrapper">
           <Outlet />

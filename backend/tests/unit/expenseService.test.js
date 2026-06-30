@@ -188,6 +188,33 @@ describe('ExpenseService', () => {
 			expect(result.notes).toBe(expenseData.notes);
 			expect(result.tags).toEqual(expenseData.tags);
 		});
+
+		it('debe devolver el gasto existente al repetir el mismo clientRequestId', async () => {
+			const expenseData = {
+				description: 'Compra offline',
+				amount: 22.75,
+				category: testCategories.food._id,
+				date: new Date('2024-05-20'),
+				clientRequestId: 'expense-offline-001',
+			};
+
+			const firstResult = await expenseService.createExpense(testUser._id, expenseData);
+			const secondResult = await expenseService.createExpense(testUser._id, {
+				...expenseData,
+				description: 'Compra offline duplicada',
+				amount: 99.99,
+			});
+
+			const savedExpenses = await Expense.find({
+				userId: testUser._id,
+				clientRequestId: 'expense-offline-001',
+			});
+
+			expect(secondResult.id).toBe(firstResult.id);
+			expect(secondResult.description).toBe('Compra offline');
+			expect(secondResult.amount).toBe(22.75);
+			expect(savedExpenses).toHaveLength(1);
+		});
 	});
 
 	/**

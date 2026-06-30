@@ -35,6 +35,7 @@ const normalizeExpenseInput = (expenseData) => {
     category: expenseData.category || expenseData.categoryId,
     date: normalizeTransactionDate(expenseData.date),
     notes: expenseData.notes,
+    clientRequestId: normalizeClientRequestId(expenseData.clientRequestId),
   };
 
   if (Array.isArray(expenseData.tags)) {
@@ -42,6 +43,15 @@ const normalizeExpenseInput = (expenseData) => {
   }
 
   return normalized;
+};
+
+const normalizeClientRequestId = (clientRequestId) => {
+  if (typeof clientRequestId !== 'string') {
+    return null;
+  }
+
+  const trimmed = clientRequestId.trim();
+  return trimmed || null;
 };
 
 const normalizeTransactionDate = (date) => {
@@ -137,6 +147,17 @@ class ExpenseService {
    */
   async createExpense(userId, expenseData) {
     const normalizedData = normalizeExpenseInput(expenseData);
+
+    if (normalizedData.clientRequestId) {
+      const existingExpense = await Expense.findOne({
+        userId,
+        clientRequestId: normalizedData.clientRequestId,
+      }).populate('category', 'name type color');
+
+      if (existingExpense) {
+        return mapExpenseForResponse(existingExpense);
+      }
+    }
 
     const expense = await Expense.create({
       ...normalizedData,

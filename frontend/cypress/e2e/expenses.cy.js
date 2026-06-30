@@ -49,7 +49,7 @@ describe('CRUD de Gastos (E2E)', () => {
   it('Debe mostrar la lista de gastos y el total', () => {
     cy.get('[data-testid="expense-list"]').should('be.visible');
     cy.get('[data-testid="expense-item"]').should('have.length', 1);
-    cy.get('[data-testid="expense-total"]').should('contain', '150.75');
+    cy.get('[data-testid="expense-total"]').invoke('text').should('match', /150[,.]75/);
   });
 
   it('Debe abrir el formulario de nuevo gasto desde la lista', () => {

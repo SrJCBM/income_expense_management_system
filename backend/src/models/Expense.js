@@ -57,6 +57,12 @@ const expenseSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+
+    clientRequestId: {
+      type: String,
+      trim: true,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -66,6 +72,10 @@ const expenseSchema = new mongoose.Schema(
 // Índice compuesto para búsquedas frecuentes
 expenseSchema.index({ userId: 1, date: -1 });
 expenseSchema.index({ userId: 1, category: 1 });
+expenseSchema.index(
+  { userId: 1, clientRequestId: 1 },
+  { unique: true, partialFilterExpression: { clientRequestId: { $type: 'string' } } }
+);
 
 const Expense = mongoose.model('Expense', expenseSchema);
 

@@ -35,7 +35,17 @@ const normalizeIncomeInput = (incomeData) => ({
   category: incomeData.category || incomeData.categoryId,
   date: normalizeTransactionDate(incomeData.date),
   notes: incomeData.notes,
+  clientRequestId: normalizeClientRequestId(incomeData.clientRequestId),
 });
+
+const normalizeClientRequestId = (clientRequestId) => {
+  if (typeof clientRequestId !== 'string') {
+    return null;
+  }
+
+  const trimmed = clientRequestId.trim();
+  return trimmed || null;
+};
 
 const normalizeTransactionDate = (date) => {
   if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
@@ -155,6 +165,17 @@ class IncomeService {
 
   async createIncome(userId, incomeData) {
     const normalizedData = normalizeIncomeInput(incomeData);
+
+    if (normalizedData.clientRequestId) {
+      const existingIncome = await Income.findOne({
+        userId,
+        clientRequestId: normalizedData.clientRequestId,
+      }).populate('category', 'name type color');
+
+      if (existingIncome) {
+        return mapIncomeForResponse(existingIncome);
+      }
+    }
 
     await ensureValidIncomeCategory(userId, normalizedData.category);
 

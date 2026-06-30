@@ -2,10 +2,14 @@ import { useEffect, useState, useRef } from 'react';
 import { useIncomes } from '../hooks/useIncomes.js';
 import { useForm } from '../hooks/useForm.js';
 import Pagination from '../components/Pagination.jsx';
+import PendingSyncList from '../components/PendingSyncList.jsx';
 import categoryService from '../services/categoryService.js';
 import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
 import { useSettings } from '../context/SettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import useNetworkStatus from '../hooks/useNetworkStatus.js';
+import useOfflineQueue from '../hooks/useOfflineQueue.js';
+import isNetworkError from '../utils/networkErrors.js';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'incomes_filters';
@@ -32,12 +36,24 @@ const Incomes = () => {
 
   const { formatCurrency } = useSettings();
   const { t } = useLanguage();
+  const { isOnline } = useNetworkStatus();
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
+  const [editingPendingItem, setEditingPendingItem] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const {
+    pendingItems,
+    isSyncing,
+    queueError,
+    enqueueCreate,
+    updatePending,
+    discardPending,
+    retryPending,
+    syncAll,
+  } = useOfflineQueue('income');
 
   const saved = loadSavedFilters();
   const [searchFilter, setSearchFilter]     = useState(saved?.searchFilter || '');
@@ -120,17 +136,32 @@ const Incomes = () => {
       notes: values.notes,
     };
 
-    if (editingIncome) {
+    if (editingPendingItem) {
+      await updatePending(editingPendingItem.localId, payload);
+      setSuccessMessage(t('offline.successPendingEdit'));
+    } else if (editingIncome) {
       await updateIncome(editingIncome.id || editingIncome._id, payload);
       setSuccessMessage(t('incomes.successEdit'));
+    } else if (!isOnline) {
+      await enqueueCreate(payload);
+      setSuccessMessage(t('offline.savedIncome'));
     } else {
-      await addIncome(payload);
-      setSuccessMessage(t('incomes.successCreate'));
+      try {
+        await addIncome(payload);
+        setSuccessMessage(t('incomes.successCreate'));
+      } catch (err) {
+        if (!isNetworkError(err)) {
+          throw err;
+        }
+        await enqueueCreate(payload);
+        setSuccessMessage(t('offline.savedIncome'));
+      }
     }
 
     setShowForm(false);
     resetForm();
     setEditingIncome(null);
+    setEditingPendingItem(null);
   };
 
   const { values, errors, isSubmitting, handleChange, handleSubmit, resetForm, setFieldValue } = useForm(
@@ -142,12 +173,14 @@ const Incomes = () => {
     if (successMessage) setSuccessMessage('');
     resetForm();
     setEditingIncome(null);
+    setEditingPendingItem(null);
     setShowForm(true);
   };
 
   const handleEdit = (income) => {
     if (successMessage) setSuccessMessage('');
     setEditingIncome(income);
+    setEditingPendingItem(null);
     setFieldValue('concept', income.concept || income.description || '');
     setFieldValue('amount', income.amount || '');
     setFieldValue('date', toDateInputValue(income.date));
@@ -166,10 +199,39 @@ const Incomes = () => {
     }
   };
 
+  const handleEditPending = (item) => {
+    if (successMessage) setSuccessMessage('');
+    setEditingIncome(null);
+    setEditingPendingItem(item);
+    setFieldValue('concept', item.payload.concept || item.payload.description || '');
+    setFieldValue('amount', item.payload.amount || '');
+    setFieldValue('date', toDateInputValue(item.payload.date));
+    setFieldValue('categoryId', item.payload.categoryId || item.payload.category || '');
+    setFieldValue('notes', item.payload.notes || '');
+    setShowForm(true);
+  };
+
+  const handleDiscardPending = async (item) => {
+    if (!window.confirm(t('offline.confirmDiscard'))) return;
+    await discardPending(item.localId);
+    setSuccessMessage(t('offline.successDiscard'));
+  };
+
+  const handleRetryPending = async (item) => {
+    await retryPending(item, addIncome);
+    fetchIncomes(activeFiltersRef.current);
+  };
+
+  const handleSyncAll = async () => {
+    await syncAll(addIncome);
+    fetchIncomes(activeFiltersRef.current);
+  };
+
   const handleCancel = () => {
     setShowForm(false);
     resetForm();
     setEditingIncome(null);
+    setEditingPendingItem(null);
   };
 
   return (
@@ -192,6 +254,12 @@ const Incomes = () => {
       {successMessage && (
         <div className="alert alert-success" role="status" aria-live="polite" data-testid="success-message">
           {successMessage}
+        </div>
+      )}
+
+      {queueError && (
+        <div className="alert alert-error" role="alert">
+          {queueError}
         </div>
       )}
 
@@ -246,7 +314,7 @@ const Incomes = () => {
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingIncome ? t('incomes.formTitleEdit') : t('incomes.formTitleCreate')}</h3>
+          <h3>{editingIncome || editingPendingItem ? t('incomes.formTitleEdit') : t('incomes.formTitleCreate')}</h3>
 
           {errors.general && (
             <div className="alert alert-error" role="alert" aria-live="assertive" data-testid="income-error-general">
@@ -377,12 +445,24 @@ const Incomes = () => {
                 aria-busy={isSubmitting}
                 data-testid="income-submit"
               >
-                {isSubmitting ? t('incomes.submitting') : editingIncome ? t('incomes.submitEdit') : t('incomes.submitCreate')}
+                {isSubmitting ? t('incomes.submitting') : editingIncome || editingPendingItem ? t('incomes.submitEdit') : t('incomes.submitCreate')}
               </button>
             </div>
           </form>
         </div>
       ) : (
+        <>
+          <PendingSyncList
+            items={pendingItems}
+            categories={categories}
+            isOnline={isOnline}
+            isSyncing={isSyncing}
+            formatCurrency={formatCurrency}
+            onSyncAll={handleSyncAll}
+            onRetry={handleRetryPending}
+            onEdit={handleEditPending}
+            onDiscard={handleDiscardPending}
+          />
         <div className="card list-card">
           {isLoading ? (
             <div className="skeleton-item"></div>
@@ -431,6 +511,7 @@ const Incomes = () => {
             disabled={isLoading}
           />
         </div>
+        </>
       )}
 
       {!showForm && categoriesError && (

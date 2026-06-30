@@ -5,12 +5,6 @@
 
 $ErrorActionPreference = "Stop"
 
-Write-Host ""
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Income Expense Manager - Build 1.1.0" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
-
 # Get paths
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $frontendRoot = if ($scriptDir -like "*\frontend\scripts") { 
@@ -21,6 +15,16 @@ $frontendRoot = if ($scriptDir -like "*\frontend\scripts") {
 $projectRoot = Split-Path -Parent $frontendRoot
 $backendRoot = Join-Path $projectRoot "backend"
 $distResourcesBackend = Join-Path (Join-Path (Join-Path $frontendRoot "dist") "resources") "backend"
+$frontendPackage = Get-Content -Path (Join-Path $frontendRoot "package.json") -Raw | ConvertFrom-Json
+$appVersion = $frontendPackage.version
+$productName = $frontendPackage.build.productName
+$installerName = "$productName Setup $appVersion.exe"
+
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "  $productName - Build $appVersion" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
 
 Write-Host "Frontend Root: $frontendRoot" -ForegroundColor Gray
 Write-Host "Backend Root:  $backendRoot" -ForegroundColor Gray
@@ -93,7 +97,7 @@ try {
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "Installer Location:" -ForegroundColor Yellow
-    Write-Host "   $(Join-Path $frontendRoot 'release\Income Expense Manager Setup 1.1.0.exe')" -ForegroundColor White
+    Write-Host "   $(Join-Path (Join-Path $frontendRoot 'release') $installerName)" -ForegroundColor White
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
     Write-Host "   1. Find the .exe in the 'release' folder" -ForegroundColor Gray

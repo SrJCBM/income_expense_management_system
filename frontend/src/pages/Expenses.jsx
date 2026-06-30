@@ -3,8 +3,13 @@ import { useExpenses } from '../hooks/useExpenses.js';
 import ExpenseList from '../components/ExpenseList.jsx';
 import ExpenseForm from '../components/ExpenseForm.jsx';
 import Pagination from '../components/Pagination.jsx';
+import PendingSyncList from '../components/PendingSyncList.jsx';
 import { useCategories } from '../hooks/useCategories.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { useSettings } from '../context/SettingsContext.jsx';
+import useNetworkStatus from '../hooks/useNetworkStatus.js';
+import useOfflineQueue from '../hooks/useOfflineQueue.js';
+import isNetworkError from '../utils/networkErrors.js';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'expenses_filters';
@@ -19,9 +24,12 @@ const loadSavedFilters = () => {
 
 const Expenses = () => {
   const { t } = useLanguage();
+  const { formatCurrency } = useSettings();
+  const { isOnline } = useNetworkStatus();
   const { expenses, pagination, isLoading, error, fetchExpenses, addExpense, updateExpense, removeExpense } = useExpenses();
   const [showForm, setShowForm]             = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [editingPendingItem, setEditingPendingItem] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [currentPage, setCurrentPage]       = useState(1);
 
@@ -35,6 +43,16 @@ const Expenses = () => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const { categories, fetchCategories } = useCategories();
+  const {
+    pendingItems,
+    isSyncing,
+    queueError,
+    enqueueCreate,
+    updatePending,
+    discardPending,
+    retryPending,
+    syncAll,
+  } = useOfflineQueue('expense');
 
   const activeFiltersRef = useRef({});
 
@@ -68,13 +86,28 @@ const Expenses = () => {
   }, []);
 
   const handleFormSubmit = async (data) => {
-    if (editingExpense) {
+    if (editingPendingItem) {
+      await updatePending(editingPendingItem.localId, data);
+      setSuccessMessage(t('offline.successPendingEdit'));
+      setEditingPendingItem(null);
+    } else if (editingExpense) {
       await updateExpense(editingExpense.id || editingExpense._id, data);
       setSuccessMessage(t('expenses.successEdit'));
       setEditingExpense(null);
+    } else if (!isOnline) {
+      await enqueueCreate(data);
+      setSuccessMessage(t('offline.savedExpense'));
     } else {
-      await addExpense(data);
-      setSuccessMessage(t('expenses.successCreate'));
+      try {
+        await addExpense(data);
+        setSuccessMessage(t('expenses.successCreate'));
+      } catch (err) {
+        if (!isNetworkError(err)) {
+          throw err;
+        }
+        await enqueueCreate(data);
+        setSuccessMessage(t('offline.savedExpense'));
+      }
     }
     setShowForm(false);
   };
@@ -89,18 +122,44 @@ const Expenses = () => {
   const handleEditClick = (expense) => {
     if (successMessage) setSuccessMessage('');
     setEditingExpense(expense);
+    setEditingPendingItem(null);
     setShowForm(true);
   };
 
   const handleNewExpense = () => {
     if (successMessage) setSuccessMessage('');
     setEditingExpense(null);
+    setEditingPendingItem(null);
     setShowForm(true);
   };
 
   const handleCancelForm = () => {
     setShowForm(false);
     setEditingExpense(null);
+    setEditingPendingItem(null);
+  };
+
+  const handleEditPending = (item) => {
+    if (successMessage) setSuccessMessage('');
+    setEditingExpense(null);
+    setEditingPendingItem(item);
+    setShowForm(true);
+  };
+
+  const handleDiscardPending = async (item) => {
+    if (!window.confirm(t('offline.confirmDiscard'))) return;
+    await discardPending(item.localId);
+    setSuccessMessage(t('offline.successDiscard'));
+  };
+
+  const handleRetryPending = async (item) => {
+    await retryPending(item, addExpense);
+    fetchExpenses(activeFiltersRef.current);
+  };
+
+  const handleSyncAll = async () => {
+    await syncAll(addExpense);
+    fetchExpenses(activeFiltersRef.current);
   };
 
   const handleApplyFilters = () => {
@@ -153,6 +212,12 @@ const Expenses = () => {
       {successMessage && (
         <div className="alert alert-success" role="status" aria-live="polite" data-testid="success-message">
           {successMessage}
+        </div>
+      )}
+
+      {queueError && (
+        <div className="alert alert-error" role="alert">
+          {queueError}
         </div>
       )}
 
@@ -254,29 +319,42 @@ const Expenses = () => {
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingExpense ? t('expenses.formTitleEdit') : t('expenses.formTitleCreate')}</h3>
+          <h3>{editingExpense || editingPendingItem ? t('expenses.formTitleEdit') : t('expenses.formTitleCreate')}</h3>
           <ExpenseForm
-            initialData={editingExpense}
+            initialData={editingExpense || editingPendingItem?.payload}
             onSubmit={handleFormSubmit}
             onCancel={handleCancelForm}
           />
         </div>
       ) : (
-        <div className="card list-card">
-          <ExpenseList
-            expenses={expenses}
-            isLoading={isLoading}
-            error={error}
-            onEdit={handleEditClick}
-            onDelete={handleDelete}
+        <>
+          <PendingSyncList
+            items={pendingItems}
+            categories={categories}
+            isOnline={isOnline}
+            isSyncing={isSyncing}
+            formatCurrency={formatCurrency}
+            onSyncAll={handleSyncAll}
+            onRetry={handleRetryPending}
+            onEdit={handleEditPending}
+            onDiscard={handleDiscardPending}
           />
-          <Pagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            onPageChange={handlePageChange}
-            disabled={isLoading}
-          />
-        </div>
+          <div className="card list-card">
+            <ExpenseList
+              expenses={expenses}
+              isLoading={isLoading}
+              error={error}
+              onEdit={handleEditClick}
+              onDelete={handleDelete}
+            />
+            <Pagination
+              page={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              disabled={isLoading}
+            />
+          </div>
+        </>
       )}
     </div>
   );

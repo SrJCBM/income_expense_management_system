@@ -81,7 +81,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="amount">{t('expenses.fieldAmount')} ($) *</label>
+          <label htmlFor="amount">{t('expenses.fieldAmount')} *</label>
           <input
             type="number"
             id="amount"

@@ -754,3 +754,106 @@ describe('Reportes - Validaciones y Edge Cases', () => {
     expect(data.totalExpense).toBe(0);
   });
 });
+
+// ============================================
+// TESTS: rango de fechas en summary
+// ============================================
+describe('GET /api/reports/summary con rango de fechas', () => {
+  const pad = (n) => String(n).padStart(2, '0');
+  // monthIndex es 0-based relativo (currentMonth - 2 = mes anterior); Date normaliza años
+  const isoDate = (monthIndex, day) => {
+    const dt = new Date(currentYear, monthIndex, day);
+    return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+  };
+
+  it('Debe calcular totales para un rango que cubre solo el mes anterior', async () => {
+    const response = await request(app)
+      .get(`/api/reports/summary?startDate=${isoDate(currentMonth - 2, 1)}&endDate=${isoDate(currentMonth - 2, 28)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(200);
+
+    const data = response.body.data;
+    expect(data.totalIncome).toBe(2700);
+    expect(data.totalExpense).toBe(130);
+    expect(data.balance).toBe(2570);
+  });
+
+  it('Debe calcular totales para un rango que cruza dos meses', async () => {
+    const response = await request(app)
+      .get(`/api/reports/summary?startDate=${isoDate(currentMonth - 2, 1)}&endDate=${isoDate(currentMonth - 1, 28)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(200);
+
+    const data = response.body.data;
+    expect(data.totalIncome).toBe(5500);
+    expect(data.totalExpense).toBe(360.50);
+    expect(data.balance).toBe(5139.50);
+  });
+
+  it('El rango es inclusivo en la fecha final', async () => {
+    // El ingreso de 200 del mes anterior es el día 25
+    const response = await request(app)
+      .get(`/api/reports/summary?startDate=${isoDate(currentMonth - 2, 25)}&endDate=${isoDate(currentMonth - 2, 25)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(200);
+
+    expect(response.body.data.totalIncome).toBe(200);
+  });
+
+  it('Debe ignorar month/year cuando se envía un rango', async () => {
+    const response = await request(app)
+      .get(`/api/reports/summary?month=${currentMonth}&year=${currentYear}&startDate=${isoDate(currentMonth - 2, 1)}&endDate=${isoDate(currentMonth - 2, 28)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(200);
+
+    expect(response.body.data.totalIncome).toBe(2700);
+  });
+
+  it('Debe rechazar startDate sin endDate - 400', async () => {
+    const response = await request(app)
+      .get(`/api/reports/summary?startDate=${isoDate(currentMonth - 2, 1)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+  });
+
+  it('Debe rechazar endDate sin startDate - 400', async () => {
+    const response = await request(app)
+      .get(`/api/reports/summary?endDate=${isoDate(currentMonth - 2, 28)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+  });
+
+  it('Debe rechazar startDate mayor que endDate - 400', async () => {
+    const response = await request(app)
+      .get(`/api/reports/summary?startDate=${isoDate(currentMonth - 1, 20)}&endDate=${isoDate(currentMonth - 2, 1)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+  });
+
+  it('Debe rechazar formato de fecha inválido - 400', async () => {
+    const response = await request(app)
+      .get('/api/reports/summary?startDate=2026-02-31&endDate=2026-03-01')
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+  });
+
+  it('category-breakdown también acepta rango', async () => {
+    const response = await request(app)
+      .get(`/api/reports/category-breakdown?startDate=${isoDate(currentMonth - 2, 1)}&endDate=${isoDate(currentMonth - 2, 28)}`)
+      .set('Authorization', `Bearer ${testUserToken}`)
+      .expect(200);
+
+    const data = response.body.data;
+    expect(Array.isArray(data)).toBe(true);
+    const total = data.reduce((sum, cat) => sum + cat.amount, 0);
+    expect(total).toBe(130);
+  });
+});

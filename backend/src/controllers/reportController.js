@@ -19,24 +19,36 @@ const getPeriodRange = (monthQuery, yearQuery) => {
   return { month, year, startDate, endDate };
 };
 
-const getMonthlySummary = async ({ userId, month, year }) => {
-  const { startDate, endDate } = getPeriodRange(month, year);
+// Rango personalizado inclusivo: [startDate, endDate] → [start, end + 1 día)
+const getCustomRange = (startDateQuery, endDateQuery) => {
+  const [sy, sm, sd] = startDateQuery.split('-').map(Number);
+  const [ey, em, ed] = endDateQuery.split('-').map(Number);
+
+  return {
+    startDate: new Date(sy, sm - 1, sd),
+    endDate: new Date(ey, em - 1, ed + 1),
+  };
+};
+
+const getMonthlySummary = async ({ userId, month, year, startDate, endDate }) => {
+  const { startDate: periodStart, endDate: periodEnd } =
+    startDate && endDate ? getCustomRange(startDate, endDate) : getPeriodRange(month, year);
   const userObjectId = new mongoose.Types.ObjectId(userId);
 
   const [incomeAgg, expenseAgg, breakdownAgg, allIncomeAgg, allExpenseAgg] = await Promise.all([
     // Ingresos del mes
     Income.aggregate([
-      { $match: { userId: userObjectId, date: { $gte: startDate, $lt: endDate } } },
+      { $match: { userId: userObjectId, date: { $gte: periodStart, $lt: periodEnd } } },
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]),
     // Gastos del mes
     Expense.aggregate([
-      { $match: { userId: userObjectId, date: { $gte: startDate, $lt: endDate } } },
+      { $match: { userId: userObjectId, date: { $gte: periodStart, $lt: periodEnd } } },
       { $group: { _id: null, total: { $sum: '$amount' } } },
     ]),
     // Desglose por categoría del mes
     Expense.aggregate([
-      { $match: { userId: userObjectId, date: { $gte: startDate, $lt: endDate } } },
+      { $match: { userId: userObjectId, date: { $gte: periodStart, $lt: periodEnd } } },
       { $group: { _id: '$category', amount: { $sum: '$amount' } } },
       { $sort: { amount: -1 } },
       {
@@ -102,6 +114,8 @@ export const getSummary = asyncHandler(async (req, res) => {
     userId: req.user.userId,
     month: req.query.month,
     year: req.query.year,
+    startDate: req.query.startDate,
+    endDate: req.query.endDate,
   });
 
   res.status(200).json(successResponse(summary, 'Resumen obtenido'));
@@ -187,6 +201,8 @@ export const getCategoryBreakdown = asyncHandler(async (req, res) => {
     userId: req.user.userId,
     month: req.query.month,
     year: req.query.year,
+    startDate: req.query.startDate,
+    endDate: req.query.endDate,
   });
 
   res.status(200).json(

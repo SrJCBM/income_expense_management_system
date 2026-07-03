@@ -10,6 +10,7 @@ import { useLanguage } from '../context/LanguageContext.jsx';
 import useNetworkStatus from '../hooks/useNetworkStatus.js';
 import useOfflineQueue from '../hooks/useOfflineQueue.js';
 import isNetworkError from '../utils/networkErrors.js';
+import { parseAmount } from '../utils/parseAmount.js';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'incomes_filters';
@@ -124,13 +125,17 @@ const Incomes = () => {
       throw { validationErrors: { general: t('incomes.errorRequired') } };
     }
 
-    if (Number(values.amount) <= 0) {
+    const amountNumber = parseAmount(values.amount);
+    if (Number.isNaN(amountNumber)) {
+      throw { validationErrors: { amount: t('incomes.errorAmountFormat') } };
+    }
+    if (amountNumber <= 0) {
       throw { validationErrors: { amount: t('incomes.errorAmount') } };
     }
 
     const payload = {
       concept: values.concept,
-      amount: Number(values.amount),
+      amount: amountNumber,
       date: toLocalNoonISOString(values.date),
       categoryId: values.categoryId,
       notes: values.notes,
@@ -356,12 +361,11 @@ const Incomes = () => {
                 <label htmlFor="income-amount">{t('incomes.fieldAmount')} *</label>
                 <input
                   id="income-amount"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   name="amount"
                   value={values.amount}
                   onChange={handleChange}
-                  min="0.01"
-                  step="0.01"
                   placeholder="0.00"
                   disabled={isSubmitting}
                   aria-required="true"

@@ -4,6 +4,7 @@ import { useCategories } from '../hooks/useCategories.js';
 import { useSettings } from '../context/SettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { getMonthName } from '../utils/formatters.js';
+import { parseAmount } from '../utils/parseAmount.js';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Budgets.css';
 
@@ -81,14 +82,15 @@ const Budgets = () => {
       return;
     }
 
-    if (!formValues.limitAmount || Number(formValues.limitAmount) <= 0) {
-      setFormError(t('budgets.errorAmount'));
+    const limitNumber = parseAmount(formValues.limitAmount);
+    if (Number.isNaN(limitNumber) || limitNumber <= 0) {
+      setFormError(Number.isNaN(limitNumber) ? t('budgets.errorLimitFormat') : t('budgets.errorAmount'));
       return;
     }
 
     const payload = {
       categoryId: formValues.categoryId,
-      limitAmount: Number(formValues.limitAmount),
+      limitAmount: limitNumber,
       alertThreshold: Number(formValues.alertThreshold) || 80,
       month: period.month,
       year: period.year,
@@ -215,12 +217,11 @@ const Budgets = () => {
                 <label htmlFor="budget-limit">{t('budgets.fieldLimitAmount')} *</label>
                 <input
                   id="budget-limit"
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   name="limitAmount"
                   value={formValues.limitAmount}
                   onChange={handleFormChange}
-                  min="0.01"
-                  step="0.01"
                   placeholder="0.00"
                   disabled={isSubmitting}
                   aria-required="true"

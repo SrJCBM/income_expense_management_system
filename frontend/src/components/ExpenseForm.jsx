@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useForm } from '../hooks/useForm.js';
 import { useCategories } from '../hooks/useCategories.js';
 import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
+import { parseAmount } from '../utils/parseAmount.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
 
 const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting }) => {
@@ -18,7 +19,11 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
     if (!values.amount || !values.concept || !values.date) {
       throw { validationErrors: { general: t('expenses.errorRequiredFields') } };
     }
-    if (Number(values.amount) <= 0) {
+    const amountNumber = parseAmount(values.amount);
+    if (Number.isNaN(amountNumber)) {
+      throw { validationErrors: { amount: t('expenses.errorAmountFormat') } };
+    }
+    if (amountNumber <= 0) {
       throw { validationErrors: { amount: t('expenses.errorAmount') } };
     }
     if (!values.categoryId) {
@@ -26,7 +31,7 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
     }
     await onSubmit({
       ...values,
-      amount: Number(values.amount),
+      amount: amountNumber,
       date: toLocalNoonISOString(values.date),
     });
   };
@@ -83,14 +88,13 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
         <div className="form-group">
           <label htmlFor="amount">{t('expenses.fieldAmount')} *</label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             id="amount"
             name="amount"
             value={values.amount}
             onChange={handleChange}
             placeholder={t('expenses.fieldAmountPlaceholder')}
-            step="0.01"
-            min="0"
             disabled={loading}
             aria-required="true"
             aria-invalid={!!errors.amount}

@@ -194,6 +194,18 @@ const Incomes = () => {
     setShowForm(true);
   };
 
+  const handleDuplicate = (income) => {
+    if (successMessage) setSuccessMessage('');
+    setEditingIncome(null);
+    setEditingPendingItem(null);
+    setFieldValue('concept', income.concept || income.description || '');
+    setFieldValue('amount', income.amount || '');
+    setFieldValue('date', getTodayInputValue());
+    setFieldValue('categoryId', income.categoryId || income.category?._id || income.category?.id || income.category || '');
+    setFieldValue('notes', income.notes || '');
+    setShowForm(true);
+  };
+
   const handleDelete = async (incomeId) => {
     if (!window.confirm(t('incomes.confirmDelete'))) return;
     try {
@@ -500,6 +512,15 @@ const Incomes = () => {
                       <td className="amount positive">+{formatCurrency(income.amount)}</td>
                       <td className="actions-cell">
                         <button className="btn-icon" onClick={() => handleEdit(income)} title={t('incomes.editTitle')} data-testid="edit-income">✏️</button>
+                        <button
+                          className="btn-icon"
+                          onClick={() => handleDuplicate(income)}
+                          title={t('incomes.duplicateTitle')}
+                          aria-label={`${t('incomes.duplicateLabel')}: ${income.concept}`}
+                          data-testid="duplicate-income"
+                        >
+                          📋
+                        </button>
                         <button className="btn-icon" onClick={() => handleDelete(incomeId)} title={t('incomes.deleteTitle')} data-testid="delete-income">🗑️</button>
                       </td>
                     </tr>

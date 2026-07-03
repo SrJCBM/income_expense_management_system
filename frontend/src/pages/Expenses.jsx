@@ -30,6 +30,7 @@ const Expenses = () => {
   const [showForm, setShowForm]             = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingPendingItem, setEditingPendingItem] = useState(null);
+  const [duplicatingExpense, setDuplicatingExpense] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [currentPage, setCurrentPage]       = useState(1);
 
@@ -110,6 +111,7 @@ const Expenses = () => {
       }
     }
     setShowForm(false);
+    setDuplicatingExpense(null);
   };
 
   const handleDelete = async (id) => {
@@ -123,6 +125,17 @@ const Expenses = () => {
     if (successMessage) setSuccessMessage('');
     setEditingExpense(expense);
     setEditingPendingItem(null);
+    setDuplicatingExpense(null);
+    setShowForm(true);
+  };
+
+  const handleDuplicateClick = (expense) => {
+    if (successMessage) setSuccessMessage('');
+    // Copia sin id ni fecha: el formulario usará la fecha de hoy y creará un gasto nuevo
+    const { id, _id, date, createdAt, updatedAt, clientRequestId, ...rest } = expense;
+    setDuplicatingExpense(rest);
+    setEditingExpense(null);
+    setEditingPendingItem(null);
     setShowForm(true);
   };
 
@@ -130,6 +143,7 @@ const Expenses = () => {
     if (successMessage) setSuccessMessage('');
     setEditingExpense(null);
     setEditingPendingItem(null);
+    setDuplicatingExpense(null);
     setShowForm(true);
   };
 
@@ -137,12 +151,14 @@ const Expenses = () => {
     setShowForm(false);
     setEditingExpense(null);
     setEditingPendingItem(null);
+    setDuplicatingExpense(null);
   };
 
   const handleEditPending = (item) => {
     if (successMessage) setSuccessMessage('');
     setEditingExpense(null);
     setEditingPendingItem(item);
+    setDuplicatingExpense(null);
     setShowForm(true);
   };
 
@@ -319,9 +335,16 @@ const Expenses = () => {
 
       {showForm ? (
         <div className="card form-card">
-          <h3>{editingExpense || editingPendingItem ? t('expenses.formTitleEdit') : t('expenses.formTitleCreate')}</h3>
+          <h3>
+            {editingExpense || editingPendingItem
+              ? t('expenses.formTitleEdit')
+              : duplicatingExpense
+                ? t('expenses.formTitleDuplicate')
+                : t('expenses.formTitleCreate')}
+          </h3>
           <ExpenseForm
-            initialData={editingExpense || editingPendingItem?.payload}
+            initialData={editingExpense || editingPendingItem?.payload || duplicatingExpense}
+            isDuplicate={!!duplicatingExpense}
             onSubmit={handleFormSubmit}
             onCancel={handleCancelForm}
           />
@@ -345,6 +368,7 @@ const Expenses = () => {
               isLoading={isLoading}
               error={error}
               onEdit={handleEditClick}
+              onDuplicate={handleDuplicateClick}
               onDelete={handleDelete}
             />
             <Pagination

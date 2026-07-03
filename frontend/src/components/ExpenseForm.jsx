@@ -5,8 +5,8 @@ import { getTodayInputValue, toDateInputValue, toLocalNoonISOString } from '../u
 import { parseAmount } from '../utils/parseAmount.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
 
-const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting }) => {
-  const isEdit = !!initialData;
+const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: externalIsSubmitting, isDuplicate = false }) => {
+  const isEdit = !!initialData && !isDuplicate;
   const { t } = useLanguage();
   const { categories, isLoading: isLoadingCategories, error: categoriesError, fetchCategories } = useCategories();
 

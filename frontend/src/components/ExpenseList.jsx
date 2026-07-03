@@ -3,7 +3,7 @@ import { toDateInputValue } from '../utils/dateUtils.js';
 import { useSettings } from '../context/SettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 
-const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
+const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete }) => {
   const { formatCurrency } = useSettings();
   const { t } = useLanguage();
   const total = useMemo(
@@ -66,6 +66,15 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDelete }) => {
                   data-testid="edit-expense"
                 >
                   ✏️
+                </button>
+                <button
+                  className="btn-icon btn-duplicate"
+                  onClick={() => onDuplicate(expense)}
+                  title={t('expenses.duplicateTitle')}
+                  aria-label={`${t('expenses.duplicateLabel')}: ${expense.concept}`}
+                  data-testid="duplicate-expense"
+                >
+                  📋
                 </button>
                 <button
                   className="btn-icon btn-delete"

@@ -239,7 +239,7 @@ const Reports = () => {
               />
             </div>
           )}
-          {hasReportData && (
+          {hasReportData && !waitingForRange && !rangeInvalid && (
             <div className="export-buttons">
               <button
                 onClick={() => handleExportPDF(summary, buildPeriod())}

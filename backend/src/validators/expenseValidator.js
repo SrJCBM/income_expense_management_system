@@ -107,6 +107,11 @@ export const validateExpenseInput = [
     .trim()
     .isLength({ max: 1000 })
     .withMessage('Las notas no deben exceder 1000 caracteres'),
+
+  body('isRecurring')
+    .optional()
+    .isBoolean()
+    .withMessage('isRecurring debe ser booleano'),
 ];
 
 export const handleValidationErrors = (req, res, next) => {

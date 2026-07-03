@@ -42,6 +42,10 @@ const normalizeExpenseInput = (expenseData) => {
     normalized.tags = expenseData.tags;
   }
 
+  if (typeof expenseData.isRecurring === 'boolean') {
+    normalized.isRecurring = expenseData.isRecurring;
+  }
+
   return normalized;
 };
 

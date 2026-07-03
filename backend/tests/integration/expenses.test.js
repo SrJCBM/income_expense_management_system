@@ -331,6 +331,59 @@ describe('POST /api/expenses', () => {
     expect(response.status).toBe(201);
     expect(response.body.data.description).toBe(expenseData.concept);
   });
+
+  it('crea un gasto con isRecurring y lo devuelve en la respuesta', async () => {
+    const expenseData = {
+      description: 'Renta mensual',
+      amount: 300,
+      category: testCategory._id.toString(),
+      date: new Date('2024-05-15').toISOString(),
+      isRecurring: true,
+    };
+
+    const response = await request(app)
+      .post('/api/expenses')
+      .set(getAuthHeaders(testUserToken))
+      .send(expenseData);
+
+    expect(response.status).toBe(201);
+    expect(response.body.data.isRecurring).toBe(true);
+  });
+
+  it('isRecurring por defecto es false', async () => {
+    const expenseData = {
+      description: 'Compra puntual',
+      amount: 10,
+      category: testCategory._id.toString(),
+      date: new Date('2024-05-15').toISOString(),
+    };
+
+    const response = await request(app)
+      .post('/api/expenses')
+      .set(getAuthHeaders(testUserToken))
+      .send(expenseData);
+
+    expect(response.status).toBe(201);
+    expect(response.body.data.isRecurring).toBe(false);
+  });
+
+  it('Debe retornar 400 si isRecurring no es booleano', async () => {
+    const expenseData = {
+      description: 'Gasto recurrente inválido',
+      amount: 50,
+      category: testCategory._id.toString(),
+      date: new Date('2024-05-15').toISOString(),
+      isRecurring: 'quizás',
+    };
+
+    const response = await request(app)
+      .post('/api/expenses')
+      .set(getAuthHeaders(testUserToken))
+      .send(expenseData);
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+  });
 });
 
 // ============================================
@@ -722,6 +775,32 @@ describe('PUT /api/expenses/:id', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.description).toBe('Solo descripción actualizada');
     expect(response.body.data.amount).toBe(50);
+  });
+
+  it('No debe sobrescribir isRecurring cuando el PUT no lo envía', async () => {
+    const expense = await insertTestExpense({
+      userId: testUser._id,
+      description: 'Gasto recurrente',
+      amount: 50,
+      category: testCategory._id,
+      date: new Date('2024-05-15'),
+      isRecurring: true,
+    });
+
+    const updateData = {
+      description: 'Gasto recurrente actualizado',
+      amount: 60,
+      category: testCategory._id.toString(),
+      date: new Date('2024-05-15').toISOString(),
+    };
+
+    const response = await request(app)
+      .put(`/api/expenses/${expense._id.toString()}`)
+      .set(getAuthHeaders(testUserToken))
+      .send(updateData);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.isRecurring).toBe(true);
   });
 });
 

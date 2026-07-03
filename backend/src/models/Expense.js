@@ -58,6 +58,12 @@ const expenseSchema = new mongoose.Schema(
       },
     ],
 
+    // Gasto recurrente (se repite cada mes)
+    isRecurring: {
+      type: Boolean,
+      default: false,
+    },
+
     clientRequestId: {
       type: String,
       trim: true,

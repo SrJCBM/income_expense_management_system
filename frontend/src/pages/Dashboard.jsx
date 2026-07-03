@@ -7,12 +7,17 @@ import reportService from '../services/reportService.js';
 import budgetService from '../services/budgetService.js';
 import '../styles/pages/Dashboard.css';
 
+const TREND_CAP = 500;
+
 const calcTrend = (current, prev) => {
   if (!prev || prev === 0) return null;
-  return Math.round(((current - prev) / prev) * 100);
+  const trend = Math.round(((current - prev) / prev) * 100);
+  // Ocultar tendencias absurdas cuando la base es minúscula
+  if (Math.abs(trend) > TREND_CAP) return null;
+  return trend;
 };
 
-const TrendBadge = ({ trend, t }) => {
+const TrendBadge = ({ trend, t, unit = '%' }) => {
   if (trend === null || trend === 0) return null;
   const up = trend > 0;
   return (
@@ -22,7 +27,7 @@ const TrendBadge = ({ trend, t }) => {
       display: 'block',
       marginTop: 4,
     }}>
-      {up ? '▲' : '▼'} {Math.abs(trend)}% {t('dashboard.vsPrev')}
+      {up ? '▲' : '▼'} {Math.abs(trend)}{unit === 'pts' ? ` ${t('dashboard.pts')}` : '%'} {t('dashboard.vsPrev')}
     </span>
   );
 };
@@ -81,19 +86,25 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const savingsRate =
-    summary.totalIncome > 0
-      ? Math.round(((summary.totalIncome - summary.totalExpense) / summary.totalIncome) * 100)
-      : 0;
+  const hasIncome = summary.totalIncome > 0;
+  const prevHasIncome = prevSummary?.totalIncome > 0;
 
-  const prevSavingsRate =
-    prevSummary?.totalIncome > 0
-      ? Math.round(((prevSummary.totalIncome - prevSummary.totalExpense) / prevSummary.totalIncome) * 100)
-      : 0;
+  const savingsRate = hasIncome
+    ? Math.round(((summary.totalIncome - summary.totalExpense) / summary.totalIncome) * 100)
+    : null;
+
+  const prevSavingsRate = prevHasIncome
+    ? Math.round(((prevSummary.totalIncome - prevSummary.totalExpense) / prevSummary.totalIncome) * 100)
+    : null;
+
+  // Diferencia en puntos porcentuales, solo si ambos meses tuvieron ingresos
+  const savingsTrend =
+    savingsRate !== null && prevSavingsRate !== null && savingsRate !== prevSavingsRate
+      ? savingsRate - prevSavingsRate
+      : null;
 
   const incomeTrend  = calcTrend(summary.totalIncome,  prevSummary?.totalIncome);
   const expenseTrend = calcTrend(summary.totalExpense, prevSummary?.totalExpense);
-  const savingsTrend = calcTrend(savingsRate, prevSavingsRate);
 
   return (
     <div className="dashboard-container">
@@ -135,6 +146,9 @@ const Dashboard = () => {
             {isLoading ? '...' : formatCurrency(summary.netBalance ?? summary.balance)}
           </p>
           <small style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{t('dashboard.historicLabel')}</small>
+          <small style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block', marginTop: 2 }} data-testid="dashboard-month-balance">
+            {t('dashboard.thisMonth')}: {isLoading ? '...' : formatCurrency(summary.balance)}
+          </small>
         </div>
         <div className="dashboard-card incomes-card" data-testid="dashboard-incomes">
           <h2>{t('dashboard.income')}</h2>
@@ -153,12 +167,17 @@ const Dashboard = () => {
         <div className="dashboard-card savings-card" data-testid="dashboard-savings">
           <h2>{t('dashboard.savingsRate')}</h2>
           <p
-            className={`amount ${savingsRate >= 0 ? 'positive' : 'negative'}`}
+            className={`amount ${savingsRate === null ? '' : savingsRate >= 0 ? 'positive' : 'negative'}`}
             data-testid="dashboard-savings-amount"
           >
-            {isLoading ? '...' : `${savingsRate}%`}
+            {isLoading ? '...' : savingsRate === null ? '—' : `${savingsRate}%`}
           </p>
-          {!isLoading && <TrendBadge trend={savingsTrend} t={t} />}
+          {!isLoading && savingsRate === null && (
+            <small style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+              {t('dashboard.noIncomeThisMonth')}
+            </small>
+          )}
+          {!isLoading && <TrendBadge trend={savingsTrend} t={t} unit="pts" />}
         </div>
       </div>
 

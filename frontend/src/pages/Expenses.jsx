@@ -307,7 +307,7 @@ const Expenses = () => {
               <li key={expense.id || expense._id} className="recurring-item" data-testid="recurring-item">
                 <span>{expense.concept} — {formatCurrency(expense.amount)}</span>
                 <span className="recurring-actions">
-                  <button type="button" className="btn-secondary btn-sm" onClick={() => handleRegisterRecurring(expense)} data-testid="recurring-register">
+                  <button type="button" className="btn-secondary btn-small" onClick={() => handleRegisterRecurring(expense)} data-testid="recurring-register">
                     {t('expenses.recurringRegister')}
                   </button>
                   <button type="button" className="btn-icon" onClick={() => handleDismissRecurring(expense)} aria-label={`${t('expenses.recurringDismiss')}: ${expense.concept}`} data-testid="recurring-dismiss">

@@ -36,13 +36,14 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
     });
   };
 
-  const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(
+  const { values, errors, isSubmitting, handleChange, handleSubmit, setFieldValue } = useForm(
     {
       concept: initialData?.concept || '',
       amount: initialData?.amount || '',
       date: toDateInputValue(initialData?.date) || getTodayInputValue(),
       categoryId: initialData?.categoryId || initialData?.category?._id || initialData?.category?.id || initialData?.category || '',
       notes: initialData?.notes || initialData?.description || '',
+      isRecurring: initialData?.isRecurring || false,
     },
     handleSubmitForm
   );
@@ -161,6 +162,21 @@ const ExpenseForm = ({ onSubmit, initialData = null, onCancel, isSubmitting: ext
             {categoriesError}
           </span>
         )}
+      </div>
+
+      <div className="form-group form-group-checkbox">
+        <label htmlFor="isRecurring">
+          <input
+            type="checkbox"
+            id="isRecurring"
+            name="isRecurring"
+            checked={!!values.isRecurring}
+            onChange={(e) => setFieldValue('isRecurring', e.target.checked)}
+            disabled={loading}
+            data-testid="expense-recurring"
+          />{' '}
+          {t('expenses.fieldRecurring')}
+        </label>
       </div>
 
       <div className="form-group">

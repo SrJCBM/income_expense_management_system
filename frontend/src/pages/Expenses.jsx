@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import expenseService from '../services/expenseService.js';
+import { getTodayInputValue, toLocalNoonISOString } from '../utils/dateUtils.js';
 import { useExpenses } from '../hooks/useExpenses.js';
 import ExpenseList from '../components/ExpenseList.jsx';
 import ExpenseForm from '../components/ExpenseForm.jsx';
@@ -33,6 +35,7 @@ const Expenses = () => {
   const [duplicatingExpense, setDuplicatingExpense] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [currentPage, setCurrentPage]       = useState(1);
+  const [recurringSuggestions, setRecurringSuggestions] = useState([]);
 
   const saved = loadSavedFilters();
   const [categoryFilter, setCategoryFilter]     = useState(saved?.categoryFilter || '');
@@ -85,6 +88,64 @@ const Expenses = () => {
     fetchCategories('expense');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const loadRecurringSuggestions = async () => {
+      try {
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const year = now.getFullYear();
+        const prevMonth = month === 1 ? 12 : month - 1;
+        const prevYear = month === 1 ? year - 1 : year;
+
+        const [prevRes, currRes] = await Promise.all([
+          expenseService.getExpenses({ month: prevMonth, year: prevYear, limit: 50 }),
+          expenseService.getExpenses({ month, year, limit: 50 }),
+        ]);
+        const prevExpenses = prevRes?.data || [];
+        const currExpenses = currRes?.data || [];
+
+        const dismissed = JSON.parse(sessionStorage.getItem('dismissed_recurring') || '[]');
+
+        const currentKeys = new Set(
+          currExpenses.map((e) => `${(e.concept || '').toLowerCase()}|${e.categoryId || e.category?._id || ''}`)
+        );
+
+        const suggestions = prevExpenses.filter((e) => {
+          if (!e.isRecurring) return false;
+          const id = e.id || e._id;
+          if (dismissed.includes(id)) return false;
+          const key = `${(e.concept || '').toLowerCase()}|${e.categoryId || e.category?._id || ''}`;
+          return !currentKeys.has(key);
+        });
+
+        setRecurringSuggestions(suggestions);
+      } catch {
+        setRecurringSuggestions([]);
+      }
+    };
+    loadRecurringSuggestions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleRegisterRecurring = async (expense) => {
+    const { id, _id, date, createdAt, updatedAt, clientRequestId, category, ...rest } = expense;
+    await addExpense({
+      ...rest,
+      categoryId: expense.categoryId || category?._id || category?.id || category,
+      date: toLocalNoonISOString(getTodayInputValue()),
+    });
+    setRecurringSuggestions((prev) => prev.filter((e) => (e.id || e._id) !== (id || _id)));
+    setSuccessMessage(t('expenses.recurringRegistered'));
+    fetchExpenses(activeFiltersRef.current);
+  };
+
+  const handleDismissRecurring = (expense) => {
+    const id = expense.id || expense._id;
+    const dismissed = JSON.parse(sessionStorage.getItem('dismissed_recurring') || '[]');
+    sessionStorage.setItem('dismissed_recurring', JSON.stringify([...dismissed, id]));
+    setRecurringSuggestions((prev) => prev.filter((e) => (e.id || e._id) !== id));
+  };
 
   const handleFormSubmit = async (data) => {
     if (editingPendingItem) {
@@ -234,6 +295,28 @@ const Expenses = () => {
       {queueError && (
         <div className="alert alert-error" role="alert">
           {queueError}
+        </div>
+      )}
+
+      {!showForm && recurringSuggestions.length > 0 && (
+        <div className="alert alert-info recurring-banner" role="status" data-testid="recurring-suggestions">
+          <strong>{t('expenses.recurringTitle')}</strong>
+          <p className="hint">{t('expenses.recurringHint')}</p>
+          <ul className="recurring-list">
+            {recurringSuggestions.map((expense) => (
+              <li key={expense.id || expense._id} className="recurring-item" data-testid="recurring-item">
+                <span>{expense.concept} — {formatCurrency(expense.amount)}</span>
+                <span className="recurring-actions">
+                  <button type="button" className="btn-secondary btn-sm" onClick={() => handleRegisterRecurring(expense)} data-testid="recurring-register">
+                    {t('expenses.recurringRegister')}
+                  </button>
+                  <button type="button" className="btn-icon" onClick={() => handleDismissRecurring(expense)} aria-label={`${t('expenses.recurringDismiss')}: ${expense.concept}`} data-testid="recurring-dismiss">
+                    ✕
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

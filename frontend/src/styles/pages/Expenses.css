@@ -573,3 +573,43 @@
     flex-direction: column;
   }
 }
+
+/* ── Recurring suggestions banner ── */
+.alert-info {
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: var(--info-color);
+}
+
+.recurring-banner {
+  display: block;
+}
+
+.recurring-banner .hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.recurring-banner .recurring-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recurring-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.recurring-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

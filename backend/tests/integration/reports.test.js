@@ -37,6 +37,13 @@ let testUserToken;
 let testCategories = {};
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth() + 1;
+// Los fixtures usan fechas relativas al mes actual; las aserciones deben usar
+// estos mismos meses relativos para no depender del calendario real.
+const previousFixtureMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+const previousFixtureYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+// Mes del año actual garantizado sin transacciones (los datos viven solo en
+// el mes actual y el anterior)
+const emptyMonth = currentMonth <= 10 ? currentMonth + 2 : currentMonth - 3;
 
 beforeAll(async () => {
   // Configurar variables de entorno para tests
@@ -121,7 +128,7 @@ beforeAll(async () => {
   // CREAR DATOS VARIADOS DE PRUEBA
   // ====================================
   
-  // GASTOS - MES ACTUAL (5 de mayo 2024)
+  // GASTOS - MES ACTUAL (fechas relativas al ejecutar)
   await insertTestExpense({
     userId: testUser._id,
     amount: 45.50,
@@ -162,7 +169,7 @@ beforeAll(async () => {
     date: new Date(currentYear, currentMonth - 1, 20),
   });
 
-  // GASTOS - MES ANTERIOR (abril 2024)
+  // GASTOS - MES ANTERIOR
   await insertTestExpense({
     userId: testUser._id,
     amount: 35.00,
@@ -187,7 +194,7 @@ beforeAll(async () => {
     date: new Date(currentYear, currentMonth - 2, 18),
   });
 
-  // INGRESOS - MES ACTUAL (mayo 2024)
+  // INGRESOS - MES ACTUAL
   await insertTestIncome({
     userId: testUser._id,
     amount: 2500.00,
@@ -204,7 +211,7 @@ beforeAll(async () => {
     date: new Date(currentYear, currentMonth - 1, 15),
   });
 
-  // INGRESOS - MES ANTERIOR (abril 2024)
+  // INGRESOS - MES ANTERIOR
   await insertTestIncome({
     userId: testUser._id,
     amount: 2500.00,
@@ -335,7 +342,7 @@ describe('GET /api/reports/summary', () => {
 
     const data = response.body.data;
 
-    // Abril tiene: ingresos 2700 (2500 + 200), gastos 130 (35 + 40 + 55)
+    // Mes anterior: ingresos 2700 (2500 + 200), gastos 130 (35 + 40 + 55)
     expect(data.totalIncome).toBe(2700);
     expect(data.totalExpense).toBe(130);
     expect(data.balance).toBe(2570);
@@ -390,19 +397,20 @@ describe('GET /api/reports/monthly', () => {
 
   it('Debe calcular correctamente datos del mes específico', async () => {
     const response = await request(app)
-      .get(`/api/reports/monthly?month=4&year=${currentYear}`)
+      .get(`/api/reports/monthly?month=${previousFixtureMonth}&year=${previousFixtureYear}`)
       .set('Authorization', `Bearer ${testUserToken}`)
       .expect(200);
 
     const data = response.body.data;
-    expect(data.totalIncome).toBe(2700); // 2500 + 200
-    expect(data.totalExpense).toBe(130); // 35 + 40 + 55
+    // Mes anterior: ingresos 2700 (2500 + 200), gastos 130 (35 + 40 + 55)
+    expect(data.totalIncome).toBe(2700);
+    expect(data.totalExpense).toBe(130);
     expect(data.balance).toBe(2570);
   });
 
   it('Debe retornar datos vacíos si no hay transacciones en el mes', async () => {
     const response = await request(app)
-      .get(`/api/reports/monthly?month=12&year=${currentYear}`)
+      .get(`/api/reports/monthly?month=${emptyMonth}&year=${currentYear}`)
       .set('Authorization', `Bearer ${testUserToken}`)
       .expect(200);
 
@@ -467,14 +475,14 @@ describe('GET /api/reports/yearly', () => {
     const data = response.body.data;
     const { totals } = data;
 
-    // Total ingresos: (2500+300) + 2700 = 5500
-    expect(totals.totalIncome).toBe(5500);
+    // En enero el mes anterior cae en el año pasado y queda fuera del reporte anual
+    const prevInSameYear = previousFixtureYear === currentYear;
+    const expectedIncome = prevInSameYear ? 5500 : 2800; // (2500+300) + 2700
+    const expectedExpense = prevInSameYear ? 360.50 : 230.50; // 230.50 + 130
 
-    // Total gastos: 230.50 + 130 = 360.50
-    expect(totals.totalExpense).toBe(360.50);
-
-    // Balance: 5500 - 360.50 = 5139.50
-    expect(totals.balance).toBe(5139.50);
+    expect(totals.totalIncome).toBe(expectedIncome);
+    expect(totals.totalExpense).toBe(expectedExpense);
+    expect(totals.balance).toBe(expectedIncome - expectedExpense);
   });
 
   it('Debe datos correctos para mes con transacciones', async () => {
@@ -484,12 +492,13 @@ describe('GET /api/reports/yearly', () => {
       .expect(200);
 
     const data = response.body.data;
-    const mayo = data.months[4]; // Mayo es el mes 5
+    const monthData = data.months[currentMonth - 1];
 
-    expect(mayo.month).toBe(5);
-    expect(mayo.income).toBe(2800);
-    expect(mayo.expense).toBe(230.50);
-    expect(mayo.balance).toBe(2569.50);
+    // Mes actual: ingresos 2500 + 300, gastos 45.50 + 25 + 30 + 50 + 80
+    expect(monthData.month).toBe(currentMonth);
+    expect(monthData.income).toBe(2800);
+    expect(monthData.expense).toBe(230.50);
+    expect(monthData.balance).toBe(2569.50);
   });
 
   it('Debe retornar 401 sin token de autenticación', async () => {
@@ -571,7 +580,7 @@ describe('GET /api/reports/category-breakdown', () => {
 
   it('Debe retornar datos vacíos si no hay categorías en el mes', async () => {
     const response = await request(app)
-      .get(`/api/reports/category-breakdown?month=12&year=${currentYear}`)
+      .get(`/api/reports/category-breakdown?month=${emptyMonth}&year=${currentYear}`)
       .set('Authorization', `Bearer ${testUserToken}`)
       .expect(200);
 

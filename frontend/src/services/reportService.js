@@ -48,11 +48,13 @@ class ReportService {
     }
   }
 
-  async getSummary(month, year) {
+  async getSummary(month, year, range = null) {
     try {
-      const response = await api.get(API_ENDPOINTS.REPORTS.SUMMARY, {
-        params: { month, year },
-      });
+      const params = range?.startDate && range?.endDate
+        ? { startDate: range.startDate, endDate: range.endDate }
+        : { month, year };
+
+      const response = await api.get(API_ENDPOINTS.REPORTS.SUMMARY, { params });
       return response.data;
     } catch (error) {
       if (error.response?.status === 404) {

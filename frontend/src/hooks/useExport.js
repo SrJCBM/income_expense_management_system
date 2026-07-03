@@ -10,7 +10,7 @@ export const useExport = () => {
   const [exportError, setExportError] = useState(null);
   const [exportSuccess, setExportSuccess] = useState(false);
 
-  const handleExportPDF = async (data, month, year) => {
+  const handleExportPDF = async (data, period) => {
     setIsExporting(true);
     setExportError(null);
     setExportSuccess(false);
@@ -20,7 +20,7 @@ export const useExport = () => {
         throw new Error('No hay datos para exportar');
       }
 
-      await exportToPDF(data, month, year);
+      await exportToPDF(data, period);
       setExportSuccess(true);
       setTimeout(() => setExportSuccess(false), 3000);
     } catch (error) {
@@ -31,7 +31,7 @@ export const useExport = () => {
     }
   };
 
-  const handleExportExcel = async (data, month, year) => {
+  const handleExportExcel = async (data, period) => {
     setIsExporting(true);
     setExportError(null);
     setExportSuccess(false);
@@ -41,7 +41,7 @@ export const useExport = () => {
         throw new Error('No hay datos para exportar');
       }
 
-      await exportToExcel(data, month, year);
+      await exportToExcel(data, period);
       setExportSuccess(true);
       setTimeout(() => setExportSuccess(false), 3000);
     } catch (error) {

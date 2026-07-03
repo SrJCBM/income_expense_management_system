@@ -36,17 +36,16 @@ const validateExportData = (data) => {
 /**
  * Exporta reporte a PDF
  * @param {Object} data - Datos del reporte
- * @param {number} month - Mes del reporte (1-12)
- * @param {number} year - Año del reporte
+ * @param {Object} period - { label, fileSlug }
  * @returns {Promise<void>}
  * @throws {Error} Si los datos son inválidos o fallan durante exportación
  */
-export const exportToPDF = async (data, month, year) => {
+export const exportToPDF = async (data, period) => {
   try {
     validateExportData(data);
     
-    if (!month || !year || month < 1 || month > 12) {
-      throw new Error('Mes o año inválido');
+    if (!period?.label || !period?.fileSlug) {
+      throw new Error('Período inválido');
     }
 
     // Try to load the autoTable plugin dynamically (optional). If not available, we'll use a fallback.
@@ -60,13 +59,7 @@ export const exportToPDF = async (data, month, year) => {
 
     const doc = new jsPDF();
     
-    const monthNames = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    
-    const monthName = monthNames[month - 1];
-    const title = `Reporte Financiero - ${monthName} ${year}`;
+    const title = `Reporte Financiero - ${period.label}`;
     
     // Título
     doc.setFontSize(20);
@@ -152,7 +145,7 @@ export const exportToPDF = async (data, month, year) => {
     }
     
     // Guardar PDF
-    doc.save(`reporte-financiero-${monthName}-${year}.pdf`);
+    doc.save(`reporte-financiero-${period.fileSlug}.pdf`);
   } catch (error) {
     const errorMessage = error.message || 'Error desconocido al exportar PDF';
     console.error('Export PDF error:', error);
@@ -163,32 +156,25 @@ export const exportToPDF = async (data, month, year) => {
 /**
  * Exporta reporte a Excel
  * @param {Object} data - Datos del reporte
- * @param {number} month - Mes del reporte (1-12)
- * @param {number} year - Año del reporte
+ * @param {Object} period - { label, fileSlug }
  * @returns {Promise<void>}
  * @throws {Error} Si los datos son inválidos o fallan durante exportación
  */
-export const exportToExcel = async (data, month, year) => {
+export const exportToExcel = async (data, period) => {
   try {
     validateExportData(data);
     
-    if (!month || !year || month < 1 || month > 12) {
-      throw new Error('Mes o año inválido');
+    if (!period?.label || !period?.fileSlug) {
+      throw new Error('Período inválido');
     }
 
-    const monthNames = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    
-    const monthName = monthNames[month - 1];
     
     // Crear workbook
     const workbook = XLSX.utils.book_new();
     
     // Hoja 1: Resumen
     const summaryData = [
-      ['REPORTE FINANCIERO', `${monthName} ${year}`],
+      ['REPORTE FINANCIERO', period.label],
       [],
       ['Concepto', 'Monto'],
       ['Ingresos Totales', data.totalIncome],
@@ -219,7 +205,7 @@ export const exportToExcel = async (data, month, year) => {
     }
     
     // Guardar Excel
-    XLSX.writeFile(workbook, `reporte-financiero-${monthName}-${year}.xlsx`);
+    XLSX.writeFile(workbook, `reporte-financiero-${period.fileSlug}.xlsx`);
   } catch (error) {
     const errorMessage = error.message || 'Error desconocido al exportar Excel';
     console.error('Export Excel error:', error);

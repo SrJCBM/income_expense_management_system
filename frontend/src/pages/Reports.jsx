@@ -18,6 +18,11 @@ const DEFAULT_FILTERS = {
   hasData: false,
 };
 
+const formatDMY = (iso) => {
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+};
+
 const Reports = () => {
   const { t } = useLanguage();
   const monthLabels = t('months.long');
@@ -27,6 +32,9 @@ const Reports = () => {
   const [error, setError] = useState(null);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [mode, setMode] = useState('month'); // 'month' | 'range'
+  const [rangeStart, setRangeStart] = useState('');
+  const [rangeEnd, setRangeEnd] = useState('');
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [filtersLoading, setFiltersLoading] = useState(true);
   const [yearlyData, setYearlyData] = useState(null);
@@ -88,12 +96,17 @@ const Reports = () => {
     if (filtersLoading) {
       return;
     }
+    if (mode === 'range' && (!rangeStart || !rangeEnd || rangeStart > rangeEnd)) {
+      return;
+    }
 
     const fetchReports = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await reportService.getSummary(month, year);
+        const response = mode === 'range'
+          ? await reportService.getSummary(null, null, { startDate: rangeStart, endDate: rangeEnd })
+          : await reportService.getSummary(month, year);
         const payload = response?.data || DEFAULT_SUMMARY;
 
         setSummary({
@@ -112,16 +125,34 @@ const Reports = () => {
     };
 
     fetchReports();
-  }, [month, year, filtersLoading]);
+  }, [month, year, mode, rangeStart, rangeEnd, filtersLoading]);
+
+  const yearlyYear = mode === 'range' && rangeStart ? Number(rangeStart.slice(0, 4)) : year;
 
   useEffect(() => {
-    if (!year) return;
-    reportService.getYearlyReport(year)
+    if (!yearlyYear) return;
+    reportService.getYearlyReport(yearlyYear)
       .then((res) => setYearlyData(res?.data || null))
       .catch(() => setYearlyData(null));
-  }, [year]);
+  }, [yearlyYear]);
 
   const availableMonths = filters.monthsByYear?.[year] || [];
+
+  const rangeInvalid = mode === 'range' && rangeStart && rangeEnd && rangeStart > rangeEnd;
+  const waitingForRange = mode === 'range' && (!rangeStart || !rangeEnd);
+
+  const buildPeriod = () => {
+    if (mode === 'range') {
+      return {
+        label: `${formatDMY(rangeStart)} – ${formatDMY(rangeEnd)}`,
+        fileSlug: `${rangeStart}_${rangeEnd}`,
+      };
+    }
+    return {
+      label: `${monthLabels[month - 1]} ${year}`,
+      fileSlug: `${monthLabels[month - 1]}-${year}`,
+    };
+  };
 
   const hasReportData =
     summary.totalIncome > 0 ||
@@ -136,7 +167,27 @@ const Reports = () => {
           <p className="subtitle">{t('reports.subtitle')}</p>
         </div>
         <div className="header-controls">
-          {filters.hasData && (
+          <div className="mode-toggle" role="group" aria-label={t('reports.modeToggleLabel')} data-testid="report-mode-toggle">
+            <button
+              type="button"
+              className={`btn-secondary btn-mode${mode === 'month' ? ' active' : ''}`}
+              aria-pressed={mode === 'month'}
+              onClick={() => setMode('month')}
+              data-testid="report-mode-month"
+            >
+              {t('reports.modeMonth')}
+            </button>
+            <button
+              type="button"
+              className={`btn-secondary btn-mode${mode === 'range' ? ' active' : ''}`}
+              aria-pressed={mode === 'range'}
+              onClick={() => setMode('range')}
+              data-testid="report-mode-range"
+            >
+              {t('reports.modeRange')}
+            </button>
+          </div>
+          {mode === 'month' && filters.hasData && (
             <div className="filters">
               <select
                 value={month}
@@ -166,10 +217,32 @@ const Reports = () => {
               </select>
             </div>
           )}
+          {mode === 'range' && (
+            <div className="filters range-filters">
+              <label htmlFor="report-start-date">{t('reports.fromLabel')}</label>
+              <input
+                type="date"
+                id="report-start-date"
+                value={rangeStart}
+                max={rangeEnd || undefined}
+                onChange={(e) => setRangeStart(e.target.value)}
+                data-testid="report-start-date"
+              />
+              <label htmlFor="report-end-date">{t('reports.toLabel')}</label>
+              <input
+                type="date"
+                id="report-end-date"
+                value={rangeEnd}
+                min={rangeStart || undefined}
+                onChange={(e) => setRangeEnd(e.target.value)}
+                data-testid="report-end-date"
+              />
+            </div>
+          )}
           {hasReportData && (
             <div className="export-buttons">
               <button
-                onClick={() => handleExportPDF(summary, month, year)}
+                onClick={() => handleExportPDF(summary, buildPeriod())}
                 className="btn-secondary"
                 disabled={isExporting}
                 aria-label={t('reports.exportPDFLabel')}
@@ -180,7 +253,7 @@ const Reports = () => {
                 {isExporting ? t('reports.exporting') : t('reports.exportPDF')}
               </button>
               <button
-                onClick={() => handleExportExcel(summary, month, year)}
+                onClick={() => handleExportExcel(summary, buildPeriod())}
                 className="btn-secondary"
                 disabled={isExporting}
                 aria-label={t('reports.exportExcelLabel')}
@@ -208,7 +281,13 @@ const Reports = () => {
         </div>
       )}
 
-      {isLoading || filtersLoading ? (
+      {rangeInvalid ? (
+        <div className="alert alert-error" role="alert" data-testid="range-error">{t('reports.rangeError')}</div>
+      ) : waitingForRange ? (
+        <div className="card list-card">
+          <p className="hint">{t('reports.fromLabel')} / {t('reports.toLabel')} — {t('reports.noDataHint')}</p>
+        </div>
+      ) : isLoading || filtersLoading ? (
         <div className="skeleton-item" style={{ height: '300px' }}></div>
       ) : error ? (
         <div className="alert alert-error">{error}</div>

@@ -235,3 +235,48 @@
   .summary-table { font-size: 0.85rem; }
   .filter-select { flex: 1; }
 }
+
+/* ── Month | Range mode toggle ── */
+.mode-toggle {
+  display: inline-flex;
+  gap: 0;
+}
+
+.mode-toggle .btn-mode {
+  border-radius: 0;
+}
+
+.mode-toggle .btn-mode:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.mode-toggle .btn-mode:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.mode-toggle .btn-mode.active {
+  background-color: var(--primary-color, #3b82f6);
+  color: #fff;
+}
+
+.range-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.range-filters input[type='date'] {
+  min-height: 42px;
+}
+
+@media (max-width: 768px) {
+  .range-filters {
+    width: 100%;
+  }
+
+  .range-filters input[type='date'] {
+    flex: 1;
+    min-height: 44px;
+  }
+}

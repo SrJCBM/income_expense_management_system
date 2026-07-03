@@ -285,7 +285,7 @@ const Reports = () => {
         <div className="alert alert-error" role="alert" data-testid="range-error">{t('reports.rangeError')}</div>
       ) : waitingForRange ? (
         <div className="card list-card">
-          <p className="hint">{t('reports.fromLabel')} / {t('reports.toLabel')} — {t('reports.noDataHint')}</p>
+          <p className="hint">{t('reports.rangePrompt')}</p>
         </div>
       ) : isLoading || filtersLoading ? (
         <div className="skeleton-item" style={{ height: '300px' }}></div>

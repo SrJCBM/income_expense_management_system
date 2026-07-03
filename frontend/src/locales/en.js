@@ -374,6 +374,7 @@ export default {
     fromLabel: 'From',
     toLabel: 'To',
     rangeError: 'Start date must be before or equal to end date',
+    rangePrompt: 'Select the From and To dates to see the range report',
     exportPDF: '📄 PDF',
     exportExcel: '📊 Excel',
     exporting: '⏳ Downloading...',

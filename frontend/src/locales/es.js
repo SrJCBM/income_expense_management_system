@@ -374,6 +374,7 @@ export default {
     fromLabel: 'Desde',
     toLabel: 'Hasta',
     rangeError: 'La fecha inicial debe ser anterior o igual a la final',
+    rangePrompt: 'Selecciona las fechas Desde y Hasta para ver el reporte del rango',
     exportPDF: '📄 PDF',
     exportExcel: '📊 Excel',
     exporting: '⏳ Descargando...',

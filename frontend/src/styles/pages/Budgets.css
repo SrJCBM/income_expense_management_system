@@ -128,4 +128,14 @@
 
 @media (max-width: 768px) {
   .budget-grid { grid-template-columns: 1fr; }
+
+  /* Touch targets ≥ 44px on mobile */
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .budget-card-actions {
+    gap: 6px;
+  }
 }

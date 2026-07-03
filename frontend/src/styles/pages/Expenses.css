@@ -85,6 +85,23 @@
   border-top: 1px solid var(--surface-border);
 }
 
+/* ── Checkbox field (e.g. recurring toggle) ── */
+.form-group-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.form-group-checkbox input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
 /* ── Filters bar ── */
 .filters-bar {
   display: flex;
@@ -555,6 +572,25 @@
   .expense-list,
   .list-card {
     overflow-x: auto;
+  }
+
+  /* Touch targets ≥ 44px on mobile */
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .filters-bar input,
+  .filters-bar select,
+  .filters-bar button,
+  .btn-filter,
+  .filter-search {
+    min-height: 44px;
+  }
+
+  .form-group-checkbox label {
+    min-height: 44px;
   }
 
   .pending-sync-header,

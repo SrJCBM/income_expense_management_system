@@ -21,7 +21,14 @@ solo en `web/`.
 
 El emulador ve el `localhost` de la PC como `10.0.2.2`. El trafico HTTP
 cleartext esta permitido SOLO hacia `10.0.2.2`
-(`android/app/src/main/res/xml/network_security_config.xml`).
+(`android/app/src/main/res/xml/network_security_config.xml`). La WebView se
+sirve con esquema `http` (`server.androidScheme` en `capacitor.config.json`);
+con el esquema `https` por defecto, Chromium bloquea las llamadas a
+`http://10.0.2.2` como Mixed Content.
+
+> Emulador por CLI: si el AVD Pixel_8_Pro queda `offline` indefinidamente al
+> arrancarlo con `emulator.exe -avd Pixel_8_Pro`, relanzarlo con
+> `-gpu swiftshader_indirect` (en esta maquina la GPU por defecto lo cuelga).
 
 ### Telefono fisico (misma red WiFi)
 

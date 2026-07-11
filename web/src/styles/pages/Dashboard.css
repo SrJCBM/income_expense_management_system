@@ -1,0 +1,333 @@
+/* ── Page header ── */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.page-header-left .eyebrow {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.page-header .subtitle {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* ── KPI grid ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.dashboard-card {
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  min-width: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+.dashboard-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.dashboard-card h2 {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
+}
+
+.dashboard-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.dashboard-card .amount {
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.dashboard-card .trend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.amount.positive { color: var(--success-color); }
+.amount.negative { color: var(--danger-color); }
+.amount.neutral  { color: var(--text-primary); }
+
+/* ── Budget alert banner ── */
+.alert-warning {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--border-radius-md);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  color: var(--warning-light);
+  animation: fadeIn 0.2s ease;
+}
+
+.budget-alert-item {
+  flex: 1;
+}
+
+.budget-alert-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--warning-light);
+  margin-bottom: 2px;
+}
+
+.budget-alert-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Dashboard lower grid ── */
+.recent-activity {
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-lg);
+  padding: 22px;
+}
+
+.recent-activity h2,
+.recent-activity-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 18px;
+  color: var(--text-primary);
+}
+
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 4px;
+}
+
+.activity-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.activity-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-desc {
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-date {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.activity-amount {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+/* ── Category bars (expenses by category) ── */
+.category-summary {
+  padding: 0;
+}
+
+.category-summary-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--text-primary);
+}
+
+.category-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-item-name-group {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.category-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.cat-name {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.category-item-amounts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cat-amount {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+  white-space: nowrap;
+}
+
+.cat-pct {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 38px;
+  text-align: right;
+}
+
+.cat-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: var(--border-radius-pill);
+  overflow: hidden;
+}
+
+.cat-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--border-radius-pill);
+  transition: width 0.4s ease;
+}
+
+/* ── Dashboard link ── */
+.dashboard-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.dashboard-link:hover { color: var(--text-accent); }
+
+/* ── Empty state ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--background-color);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  font-size: 32px;
+}
+
+.empty-state-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.empty-state p,
+.empty-state .hint {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

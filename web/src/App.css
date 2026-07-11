@@ -1,0 +1,10 @@
+/* App.css — reset de estilos legacy */
+
+body {
+  background: var(--background-color);
+  color: var(--text-primary);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}

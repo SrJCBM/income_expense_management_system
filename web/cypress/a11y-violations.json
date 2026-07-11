@@ -1,0 +1,57 @@
+[
+  {
+    "id": "color-contrast",
+    "impact": "serious",
+    "tags": [
+      "cat.color",
+      "wcag2aa",
+      "wcag143",
+      "TTv5",
+      "TT13.c",
+      "EN-301-549",
+      "EN-9.1.4.3",
+      "ACT",
+      "RGAAv4",
+      "RGAA-3.2.1"
+    ],
+    "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI",
+    "nodes": [
+      {
+        "any": [
+          {
+            "id": "color-contrast",
+            "data": {
+              "fgColor": "#6366f1",
+              "bgColor": "#1e293b",
+              "contrastRatio": 3.27,
+              "fontSize": "10.8pt (14.4px)",
+              "fontWeight": "normal",
+              "messageKey": null,
+              "expectedContrastRatio": "4.5:1"
+            },
+            "relatedNodes": [
+              {
+                "html": "<div class=\"recent-activity\"><div class=\"flex-between\"><h2>Gastos por Categoría</h2><a class=\"dashboard-link\" href=\"#/reports\">Ver reportes →</a></div><div><div class=\"skeleton-item\"></div><div class=\"skeleton-item\"></div></div></div>",
+                "target": [
+                  ".recent-activity"
+                ]
+              }
+            ],
+            "impact": "serious",
+            "message": "Element has insufficient color contrast of 3.27 (foreground color: #6366f1, background color: #1e293b, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ],
+        "all": [],
+        "none": [],
+        "impact": "serious",
+        "html": "<a class=\"dashboard-link\" href=\"#/reports\">Ver reportes →</a>",
+        "target": [
+          ".dashboard-link"
+        ],
+        "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.27 (foreground color: #6366f1, background color: #1e293b, font size: 10.8pt (14.4px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+    ]
+  }
+]

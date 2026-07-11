@@ -63,7 +63,7 @@
 
 #### Run Tests
 ```bash
-cd frontend
+cd web
 npm run test:e2e          # Run E2E tests
 npm run cypress:open      # Open Cypress UI
 
@@ -90,19 +90,19 @@ npm run test:coverage     # See coverage report
 
 #### Start Development Environment
 ```bash
-cd frontend
+cd installer
 npm run electron-dev      # Electron + hot-reload
 ```
 
 #### Build for Production
 ```bash
-cd frontend
+cd installer
 npm run build:dist        # Create Windows .exe installer
 ```
 
 #### Preview Production Build
 ```bash
-cd frontend
+cd installer
 npm run electron          # Run packaged app (after build)
 ```
 
@@ -136,7 +136,7 @@ income_expense_management_system/
 │   ├── API.md
 │   ├── SETUP.md
 │   └── DEVELOPMENT_GUIDE.md
-├── frontend/
+├── installer/
 │   ├── BUILD_QUICK_GUIDE.md           ← Build overview
 │   ├── BUILD_CHECKLIST.md             ← Pre-build checklist
 │   ├── ELECTRON_BUILD.md              ← Technical deep-dive
@@ -151,7 +151,7 @@ income_expense_management_system/
 ## ❓ Common Questions
 
 ### Q: Where do I find the .exe installer?
-**A:** After `npm run build:dist`, check: `frontend/release/Income Expense Manager Setup 1.0.0.exe`
+**A:** After `npm run build:dist`, check: `installer/release/Income Expense Manager Setup 1.0.0.exe`
 
 ### Q: What does the build script do?
 **A:** Compiles frontend → bundles backend → creates Windows installer. Takes 5-10 minutes.

@@ -68,7 +68,7 @@ npm --version     # Debe ser v9+
 
 # Verificar dependencias instaladas
 cd backend && npm list | head -20
-cd frontend && npm list | head -20
+cd web && npm list | head -20
 ```
 
 ### Estructura de Carpetas para Testing
@@ -93,7 +93,7 @@ backend/
 │       ├── categories.test.js            # 42 tests: endpoints de categorías
 │       └── reports.test.js               # 37 tests: endpoints de reportes
 │
-frontend/
+web/
 ├── cypress/
 │   ├── support/
 │   │   └── commands.js                   # Comandos personalizados de Cypress
@@ -385,7 +385,7 @@ npm test -- integration/reports
 
 ```bash
 # Terminal 1: Inicia servidor de desarrollo
-cd frontend
+cd web
 npm run dev -- --port 3000
 
 # Espera a ver:
@@ -396,7 +396,7 @@ npm run dev -- --port 3000
 
 ```bash
 # Terminal 2 (en otra ventana)
-cd frontend
+cd web
 npm run test:e2e
 ```
 
@@ -433,7 +433,7 @@ Duration: ~24 seconds
 ### Comando 2: Modo Interactivo (Cypress Studio)
 
 ```bash
-cd frontend
+cd web
 npm run cypress:open
 ```
 
@@ -585,7 +585,7 @@ Coverage: 87.15%
 
 ```bash
 # Terminal 2
-cd frontend
+cd web
 
 # Instalar dependencias (solo primera vez)
 npm install
@@ -604,7 +604,7 @@ npm run dev -- --port 3000
 
 ```bash
 # Terminal 3 (mientras Terminal 2 sigue corriendo)
-cd frontend
+cd web
 
 # Ejecutar E2E tests
 npm run test:e2e
@@ -630,7 +630,7 @@ Si quieres automatizar todo:
 cd backend; npm test; cd ..
 
 # Frontend dev server (background)
-cd frontend; Start-Process -NoNewWindow -FilePath npm -ArgumentList "run dev -- --port 3000"
+cd web; Start-Process -NoNewWindow -FilePath npm -ArgumentList "run dev -- --port 3000"
 
 # E2E tests (espera 3 segundos para que inicie servidor)
 Start-Sleep -Seconds 3
@@ -771,7 +771,7 @@ The command was expected to run within 10000ms
 Verifica que `npm run dev` esté activo. Si no:
 ```bash
 # Terminal dedicada para dev server
-cd frontend
+cd web
 npm run dev -- --port 3000
 # Mantén corriendo mientras ejecutas tests
 ```
@@ -884,10 +884,10 @@ npm run test:e2e -- --spec cypress/e2e/auth.cy.js  # Test específico
 cd backend && npm test
 
 # Terminal 2: Frontend dev server
-cd frontend && npm run dev -- --port 3000
+cd web && npm run dev -- --port 3000
 
 # Terminal 3: Frontend E2E tests
-cd frontend && npm run test:e2e
+cd web && npm run test:e2e
 ```
 
 ---

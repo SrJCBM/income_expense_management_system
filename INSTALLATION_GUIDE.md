@@ -14,11 +14,11 @@
 cd income_expense_management_system
 
 # 2. Install dependencies
-cd frontend
+cd installer
 npm install
 cd ../backend
 npm install
-cd ../frontend
+cd ../installer
 
 # 3. Run in development mode
 npm run electron-dev
@@ -27,7 +27,7 @@ npm run electron-dev
 ## For Building the Installer
 
 ```powershell
-# From frontend directory
+# From installer directory
 npm run build:dist
 ```
 
@@ -40,7 +40,7 @@ This will:
 ### Build Output
 
 ```
-frontend/
+installer/
 ├── dist/
 │   ├── index.html (compiled frontend)
 │   ├── assets/ (React bundles)
@@ -61,7 +61,7 @@ npm install -D electron electron-builder cross-env
 ```powershell
 cd backend
 npm ci --omit=dev
-cd ../frontend
+cd ../installer
 npm run build:dist
 ```
 

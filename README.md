@@ -1,19 +1,24 @@
-# Sistema de Control de Gastos e Ingresos
+# FinanceApp
 
-Aplicacion full-stack para registrar, consultar y analizar ingresos y gastos personales o familiares. Permite gestionar categorias, visualizar reportes, exportar informacion y empaquetar una version de escritorio con Electron.
+Aplicacion financiera full-stack para registrar, consultar y analizar ingresos, gastos, presupuestos y reportes personales o familiares. FinanceApp incluye version web, API REST, sincronizacion offline para creacion de ingresos/gastos y empaquetado de escritorio con Electron.
 
 ## Caracteristicas
 
 - Registro y edicion de ingresos.
 - Registro y edicion de gastos.
-- Categorias para ingresos y gastos.
-- Dashboard con resumen financiero.
-- Reportes con graficos y desglose por categoria.
+- Creacion offline de ingresos y gastos con cola local persistente en IndexedDB.
+- Sincronizacion manual de pendientes con proteccion contra duplicados mediante `clientRequestId`.
+- Categorias para ingresos y gastos con selector de emojis por secciones.
+- Presupuestos mensuales con progreso y alertas.
+- Dashboard con resumen financiero, tendencias y alertas.
+- Reportes con graficos, tendencia anual y desglose por categoria.
 - Exportacion a PDF y Excel.
+- Perfil de usuario con moneda configurable y restablecimiento de datos.
+- Idioma configurable entre espanol e ingles.
 - Autenticacion con JWT.
-- Interfaz responsive.
+- Interfaz responsive con mejoras para uso movil.
 - Pruebas E2E con Cypress.
-- Build de escritorio con Electron.
+- Build de escritorio con Electron y electron-builder.
 
 ## Inicio Rapido
 
@@ -34,7 +39,7 @@ npm run dev
 Terminal 2:
 
 ```bash
-cd frontend
+cd web
 npm install
 npm run dev
 ```
@@ -115,11 +120,10 @@ income_expense_management_system/
       helpers/
       fixtures/
 
-  frontend/
+  web/
     package.json
     vite.config.js
     cypress.config.js
-    electron/
     scripts/
     src/
       components/
@@ -134,6 +138,14 @@ income_expense_management_system/
       e2e/
       support/
       fixtures/
+
+  installer/
+    package.json
+    electron/
+    scripts/
+
+  mobile/
+    (App Android con Capacitor, Fase 2, pendiente)
 
   docs/
 ```
@@ -153,14 +165,14 @@ FRONTEND_URL=http://localhost:3000
 BCRYPT_ROUNDS=10
 ```
 
-Frontend (`frontend/.env`):
+Frontend (`web/.env`):
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_API_TIMEOUT=10000
 VITE_AUTH_MODE=mock
-VITE_APP_NAME=Income & Expense Manager
-VITE_APP_VERSION=1.1.0
+VITE_APP_NAME=FinanceApp
+VITE_APP_VERSION=1.2.0
 ```
 
 No subir archivos `.env` al repositorio.
@@ -178,21 +190,28 @@ npm run test:coverage
 Frontend E2E:
 
 ```bash
-cd frontend
+cd web
 npm run cypress:run
+```
+
+Pruebas E2E focalizadas usadas para validar los flujos tocados con offline, categorias y formularios:
+
+```bash
+cd web
+npm run cypress:run -- --spec "cypress/e2e/expenses.cy.js,cypress/e2e/incomes.cy.js,cypress/e2e/categories.cy.js"
 ```
 
 Frontend accessibility smoke:
 
 ```bash
-cd frontend
+cd web
 npm run test:a11y
 ```
 
 Abrir Cypress en modo visual:
 
 ```bash
-cd frontend
+cd web
 npm run dev
 npm run cypress
 ```
@@ -210,23 +229,23 @@ Ver [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md) para el flujo completo.
 Version actual del instalador:
 
 ```text
-1.1.0
+FinanceApp 1.2.0
 ```
 
 Generar instalador:
 
 ```bash
-cd frontend
+cd installer
 npm run build:dist
 ```
 
 Salida local:
 
 ```text
-frontend/release/Income Expense Manager Setup 1.1.0.exe
+installer/release/FinanceApp Setup 1.2.0.exe
 ```
 
-La carpeta `frontend/release/` esta ignorada por Git porque contiene artefactos pesados. No debe subirse al repositorio.
+El nombre del instalador se calcula desde `installer/package.json`, usando `build.productName` y `version`. La carpeta `installer/release/` esta ignorada por Git porque contiene artefactos pesados. No debe subirse al repositorio.
 
 ## Estado del Proyecto
 
@@ -237,8 +256,10 @@ La carpeta `frontend/release/` esta ignorada por Git porque contiene artefactos 
 | Ingresos | Completo |
 | Categorias | Completo |
 | Reportes | Completo |
-| Presupuestos | En desarrollo |
-| Perfil de usuario | En desarrollo |
+| Presupuestos | Completo |
+| Perfil de usuario | Completo |
+| Offline create/sync | Completo para ingresos y gastos |
+| Electron desktop | Completo |
 
 ## Soporte
 
@@ -252,6 +273,6 @@ MIT
 
 ---
 
-Version: 1.1.0  
+Version: 1.2.0  
 Ultima actualizacion: Junio 2026  
 Estado: Produccion

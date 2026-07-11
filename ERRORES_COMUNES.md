@@ -13,7 +13,7 @@ cd  # Muestra la carpeta actual en Windows PowerShell
 
 # Navega a la carpeta correcta:
 cd backend      # Si instalas backend
-cd ../frontend  # Si cambias a frontend
+cd ../web       # Si cambias a frontend
 
 # Luego ejecuta:
 npm install
@@ -32,7 +32,7 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess
 
 # Cierra ese programa o usa otro puerto en .env:
 # Cambia: PORT=5001  (en backend/.env)
-# O:      port: 5001  (en frontend/vite.config.js)
+# O:      port: 5001  (en web/vite.config.js)
 ```
 
 **Solución rápida**: Reinicia tu computadora
@@ -45,7 +45,7 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess
 
 **¿Es crítico?**: **NO** - Solo es un ícono decorativo. La app funciona perfectamente.
 
-**Solución**: Ignora este error. Si quieres arreglarlo, crea el archivo `frontend/public/vite.svg` (busca en google "vite.svg")
+**Solución**: Ignora este error. Si quieres arreglarlo, crea el archivo `web/public/vite.svg` (busca en google "vite.svg")
 
 ---
 
@@ -118,7 +118,7 @@ mongod
 **Causa 1**: Frontend no está ejecutándose
 ```bash
 # Verifica en Terminal 2:
-cd frontend
+cd web
 npm run dev
 
 # Deberías ver:
@@ -128,7 +128,7 @@ npm run dev
 **Causa 2**: Falta el archivo `index.html` en frontend
 ```bash
 # Verifica que existe:
-cd frontend
+cd web
 dir index.html  # En Windows PowerShell
 
 # Si falta, contacta al líder del proyecto
@@ -136,7 +136,7 @@ dir index.html  # En Windows PowerShell
 
 **Causa 3**: Puerto 3000 está en uso
 ```bash
-# Usa otro puerto en frontend/vite.config.js:
+# Usa otro puerto en web/vite.config.js:
 # port: 3001  (en lugar de 3000)
 ```
 

@@ -15,7 +15,7 @@ Espera el mensaje: `✅ Servidor ejecutándose en puerto 5000`
 ## 🚀 Paso 2: Frontend (Terminal 2)
 
 ```powershell
-cd frontend
+cd web
 npm install
 npm run dev
 ```
@@ -91,7 +91,7 @@ El navegador abrirá en **http://localhost:3000** 🎉
 │  -----------                                                               │
 │  Abre OTRA terminal en la CARPETA DEL PROYECTO                            │
 │                                                                            │
-│  $ cd frontend                                                             │
+│  $ cd web                                                                  │
 │  $ npm install                                                             │
 │  $ npm run dev                                                             │
 │                                                                            │
@@ -286,7 +286,7 @@ El navegador abrirá en **http://localhost:3000** 🎉
 | Saber qué codificar | `docs/DEVELOPMENT_GUIDE.md` |
 | Ver el mapa completo | `docs/PROJECT_STRUCTURE.md` |
 | Configuración backend | `backend/.env.example` |
-| Configuración frontend | `frontend/.env.example` |
+| Configuración frontend | `web/.env.example` |
 
 ---
 

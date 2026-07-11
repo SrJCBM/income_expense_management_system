@@ -13,7 +13,7 @@ describe('Accessibility smoke', () => {
 
   it('Dashboard should keep landmarks and buttons accessible', () => {
     cy.visitWithSession('/');
-    cy.contains('Panel de Control').should('be.visible');
+    cy.get('[data-testid="dashboard-balance"]').should('be.visible');
     cy.auditA11y();
   });
 });

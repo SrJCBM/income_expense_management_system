@@ -111,12 +111,26 @@ describe('CRUD de Ingresos (E2E)', () => {
   it('Debe validar que el monto sea mayor a 0', () => {
     cy.get('[data-testid="new-income-button"]').click();
     cy.get('[data-testid="income-concept"]').clear().type('Ingreso de prueba');
-    cy.get('[data-testid="income-amount"]').clear().type('-150');
+    cy.get('[data-testid="income-amount"]').clear().type('0');
     cy.get('[data-testid="income-category"]').select(TEST_CATEGORY_ID);
     cy.get('[data-testid="income-submit"]').click();
 
     cy.get('[data-testid="income-error-amount"]').should('be.visible')
       .and('contain', 'mayor a 0');
+  });
+
+  it('Debe rechazar un monto negativo como formato inválido', () => {
+    // Desde parseAmount (regex ^\d+(\.\d+)?$ tras normalizar coma), un valor
+    // negativo no matchea el patrón numérico y se trata como formato inválido,
+    // no como "monto <= 0".
+    cy.get('[data-testid="new-income-button"]').click();
+    cy.get('[data-testid="income-concept"]').clear().type('Ingreso de prueba');
+    cy.get('[data-testid="income-amount"]').clear().type('-150');
+    cy.get('[data-testid="income-category"]').select(TEST_CATEGORY_ID);
+    cy.get('[data-testid="income-submit"]').click();
+
+    cy.get('[data-testid="income-error-amount"]').should('be.visible')
+      .and('contain', 'inválido');
   });
 
   it('Debe editar un ingreso desde la lista', () => {

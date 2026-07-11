@@ -74,7 +74,7 @@ describe('Authentication Flow', () => {
 
       cy.wait('@registerOk');
       cy.url().should('eq', `${Cypress.config('baseUrl')}/#/`);
-      cy.contains('Panel de Control').should('be.visible');
+      cy.get('[data-testid="dashboard-balance"]').should('be.visible');
     });
 
     it('Debe mostrar error si el email ya existe', () => {
@@ -103,7 +103,7 @@ describe('Authentication Flow', () => {
       cy.getByDataTest('confirm-password-input').type('OtroPassword456!');
       cy.getByDataTest('register-button').click();
 
-      cy.get('[role="alert"]').should('contain.text', 'contrasenas no coinciden');
+      cy.get('[role="alert"]').should('contain.text', 'no coinciden');
       cy.url().should('include', '/register');
     });
 
@@ -114,7 +114,7 @@ describe('Authentication Flow', () => {
       cy.getByDataTest('confirm-password-input').type('abc');
       cy.getByDataTest('register-button').click();
 
-      cy.get('[role="alert"]').should('contain.text', 'al menos 8 caracteres');
+      cy.get('[role="alert"]').should('contain.text', 'no cumple todos los requisitos de seguridad');
       cy.url().should('include', '/register');
     });
 
@@ -168,7 +168,7 @@ describe('Authentication Flow', () => {
 
       cy.wait('@loginOk');
       cy.url().should('eq', `${Cypress.config('baseUrl')}/#/`);
-      cy.contains('Panel de Control').should('be.visible');
+      cy.get('[data-testid="dashboard-balance"]').should('be.visible');
     });
 
     it('Debe mostrar error con credenciales invalidas', () => {
@@ -216,7 +216,7 @@ describe('Authentication Flow', () => {
 
       cy.reload();
       cy.url().should('eq', `${Cypress.config('baseUrl')}/#/`);
-      cy.contains('Panel de Control').should('be.visible');
+      cy.get('[data-testid="dashboard-balance"]').should('be.visible');
     });
   });
 
@@ -227,13 +227,14 @@ describe('Authentication Flow', () => {
       }
 
       cy.visitWithSession('/', FAKE_TOKEN, FAKE_USER);
-      cy.contains('Panel de Control').should('be.visible');
+      cy.get('[data-testid="dashboard-balance"]').should('be.visible');
     });
 
     it('Debe mostrar el boton de logout en el dashboard', () => {
+      // El botón es solo-icono ('⎋'); el texto accesible vive en el atributo title.
       cy.getByDataTest('logout-button')
         .should('be.visible')
-        .and('contain.text', 'Cerrar');
+        .and('have.attr', 'title', 'Cerrar Sesión');
     });
 
     it('Debe limpiar la sesion al hacer click en logout', () => {

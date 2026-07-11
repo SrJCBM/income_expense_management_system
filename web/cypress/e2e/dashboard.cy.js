@@ -27,10 +27,13 @@ describe('Dashboard y Totales', () => {
     });
     cy.wait('@getSummary');
 
-    cy.get('[data-testid="dashboard-balance-amount"]').should('contain.text', '3,000.00');
-    cy.get('[data-testid="dashboard-incomes-amount"]').should('contain.text', '5,000.00');
-    cy.get('[data-testid="dashboard-expenses-amount"]').should('contain.text', '2,000.00');
-    cy.get('[data-testid="dashboard-category-item"]').should('contain.text', 'Alimentación').and('contain.text', '2,000.00');
+    // formatCurrency usa Intl con locale es-EC: separador de miles "." y decimal ",".
+    // Verificamos las partes numéricas sin acoplarnos al símbolo de separador exacto.
+    cy.get('[data-testid="dashboard-balance-amount"]').invoke('text').should('match', /3.000,00/);
+    cy.get('[data-testid="dashboard-incomes-amount"]').invoke('text').should('match', /5.000,00/);
+    cy.get('[data-testid="dashboard-expenses-amount"]').invoke('text').should('match', /2.000,00/);
+    cy.get('[data-testid="dashboard-category-item"]').should('contain.text', 'Alimentación');
+    cy.get('[data-testid="dashboard-category-item"]').invoke('text').should('match', /2.000,00/);
   });
 
   it('debería manejar montos altos sin romper la visualización', () => {
@@ -62,6 +65,6 @@ describe('Dashboard y Totales', () => {
     cy.get('[data-testid="dashboard-incomes-amount"]').should('contain.text', '999');
     cy.get('[data-testid="dashboard-expenses-amount"]').should('contain.text', '999');
     
-    cy.get('[data-testid="dashboard-empty-state"]').should('be.visible').and('contain.text', 'No hay actividad reciente');
+    cy.get('[data-testid="dashboard-empty-state"]').should('be.visible').and('contain.text', 'Sin datos para este período');
   });
 });

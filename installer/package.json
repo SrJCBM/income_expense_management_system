@@ -1,0 +1,42 @@
+{
+  "name": "financeapp-installer",
+  "private": true,
+  "version": "1.2.0",
+  "description": "FinanceApp Electron desktop client and Windows installer build.",
+  "main": "electron/main.cjs",
+  "author": "Ricardo Lainez",
+  "license": "MIT",
+  "scripts": {
+    "electron-dev": "cross-env ELECTRON=1 electron .",
+    "electron": "electron .",
+    "build:dist": "powershell -ExecutionPolicy Bypass -File scripts/build-dist.ps1",
+    "electron-build": "npm run build:dist",
+    "electron-dist": "npm run build:dist"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.incomeexpense.desktop",
+    "productName": "FinanceApp",
+    "files": ["dist/**/*", "electron/**/*", "package.json"],
+    "extraResources": [{ "from": "dist/resources/backend", "to": "backend" }],
+    "extraMetadata": { "main": "electron/main.cjs" },
+    "directories": { "output": "release" },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "signAndEditExecutable": false,
+      "certificateFile": null,
+      "certificatePassword": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FinanceApp"
+    }
+  }
+}

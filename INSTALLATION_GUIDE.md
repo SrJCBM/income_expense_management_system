@@ -18,6 +18,8 @@ cd installer
 npm install
 cd ../backend
 npm install
+cd ../web
+npm install
 cd ../installer
 
 # 3. Run in development mode

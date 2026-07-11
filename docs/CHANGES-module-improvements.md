@@ -220,14 +220,14 @@ El frontend no tiene tests unitarios para los nuevos componentes (`Pagination`, 
 | `backend/tests/unit/incomeService.test.js` | Tests actualizados para respuesta paginada |
 | `backend/tests/unit/expenseService.pagination.test.js` | **Nuevo**: tests de paginación |
 | `backend/tests/unit/incomeService.pagination.test.js` | **Nuevo**: tests de paginación |
-| `frontend/src/hooks/useExpenses.js` | Expone estado `pagination` |
-| `frontend/src/hooks/useIncomes.js` | Expone estado `pagination` |
-| `frontend/src/components/Pagination.jsx` | **Nuevo**: componente reutilizable |
-| `frontend/src/pages/Expenses.jsx` | Paginación UI + sessionStorage filters |
-| `frontend/src/pages/Incomes.jsx` | Paginación UI + sessionStorage filters |
-| `frontend/src/pages/Reports.jsx` | Fetch de datos anuales → `yearlyData` |
-| `frontend/src/components/ReportCharts.jsx` | TrendChart (LineChart 12 meses) |
-| `frontend/src/pages/Dashboard.jsx` | Fetch paralelo + TrendBadge |
-| `frontend/src/components/AuthBrand.jsx` | FinTrack → FinanceApp |
-| `frontend/src/styles/pages/Expenses.css` | Estilos `.pagination` y `.pagination-info` |
+| `web/src/hooks/useExpenses.js` | Expone estado `pagination` |
+| `web/src/hooks/useIncomes.js` | Expone estado `pagination` |
+| `web/src/components/Pagination.jsx` | **Nuevo**: componente reutilizable |
+| `web/src/pages/Expenses.jsx` | Paginación UI + sessionStorage filters |
+| `web/src/pages/Incomes.jsx` | Paginación UI + sessionStorage filters |
+| `web/src/pages/Reports.jsx` | Fetch de datos anuales → `yearlyData` |
+| `web/src/components/ReportCharts.jsx` | TrendChart (LineChart 12 meses) |
+| `web/src/pages/Dashboard.jsx` | Fetch paralelo + TrendBadge |
+| `web/src/components/AuthBrand.jsx` | FinTrack → FinanceApp |
+| `web/src/styles/pages/Expenses.css` | Estilos `.pagination` y `.pagination-info` |
 | `.gitignore` | Ignora `docs/superpowers/` |

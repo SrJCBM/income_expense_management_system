@@ -57,7 +57,7 @@ Este documento lista las funciones importantes en formato pregunta, con respuest
   - Sí. Explicación: El sistema tiene un endpoint que indica si el backend está funcionando.
 
 - ¿La app se puede instalar en Windows con un .exe?
-  - Sí. Explicación: Se creó un instalador para Windows y está listo en la carpeta `frontend/release`.
+  - Sí. Explicación: Se creó un instalador para Windows y está listo en la carpeta `installer/release`.
 
 - ¿El instalador incluye el servidor (backend)?
   - Sí. Explicación: El instalador incluye el backend para que la app funcione sin instalar más cosas.

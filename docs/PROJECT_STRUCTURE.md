@@ -77,7 +77,7 @@ income_expense_management_system/
 │   ├── .env.example                 # Variables (plantilla)
 │   └── .env                         # Variables (GITIGNORED)
 │
-├── 📁 frontend/
+├── 📁 web/
 │   ├── 📁 src/
 │   │   ├── 📁 components/           # Componentes reutilizables
 │   │   │   ├── Button.jsx           (Botón genérico)

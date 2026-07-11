@@ -91,23 +91,23 @@ El resultado final es una aplicación que se abre como programa nativo, carga la
 ### Fase 2: Frontend Base (Semana 2)
 
 #### 2.1 Setup Inicial
-- [ ] `npm install` en frontend/
+- [ ] `npm install` en web/
 - [ ] Crear `.env` con `VITE_API_URL`
 - [ ] `npm run dev` - debe abrir en localhost:3000
 
 #### 2.2 Autenticación (Login/Register)
 **Archivos a editar**:
-- `frontend/src/pages/Login.jsx` 
+- `web/src/pages/Login.jsx` 
   - Formulario de login
   - Usar `useAuth()` hook
   - Guardar token
 
-- `frontend/src/components/LoginForm.jsx` (nuevo)
+- `web/src/components/LoginForm.jsx` (nuevo)
   - Componente del formulario
   - Validar email/password
   - Mostrar errores
 
-- `frontend/src/services/authService.js` - Implementar métodos
+- `web/src/services/authService.js` - Implementar métodos
 
 **Resultado**: Poder registrarse e iniciar sesión
 

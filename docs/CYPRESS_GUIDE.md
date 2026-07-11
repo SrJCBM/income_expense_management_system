@@ -6,7 +6,7 @@ Guia para instalar, actualizar y ejecutar Cypress en el frontend despues de hace
 
 El proyecto usa Cypress `15.16.0`.
 
-La version esta declarada en `frontend/package.json`:
+La version esta declarada en `web/package.json`:
 
 ```json
 "cypress": "^15.16.0"
@@ -17,14 +17,14 @@ La version esta declarada en `frontend/package.json`:
 Desde la raiz del proyecto:
 
 ```bash
-cd frontend
+cd web
 npm install
 ```
 
 Si Cypress no abre o parece estar corrupto, reinstala el binario local:
 
 ```bash
-cd frontend
+cd web
 npx cypress cache clear
 npx cypress install
 ```
@@ -34,14 +34,14 @@ npx cypress install
 Primero levanta el frontend:
 
 ```bash
-cd frontend
+cd web
 npm run dev
 ```
 
 En otra terminal:
 
 ```bash
-cd frontend
+cd web
 npm run cypress
 ```
 
@@ -63,7 +63,7 @@ En la pantalla de Cypress:
 Con el frontend levantado en `http://localhost:3000`:
 
 ```bash
-cd frontend
+cd web
 npm run cypress:run
 ```
 
@@ -144,7 +144,7 @@ Los specs actuales de Cypress usan mocks para endpoints protegidos. Esto evita q
 Los helpers estan en:
 
 ```text
-frontend/cypress/support/commands.js
+web/cypress/support/commands.js
 ```
 
 Helpers importantes:
@@ -169,9 +169,9 @@ Usa `cy.visitWithSession('/expenses')` para rutas privadas; el helper convierte 
 ## Specs actuales
 
 ```text
-frontend/cypress/e2e/accessibility.cy.js
-frontend/cypress/e2e/auth.cy.js
-frontend/cypress/e2e/expenses.cy.js
+web/cypress/e2e/accessibility.cy.js
+web/cypress/e2e/auth.cy.js
+web/cypress/e2e/expenses.cy.js
 ```
 
 ## Recomendaciones para nuevos tests
@@ -186,14 +186,14 @@ frontend/cypress/e2e/expenses.cy.js
 ## Comandos rapidos
 
 ```bash
-cd frontend
+cd web
 npm install
 npm run dev
 npm run cypress
 ```
 
 ```powershell
-cd frontend
+cd web
 Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
 npx cypress run --config baseUrl=http://127.0.0.1:3000 --browser chrome
 ```

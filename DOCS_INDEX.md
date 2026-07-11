@@ -151,7 +151,7 @@ income_expense_management_system/
 ## ❓ Common Questions
 
 ### Q: Where do I find the .exe installer?
-**A:** After `npm run build:dist`, check: `installer/release/Income Expense Manager Setup 1.0.0.exe`
+**A:** After `npm run build:dist`, check: `installer/release/FinanceApp Setup 1.2.0.exe`
 
 ### Q: What does the build script do?
 **A:** Compiles frontend → bundles backend → creates Windows installer. Takes 5-10 minutes.

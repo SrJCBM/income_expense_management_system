@@ -134,7 +134,7 @@ Deberías ver: `{"status":"ok"}`
 **⚠️ IMPORTANTE**: Usa OTRA terminal/PowerShell (no cierres la del backend)
 
 ```bash
-cd frontend
+cd web
 npm install
 ```
 
@@ -159,7 +159,7 @@ Si cualquiera falta, contacta al líder del proyecto.
 ### 3. Configurar Variables de Entorno
 
 ```bash
-cd frontend
+cd web
 cp .env.example .env
 ```
 
@@ -168,7 +168,7 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-**Editar `frontend/.env`:**
+**Editar `web/.env`:**
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_API_TIMEOUT=10000
@@ -179,7 +179,7 @@ VITE_ENV=development
 ### 4. Iniciar Servidor Frontend
 
 ```bash
-# En la carpeta frontend (en la SEGUNDA terminal)
+# En la carpeta web (en la SEGUNDA terminal)
 npm run dev
 ```
 
@@ -375,15 +375,15 @@ docker-compose up
 
 1. **Build** (local):
 ```bash
-cd frontend
+cd web
 npm run build
 ```
 
 2. **Crear en Render**:
    - New → Static Site
    - Name: `income-expense-app`
-   - Build Command: `cd frontend && npm run build`
-   - Publish Directory: `frontend/dist`
+   - Build Command: `cd web && npm run build`
+   - Publish Directory: `web/dist`
 
 3. **Configurar Variables de Entorno**:
    ```
@@ -413,7 +413,7 @@ income_expense_management_system/
 │   ├── .env (NO COMMITAR - crear desde .env.example)
 │   └── .env.example ✅
 │
-├── frontend/
+├── web/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
@@ -538,15 +538,15 @@ docker-compose up
 
 1. **Build** (local):
 ```bash
-cd frontend
+cd web
 npm run build
 ```
 
 2. **Crear en Render**:
    - New → Static Site
    - Name: `income-expense-app`
-   - Build Command: `cd frontend && npm run build`
-   - Publish Directory: `frontend/dist`
+   - Build Command: `cd web && npm run build`
+   - Publish Directory: `web/dist`
 
 3. **Configurar Variables de Entorno**:
    ```
@@ -568,7 +568,7 @@ income_expense_management_system/
 │   ├── .env (NO COMMITAR)
 │   └── .env.example ✅
 │
-├── frontend/
+├── web/
 │   ├── src/
 │   ├── public/
 │   ├── vite.config.js

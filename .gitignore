@@ -120,6 +120,9 @@ installer/dist/
 installer/release/
 mobile/node_modules/
 
+# Excepción: el lockfile de mobile SÍ se versiona (builds reproducibles de Capacitor)
+!mobile/package-lock.json
+
 # ============================================
 # MISC
 # ============================================

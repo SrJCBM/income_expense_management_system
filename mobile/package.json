@@ -1,0 +1,21 @@
+{
+  "name": "financeapp-mobile",
+  "private": true,
+  "version": "1.2.0",
+  "description": "FinanceApp Android app (Capacitor) reusing the React build from ../web.",
+  "scripts": {
+    "build:web:dev": "npm --prefix ../web run build -- --mode mobile",
+    "build:web:prod": "npm --prefix ../web run build -- --mode mobile-prod",
+    "sync:dev": "npm run build:web:dev && npx cap sync android",
+    "sync:prod": "npm run build:web:prod && npx cap sync android",
+    "open:android": "npx cap open android",
+    "apk:debug": "cd android && gradlew.bat assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}

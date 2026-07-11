@@ -1,0 +1,8 @@
+{
+  "appId": "com.financeapp.app",
+  "appName": "FinanceApp",
+  "webDir": "../web/dist",
+  "android": {
+    "allowMixedContent": false
+  }
+}

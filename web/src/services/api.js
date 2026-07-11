@@ -45,7 +45,11 @@ api.interceptors.response.use(
       if (!isCredentialEndpoint) {
         localStorage.removeItem('authToken');
         localStorage.removeItem('authUser');
-        window.location.href = '/login';
+        // Hash + reload en lugar de ruta absoluta: la app usa HashRouter y en
+        // Electron (file://) o Capacitor (https://localhost) '/login' saldría
+        // del origen servido. El reload conserva la limpieza total de estado.
+        window.location.hash = '#/login';
+        window.location.reload();
       }
     }
     return Promise.reject(error);

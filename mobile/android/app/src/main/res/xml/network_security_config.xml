@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Solo desarrollo: el emulador Android ve el localhost de la PC como
+         10.0.2.2. Para probar con un telefono fisico, anadir aqui otra
+         entrada <domain> con la IP LAN de la PC (p. ej. 192.168.1.50). -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+    <!-- Todo lo demas (incluido Render en produccion) exige HTTPS. -->
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

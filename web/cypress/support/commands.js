@@ -43,6 +43,23 @@ Cypress.Commands.add('mockProtectedApi', () => {
     statusCode: 200,
     body: { success: true, data: [] },
   }).as('getBudgetAlerts');
+
+  cy.intercept('GET', '**/api/reports/yearly*', {
+    statusCode: 200,
+    body: {
+      success: true,
+      data: {
+        year: 2026,
+        months: Array.from({ length: 12 }, (_, idx) => ({
+          month: idx + 1,
+          income: 0,
+          expense: 0,
+          balance: 0,
+        })),
+        totals: { totalIncome: 0, totalExpense: 0, balance: 0 },
+      },
+    },
+  }).as('getYearlyReport');
 });
 
 Cypress.Commands.add('seedSession', (token, user) => {

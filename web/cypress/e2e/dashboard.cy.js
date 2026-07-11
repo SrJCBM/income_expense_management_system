@@ -1,5 +1,8 @@
 describe('Dashboard y Totales', () => {
   beforeEach(() => {
+    // Mockea todos los endpoints protegidos (budgets/alerts, reports/yearly, etc.)
+    // para que no se dispare un auto-logout por 401 en llamadas no mockeadas.
+    cy.mockProtectedApi();
     cy.intercept('GET', '**/api/auth/me', { statusCode: 200, body: { id: '1', name: 'Test User' } }).as('getUser');
   });
 

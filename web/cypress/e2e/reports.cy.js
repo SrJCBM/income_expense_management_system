@@ -1,5 +1,9 @@
 describe('Análisis y Reportes', () => {
   beforeEach(() => {
+    // Mockea todos los endpoints protegidos (incluye reports/yearly, que Reports.jsx
+    // llama para alimentar ReportCharts) para evitar un auto-logout por 401.
+    cy.mockProtectedApi();
+
     // Interceptar llamadas de API para reportes
     cy.intercept('GET', '**/api/reports/filters*', {
       statusCode: 200,

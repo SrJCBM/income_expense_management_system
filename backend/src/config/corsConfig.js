@@ -8,6 +8,10 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5173',
+  // WebView de Capacitor (app Android): el origen depende del androidScheme.
+  'capacitor://localhost',
+  'https://localhost',
+  'http://localhost',
   process.env.FRONTEND_URL,
   process.env.RENDER_EXTERNAL_URL,
 ].filter(Boolean); // elimina valores vacíos/undefined

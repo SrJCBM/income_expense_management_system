@@ -1,25 +1,58 @@
-# FinanceApp Mobile (Fase 2 — pendiente)
+# FinanceApp Mobile (Android — Capacitor)
 
-Esta carpeta alojará la app Android construida con **Capacitor**, reutilizando
-el código React de `../web` (sin reescritura).
+App Android construida con **Capacitor 6**, reutilizando el build React de
+`../web` (`webDir: '../web/dist'`). Sin codigo duplicado: la UI se mantiene
+solo en `web/`.
 
-## Diseño aprobado (2026-07-10)
+## Requisitos
 
-- `@capacitor/core` + `@capacitor/android`, con `webDir: '../web/dist'`.
-- El proyecto `android/` generado se abre en **Android Studio** y se ejecuta en
-  el emulador Pixel 8 Pro o en un dispositivo físico.
-- API por ambiente (variables Vite en `../web`):
-  - Desarrollo (emulador): `VITE_API_URL=http://10.0.2.2:5000/api`
-    (el emulador ve el `localhost` de la PC como `10.0.2.2`; para un teléfono
-    físico, cambiar a la IP LAN de la PC, p. ej. `http://192.168.x.x:5000/api`).
-  - Producción: `VITE_API_URL=https://income-expense-api-hgsu.onrender.com/api`
-    (backend ya desplegado en Render; no se despliega nada nuevo).
-- Scripts previstos: `sync:dev` / `sync:prod` (build de web en el modo
-  correspondiente + `npx cap sync`).
-- Dev requiere permitir HTTP cleartext hacia `10.0.2.2` (solo builds de
-  desarrollo). HashRouter y localStorage ya funcionan en WebView sin cambios.
+- Android Studio con SDK y emulador (probado con Pixel 8 Pro).
+- JDK 17 (Capacitor 6 no soporta Java 21/Capacitor 7 en esta maquina).
+- `mobile/android/local.properties` con `sdk.dir` apuntando al Android SDK
+  (no se versiona; se crea solo o lo genera Android Studio).
 
-## Estado
+## Flujo de desarrollo (emulador)
 
-Solo esqueleto. No ejecutar `npm init` ni instalar Capacitor hasta que la
-Fase 2 sea aprobada explícitamente.
+1. Backend local corriendo: `cd ../backend && npm run dev` (puerto 5000).
+2. `npm run sync:dev` — build de web en modo `mobile`
+   (`VITE_API_URL=http://10.0.2.2:5000/api`) + `cap sync android`.
+3. `npm run open:android` — abre el proyecto en Android Studio; Run ▶ en el
+   emulador Pixel 8 Pro.
+
+El emulador ve el `localhost` de la PC como `10.0.2.2`. El trafico HTTP
+cleartext esta permitido SOLO hacia `10.0.2.2`
+(`android/app/src/main/res/xml/network_security_config.xml`).
+
+### Telefono fisico (misma red WiFi)
+
+1. Averiguar la IP LAN de la PC (`ipconfig`).
+2. En `../web/.env.mobile`, cambiar `VITE_API_URL` a `http://<IP-LAN>:5000/api`.
+3. Anadir `<domain includeSubdomains="false"><IP-LAN></domain>` en
+   `network_security_config.xml`.
+4. `npm run sync:dev` y Run desde Android Studio con el telefono conectado.
+
+## Build apuntando a produccion (Render)
+
+`npm run sync:prod` usa `../web/.env.mobile-prod`
+(`https://income-expense-api-hgsu.onrender.com/api`). Todo HTTPS; no requiere
+cleartext.
+
+> Nota: el backend en Render debe tener el commit que permite los origenes
+> `capacitor://localhost` / `https://localhost` en CORS
+> (`backend/src/config/corsConfig.js`). Redeployar Render es decision del
+> usuario; no se hace automaticamente.
+
+## APK por linea de comandos
+
+- Debug: `npm run apk:debug` →
+  `android/app/build/outputs/apk/debug/app-debug.apk`.
+- Instalar en el emulador: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`.
+
+## Scripts
+
+| Script          | Que hace                                             |
+|-----------------|------------------------------------------------------|
+| `sync:dev`      | build web modo `mobile` + `cap sync android`         |
+| `sync:prod`     | build web modo `mobile-prod` + `cap sync android`    |
+| `open:android`  | abre `android/` en Android Studio                    |
+| `apk:debug`     | `gradlew assembleDebug`                              |

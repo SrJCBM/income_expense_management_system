@@ -145,7 +145,7 @@ income_expense_management_system/
     scripts/
 
   mobile/
-    (App Android con Capacitor, Fase 2, pendiente)
+    (App Android con Capacitor 6, sync desde web/, se abre en Android Studio)
 
   docs/
 ```

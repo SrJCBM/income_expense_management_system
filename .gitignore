@@ -106,16 +106,19 @@ backend/coverage/
 backend/logs/
 
 # ============================================
-# FRONTEND SPECIFIC
+# WEB / INSTALLER / MOBILE SPECIFIC
 # ============================================
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-frontend/.env.local
-frontend/coverage/
-frontend/.parcel-cache
-frontend/.cache
-frontend/release/
+web/node_modules/
+web/dist/
+web/.env
+web/.env.local
+web/coverage/
+web/.parcel-cache
+web/.cache
+installer/node_modules/
+installer/dist/
+installer/release/
+mobile/node_modules/
 
 # ============================================
 # MISC
@@ -136,10 +139,10 @@ agents.md
 CLAUDE.md
 AUDIT_GRAPHICS_ACCESSIBILITY.md
 docs/guion-video-cypress.md
-frontend/BUILD_CHECKLIST.md
-frontend/BUILD_QUICK_GUIDE.md
-frontend/ELECTRON_BUILD.md
-frontend/README_BUILD.md
+installer/BUILD_CHECKLIST.md
+installer/BUILD_QUICK_GUIDE.md
+installer/ELECTRON_BUILD.md
+installer/README_BUILD.md
 
 # ============================================
 # SUPERPOWERS (AI-generated specs & plans)

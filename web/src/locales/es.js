@@ -224,6 +224,7 @@ export default {
     fieldDate: 'Fecha',
     fieldCategory: 'Categoría',
     fieldCategoryDefault: 'Selecciona una categoría',
+    loadingCategories: 'Cargando categorías...',
     fieldNotes: 'Notas',
     fieldNotesPlaceholder: 'Información adicional (opcional)',
     submitCreate: 'Crear Ingreso',

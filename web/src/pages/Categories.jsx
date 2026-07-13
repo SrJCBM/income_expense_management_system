@@ -312,6 +312,7 @@ const Categories = () => {
               <p className="hint">{t('categories.emptyHint')}</p>
             </div>
           ) : (
+          <div className="table-scroll">
             <table className="data-table" data-testid="category-list">
               <thead>
                 <tr>
@@ -327,13 +328,13 @@ const Categories = () => {
                   const categoryId = category.id || category._id;
                   return (
                     <tr key={categoryId} data-testid="category-item">
-                      <td>
+                      <td data-label={t('categories.colName')}>
                         <span style={{ marginRight: '0.5rem' }}>{displayIcon(category.icon)}</span>
                         {category.name}
                       </td>
-                      <td>{category.type === 'income' ? t('categories.typeIncome') : t('categories.typeExpense')}</td>
-                      <td>{category.description || t('categories.noDescription')}</td>
-                      <td>
+                      <td data-label={t('categories.colType')}>{category.type === 'income' ? t('categories.typeIncome') : t('categories.typeExpense')}</td>
+                      <td data-label={t('categories.colDescription')}>{category.description || t('categories.noDescription')}</td>
+                      <td data-label={t('categories.colColor')}>
                         <span style={{
                           display: 'inline-block',
                           width: 16,
@@ -342,7 +343,7 @@ const Categories = () => {
                           borderRadius: '50%',
                         }} />
                       </td>
-                      <td className="actions-cell">
+                      <td className="actions-cell" data-label={t('categories.colActions')}>
                         <button
                           className="btn-icon"
                           onClick={() => handleEditClick(category)}
@@ -361,6 +362,7 @@ const Categories = () => {
                 })}
               </tbody>
             </table>
+          </div>
           )}
         </div>
       )}

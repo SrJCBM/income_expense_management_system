@@ -41,6 +41,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete
 
   return (
     <div className="expense-list" data-testid="expense-list">
+      <div className="table-scroll">
       <table className="data-table">
         <thead>
           <tr>
@@ -54,11 +55,11 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete
         <tbody>
           {expenses.map((expense) => (
             <tr key={expense.id || expense._id} data-testid="expense-item">
-              <td>{toDateInputValue(expense.date)}</td>
-              <td>{expense.concept}</td>
-              <td>{expense.category?.name || t('expenses.noCategory')}</td>
-              <td className="amount negative">-{formatCurrency(expense.amount)}</td>
-              <td className="actions-cell">
+              <td data-label={t('expenses.colDate')}>{toDateInputValue(expense.date)}</td>
+              <td data-label={t('expenses.colConcept')}>{expense.concept}</td>
+              <td data-label={t('expenses.colCategory')}>{expense.category?.name || t('expenses.noCategory')}</td>
+              <td className="amount negative" data-label={t('expenses.colAmount')}>-{formatCurrency(expense.amount)}</td>
+              <td className="actions-cell" data-label={t('expenses.colActions')}>
                 <button
                   className="btn-icon btn-edit"
                   onClick={() => onEdit(expense)}
@@ -98,6 +99,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete
           </tr>
         </tfoot>
       </table>
+      </div>
     </div>
   );
 };

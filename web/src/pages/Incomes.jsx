@@ -40,6 +40,7 @@ const Incomes = () => {
   const { isOnline } = useNetworkStatus();
   const [categories, setCategories] = useState([]);
   const [categoriesError, setCategoriesError] = useState(null);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
   const [editingPendingItem, setEditingPendingItem] = useState(null);
@@ -104,11 +105,14 @@ const Incomes = () => {
 
   const loadIncomeCategories = async () => {
     setCategoriesError(null);
+    setCategoriesLoading(true);
     try {
       const response = await categoryService.getCategories('income');
       setCategories(response?.data || []);
     } catch (err) {
       setCategoriesError(err.message);
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -414,13 +418,13 @@ const Incomes = () => {
                 value={values.categoryId}
                 onChange={handleChange}
                 className="form-select"
-                disabled={isSubmitting || categories.length === 0}
+                disabled={isSubmitting || categoriesLoading}
                 aria-required="true"
                 aria-invalid={!!errors.categoryId}
                 aria-describedby={errors.categoryId ? 'category-error' : undefined}
                 data-testid="income-category"
               >
-                <option value="">{t('incomes.fieldCategoryDefault')}</option>
+                <option value="">{categoriesLoading ? t('incomes.loadingCategories') : t('incomes.fieldCategoryDefault')}</option>
                 {categories.map((category) => (
                   <option key={category.id || category._id} value={category.id || category._id}>
                     {category.name}
@@ -491,6 +495,7 @@ const Incomes = () => {
               <p className="hint">{t('incomes.emptyHint')}</p>
             </div>
           ) : (
+          <div className="table-scroll">
             <table className="data-table" data-testid="income-list">
               <thead>
                 <tr>
@@ -506,11 +511,11 @@ const Incomes = () => {
                   const incomeId = income.id || income._id;
                   return (
                     <tr key={incomeId} data-testid="income-item">
-                      <td>{toDateInputValue(income.date)}</td>
-                      <td>{income.concept}</td>
-                      <td>{income.category?.name || t('incomes.noCategory')}</td>
-                      <td className="amount positive">+{formatCurrency(income.amount)}</td>
-                      <td className="actions-cell">
+                      <td data-label={t('incomes.colDate')}>{toDateInputValue(income.date)}</td>
+                      <td data-label={t('incomes.colConcept')}>{income.concept}</td>
+                      <td data-label={t('incomes.colCategory')}>{income.category?.name || t('incomes.noCategory')}</td>
+                      <td className="amount positive" data-label={t('incomes.colAmount')}>+{formatCurrency(income.amount)}</td>
+                      <td className="actions-cell" data-label={t('incomes.colActions')}>
                         <button className="btn-icon" onClick={() => handleEdit(income)} title={t('incomes.editTitle')} data-testid="edit-income">✏️</button>
                         <button
                           className="btn-icon"
@@ -528,6 +533,7 @@ const Incomes = () => {
                 })}
               </tbody>
             </table>
+          </div>
           )}
           <Pagination
             page={pagination.page}
@@ -543,7 +549,7 @@ const Incomes = () => {
         <div className="alert alert-error">{categoriesError}</div>
       )}
 
-      {!showForm && !categoriesError && categories.length === 0 && (
+      {!showForm && !categoriesError && !categoriesLoading && categories.length === 0 && (
         <div className="card list-card">
           <p className="hint">{t('incomes.noCategoriesHint')}</p>
         </div>

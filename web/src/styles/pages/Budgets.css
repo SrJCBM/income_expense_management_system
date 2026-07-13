@@ -1,6 +1,6 @@
 .budget-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
   gap: 16px;
 }
 
@@ -124,6 +124,14 @@
 .filter-label {
   color: var(--text-secondary);
   font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .budget-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  .budget-card {
+    padding: 16px;
+  }
 }
 
 @media (max-width: 768px) {

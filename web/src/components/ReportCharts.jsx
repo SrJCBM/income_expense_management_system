@@ -255,6 +255,7 @@ const ReportCharts = ({ data, yearlyData = null }) => {
       {/* Tabla de resumen */}
       <section className="chart-wrapper" aria-labelledby="summary-title">
         <h3 id="summary-title">{t('reports.detailedSummary')}</h3>
+        <div className="summary-table-scroll">
         <table className="summary-table" role="table" aria-label={t('reports.summaryAriaLabel')}>
           <thead>
             <tr>
@@ -266,21 +267,22 @@ const ReportCharts = ({ data, yearlyData = null }) => {
           <tbody>
             {chartData.map((row, i) => (
               <tr key={i}>
-                <td>
+                <td data-label={t('reports.colCategory')}>
                   <span className="category-dot" style={{ backgroundColor: row.color }} aria-hidden="true" />
                   {row.name}
                 </td>
-                <td className="text-right">{formatCurrency(row.amount)}</td>
-                <td className="text-right">{row.percentage}%</td>
+                <td className="text-right" data-label={t('reports.colAmount')}>{formatCurrency(row.amount)}</td>
+                <td className="text-right" data-label={t('reports.colPercentage')}>{row.percentage}%</td>
               </tr>
             ))}
             <tr className="summary-total">
               <td><strong>{t('reports.total')}</strong></td>
-              <td className="text-right"><strong>{formatCurrency(data.totalExpense)}</strong></td>
-              <td className="text-right"><strong>100%</strong></td>
+              <td className="text-right" data-label={t('reports.colAmount')}><strong>{formatCurrency(data.totalExpense)}</strong></td>
+              <td className="text-right" data-label={t('reports.colPercentage')}><strong>100%</strong></td>
             </tr>
           </tbody>
         </table>
+        </div>
       </section>
 
       {yearlyData && yearlyData.months?.some((m) => m.income > 0 || m.expense > 0) && (

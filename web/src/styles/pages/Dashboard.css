@@ -31,7 +31,7 @@
 /* ── KPI grid ── */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: 16px;
   margin-bottom: 22px;
 }
@@ -329,5 +329,20 @@
   .page-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+    gap: 12px;
+  }
+
+  .dashboard-card {
+    padding: 16px;
+  }
+
+  .dashboard-card .amount {
+    font-size: 22px;
   }
 }

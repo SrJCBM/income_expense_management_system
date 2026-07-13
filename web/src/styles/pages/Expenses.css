@@ -211,8 +211,15 @@
   margin-bottom: 1.5rem;
 }
 
+/* Ensures the card itself clips table overflow */
+.card.list-card {
+  overflow: hidden;
+}
+
 .table-scroll {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
 .data-table {
@@ -565,14 +572,93 @@
     justify-content: center;
   }
 
-  .data-table {
-    min-width: 680px;
+  /* ── Row-to-card transform: each <tr> becomes a stacked card ── */
+  .table-scroll {
+    overflow-x: visible;
   }
 
-  .expense-list,
-  .list-card {
-    overflow-x: auto;
+  .data-table {
+    min-width: 0;
   }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table tbody tr {
+    background: var(--surface-color);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--border-radius-md);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .data-table tbody tr:last-child { margin-bottom: 0; }
+  .data-table tbody tr:hover { background: var(--surface-color); }
+
+  .data-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: right;
+    min-width: 0;
+  }
+
+  .data-table tbody tr td:first-child { border-top: none; }
+
+  .data-table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+
+  .data-table td.actions-cell {
+    justify-content: flex-end;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .data-table td.actions-cell::before {
+    display: none;
+  }
+
+  /* Total row stays visible as a summary card at the end of the list */
+  .data-table tfoot { display: block; }
+
+  .data-table tfoot tr.total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-color);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--border-radius-md);
+    padding: 14px 16px;
+    margin-top: 4px;
+  }
+
+  .data-table tfoot td {
+    display: block;
+    padding: 0;
+    border: none;
+  }
+
+  .data-table tfoot td::before { content: none; }
+  .data-table tfoot tr.total-row td:empty { display: none; }
 
   /* Touch targets ≥ 44px on mobile */
   .btn-icon {
@@ -607,6 +693,30 @@
 
   .pending-sync-actions {
     flex-direction: column;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .pagination-info {
+    min-width: 0;
+    order: 1;
+    width: 100%;
+  }
+}
+
+/* ── Extra-small phones (≤414px) ── */
+@media (max-width: 414px) {
+  /* Header button full-width */
+  .page-header.flex-between .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card {
+    padding: 14px 12px;
   }
 }
 

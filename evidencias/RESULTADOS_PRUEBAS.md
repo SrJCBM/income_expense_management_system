@@ -2,7 +2,7 @@
 
 - Fecha de consolidacion: 2026-07-14
 - Alcance: evidencia estable para la demostracion de la rubrica.
-- Fuente: historial de ejecucion y documentacion aprobada en `docs/PRUEBAS_MODULOS.md` y `.superpowers/sdd/task-2-report.md`.
+- Fuente incluida en la entrega: historial de resultados consolidado en `docs/PRUEBAS_MODULOS.md`, archivos de prueba del repositorio y comandos reproducibles indicados en este documento.
 
 Este documento consolida resultados ya verificados durante la implementacion y la preparacion de la demostracion. No representa una nueva ejecucion de las suites en la fecha de consolidacion.
 
@@ -18,7 +18,7 @@ Este documento consolida resultados ya verificados durante la implementacion y l
 
 En una clonacion limpia se debe ejecutar primero `npm install` en `backend`, `web`, `mobile` e `installer`. La ausencia de lockfiles en alguno de esos modulos se considera una observacion menor no bloqueante para esta entrega; `npm install` sigue siendo el procedimiento documentado.
 
-Las pruebas E2E levantan Vite mediante el script del proyecto. El backend usa MongoDB temporal y ejecucion serial. La repeticion de `20/20` del framework QA reutilizo dependencias instaladas despues de que un primer intento en el worktree fallara por ausencia de `backend/node_modules`; esta condicion esta registrada en el informe de Tarea 2.
+Las pruebas E2E levantan Vite mediante el script del proyecto. El backend usa MongoDB temporal y ejecucion serial. En la preparacion historica, un primer intento del framework QA no pudo importar las dependencias porque el worktree no tenia `backend/node_modules`; despues de disponer de las dependencias, el mismo comando verifico `20/20`. Esta nota conserva el contexto real y no presenta esa repeticion como una ejecucion nueva de esta entrega.
 
 ## Limites de la evidencia
 

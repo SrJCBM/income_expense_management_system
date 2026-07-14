@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 
@@ -25,10 +26,11 @@ function baseResult(check, status, durationMs = 0, extra = {}) {
   };
 }
 
-function executableForPlatform(executable) {
-  if (process.platform === 'win32' && executable === 'npm') return 'npm.cmd';
-  if (process.platform === 'win32' && executable === 'npx') return 'npx.cmd';
-  return executable;
+function processCommand(executable, args) {
+  if (process.platform === 'win32' && ['npm', 'npx'].includes(executable)) {
+    return { executable: 'cmd.exe', args: ['/d', '/s', '/c', executable, ...args] };
+  }
+  return { executable, args };
 }
 
 export async function runCommand(check, options = {}) {
@@ -43,7 +45,8 @@ export async function runCommand(check, options = {}) {
   const started = performance.now();
   return new Promise((resolve) => {
     let output = '';
-    const child = spawn(executableForPlatform(rawExecutable), args, {
+    const processSpec = processCommand(rawExecutable, args);
+    const child = spawn(processSpec.executable, processSpec.args, {
       cwd: check.cwd,
       env: process.env,
       shell: false,
@@ -72,4 +75,27 @@ export async function runCommand(check, options = {}) {
       }));
     });
   });
+}
+
+export async function runArtifactCheck(check, options = {}) {
+  if (options.skipReason) return baseResult(check, 'SKIPPED', 0, { reason: options.skipReason });
+  const directory = path.dirname(check.artifact);
+  const pattern = path.basename(check.artifact);
+  const expression = new RegExp(`^${pattern.replaceAll('.', '\\.').replaceAll('*', '.*')}$`, 'i');
+
+  try {
+    const entries = (await readdir(directory)).filter((entry) => expression.test(entry));
+    if (entries.length === 0) {
+      return baseResult(check, 'FAIL', 0, { reason: `No se encontró el artefacto ${check.artifact}.` });
+    }
+    const evidence = [];
+    for (const entry of entries) {
+      const filePath = path.join(directory, entry);
+      const metadata = await stat(filePath);
+      evidence.push(`${filePath} · ${metadata.size} bytes · ${metadata.mtime.toISOString()}`);
+    }
+    return baseResult(check, 'PASS', 0, { evidence });
+  } catch (error) {
+    return baseResult(check, 'FAIL', 0, { reason: error.message });
+  }
 }

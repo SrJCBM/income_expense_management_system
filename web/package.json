@@ -23,9 +23,12 @@
     "cypress:open": "node scripts/run-cypress.cjs open",
     "cypress:run": "node scripts/run-cypress.cjs run",
     "cypress:video:expenses": "node scripts/run-cypress.cjs run --headed --browser electron --spec cypress/e2e/expenses.cy.js",
-    "test:e2e": "node scripts/run-cypress.cjs run",
-    "test:e2e:smoke": "node scripts/run-cypress.cjs run --spec cypress/e2e/regression.cy.js",
-    "test:a11y": "node scripts/run-cypress.cjs run --spec cypress/e2e/accessibility.cy.js",
+    "test:e2e": "start-server-and-test \"npm run dev -- --host 127.0.0.1 --port 3000\" http://127.0.0.1:3000/index.html test:e2e:raw",
+    "test:e2e:raw": "node scripts/run-cypress.cjs run",
+    "test:e2e:smoke": "start-server-and-test \"npm run dev -- --host 127.0.0.1 --port 3000\" http://127.0.0.1:3000/index.html test:e2e:smoke:raw",
+    "test:e2e:smoke:raw": "node scripts/run-cypress.cjs run --spec cypress/e2e/regression.cy.js",
+    "test:a11y": "start-server-and-test \"npm run dev -- --host 127.0.0.1 --port 3000\" http://127.0.0.1:3000/index.html test:a11y:raw",
+    "test:a11y:raw": "node scripts/run-cypress.cjs run --spec cypress/e2e/accessibility.cy.js",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest"
   },
@@ -45,6 +48,7 @@
     "@vitejs/plugin-react": "^4.0.0",
     "cypress": "^15.16.0",
     "cypress-axe": "^1.5.0",
+    "start-server-and-test": "^2.0.13",
     "vite": "^4.4.0",
     "vitest": "^3.2.4"
   }

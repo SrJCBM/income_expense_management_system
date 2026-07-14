@@ -118,6 +118,8 @@ web/.cache
 installer/node_modules/
 installer/dist/
 installer/release/
+installer/test-results/
+web/cypress/videos/
 mobile/node_modules/
 
 # Excepción: el lockfile de mobile SÍ se versiona (builds reproducibles de Capacitor)

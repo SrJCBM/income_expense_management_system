@@ -6,7 +6,11 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./tests/setup.js'],
-    threads: 1,
+    // Cada archivo crea su propio MongoMemoryServer. Vitest 4 ya no reconoce
+    // `threads: 1`; serializar archivos evita múltiples mongod/WiredTiger
+    // compitiendo por memoria en Windows y CI.
+    fileParallelism: false,
+    maxWorkers: 1,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
@@ -17,10 +21,12 @@ export default defineConfig({
         '**/dist/**',
         'coverage/',
       ],
-      lines: 70,
-      functions: 70,
-      branches: 70,
-      statements: 70,
+      thresholds: {
+        lines: 70,
+        functions: 70,
+        branches: 70,
+        statements: 70,
+      },
     },
     testTimeout: 10000,
     hookTimeout: 10000,

@@ -7,9 +7,8 @@ export default defineConfig({
     supportFile: 'cypress/support/e2e.js',
     screenshotsFolder: 'cypress/screenshots',
     videosFolder: 'cypress/videos',
-    // Cypress guarda videos en `cypress run`; `cypress open` es solo interactivo.
-    video: true,
-    videoCompression: false,
+    // Las capturas de fallos aportan evidencia suficiente sin generar videos pesados.
+    video: false,
     trashAssetsBeforeRuns: false,
     screenshotOnRunFailure: true,
     viewportWidth: 1280,

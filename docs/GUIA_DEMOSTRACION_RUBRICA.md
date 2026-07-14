@@ -10,6 +10,30 @@
 - Dejar abiertas las evidencias antes/después y los reportes de pruebas. Desactivar notificaciones y cerrar ventanas ajenas.
 - Preparar una captura o evidencia reproducible del error de comunicación. No apagar, desconectar ni alterar la API compartida durante la demostración.
 
+### Checklist de la víspera
+
+- [ ] En una clonación limpia, instalar primero las dependencias con `npm install` en `backend`, `web`, `mobile` e `installer`; no interpretar una importación fallida por dependencias ausentes como un defecto del producto.
+- [ ] Ejecutar las comprobaciones previstas y dejar preparados los reportes; confirmar que las versiones instaladas satisfacen los requisitos del proyecto.
+- [ ] Confirmar que web, Electron y Android apuntan a la misma API y a la misma base de datos, sin mostrar valores privados de `.env`.
+- [ ] Verificar la cuenta demo compartida en los tres clientes y preparar datos iniciales que no sean personales.
+- [ ] Instalar y abrir previamente el APK en el emulador o dispositivo de respaldo.
+- [ ] Dejar Electron construido o listo para iniciar y comprobar una sesión completa.
+- [ ] Ajustar el zoom del navegador para que formularios, montos y mensajes sean legibles desde el proyector.
+- [ ] Desactivar notificaciones del sistema, navegador, mensajería y correo.
+- [ ] Preparar cargador, extensión eléctrica y una conexión de respaldo que permita llegar a la API.
+- [ ] Abrir y auditar `evidencias/PracticaLab_Pruebas.pdf` y `evidencias/Rubrica.pdf`; comprobar que corresponden al informe de observaciones y a la rúbrica usada en esta demostración.
+
+### Checklist de 15 minutos antes
+
+1. Levantar o comprobar backend.
+2. Abrir web e iniciar sesión.
+3. Abrir Electron e iniciar sesión.
+4. Iniciar el emulador y abrir FinanceApp.
+5. Confirmar la misma cuenta en los tres clientes.
+6. Limpiar únicamente los datos creados en ensayos anteriores.
+7. Abrir PDF de observaciones y reporte QA.
+8. Cerrar terminales y ventanas no utilizadas.
+
 ## Tabla de tiempos
 
 | Tiempo | Responsable | Objetivo |
@@ -212,6 +236,40 @@ Antes de exponer, abrir `qa/reports/` o las capturas de la ejecución completa. 
 - **Acción:** Mantener visible la pantalla final y dedicar los dos minutos completos a preguntas del evaluador. Responde primero el integrante responsable del tema consultado y los demás complementan solo si es necesario.
 - **Parlamento literal:** “Gracias por su atención. Abrimos ahora el espacio de preguntas.”
 - **Resultado esperado:** Pantalla final con arquitectura y balance final `950,00`; existe un intervalo efectivo de dos minutos para preguntas.
+
+## Matriz de trazabilidad de la rúbrica
+
+| Criterio | Minuto | Evidencia |
+|---|---|---|
+| Presentación | 00:00-03:00 | Tema, objetivo y formalidad |
+| Funcionamiento móvil | 09:00-15:00 | Consulta y creación sin cierre inesperado |
+| Integración | 03:00-20:00 | Escrituras y lecturas cruzadas |
+| Correcciones | 20:00-24:00 | `9 / 10` y demostraciones antes/después |
+| Robustez | 24:00-25:30 | Validación y recuperación controlada |
+| Demostración | 00:00-30:00 | Participación y explicación técnica |
+
+La tabla de tiempos contiene siete bloques continuos: 3 + 6 + 6 + 5 + 4 + 3 + 3 = **30 minutos exactos**, desde 00:00 hasta 30:00.
+
+## Contingencias durante la demostración
+
+En cualquier contingencia se describe primero el estado real. La evidencia preparada complementa lo ocurrido, pero nunca se afirma que una acción terminó si la pantalla no lo confirma.
+
+- **Emulador lento:** indicar que el emulador todavía está iniciando; esperar dentro del margen acordado y, si no responde, mostrar la evidencia móvil preparada. No decir que consultó o guardó datos si no apareció la confirmación.
+- **API de Render despertando:** explicar que la primera solicitud puede estar esperando el arranque del servicio; conservar la pantalla y usar el reporte o captura preparada si excede el margen. Reanudar la lectura cruzada solo cuando la API responda.
+- **Electron sin conexión:** mostrar el mensaje real, comprobar la conectividad sin cambiar secretos y continuar con web junto con la evidencia de escritorio preparada. No atribuir a Electron una lectura que no ocurrió.
+- **Dato que tarda en aparecer:** actualizar una sola vez y esperar la respuesta; si continúa ausente, reconocer que la sincronización no se confirmó en vivo y mostrar la evidencia previa trazable.
+- **Cypress tarda demasiado:** detener la intención de ejecución en vivo y abrir el reporte completo ya preparado de `73/73 Cypress`; aclarar que se está mostrando el resultado registrado, no una ejecución nueva.
+- **Pregunta cuya respuesta no se conoce:** responder: “No tengo evidencia suficiente para afirmarlo ahora. Lo registraré y lo verificaré en el código o en una prueba reproducible antes de dar una respuesta definitiva”.
+
+## Preguntas probables y respuestas breves
+
+- **¿Por qué una sola interfaz React?** Porque web es la interfaz compartida: Electron la presenta como escritorio y Capacitor como Android. Esto reduce duplicación, aunque cada plataforma conserva su empaquetado y verificación propios.
+- **¿Cómo se sincronizan los clientes?** No se sincronizan directamente entre sí. Todos leen y escriben mediante la misma API REST; al actualizar, recuperan el estado persistido de la cuenta.
+- **¿Dónde viven los datos?** En MongoDB, accedido por el backend mediante Mongoose; no viven únicamente en el navegador, Electron o el emulador.
+- **¿Cómo se protege la API?** La autenticación usa JWT, las contraseñas se procesan con bcrypt y el backend aplica validación, autorización por usuario y configuración CORS.
+- **¿Qué diferencia hay entre prueba unitaria, E2E y smoke?** Una unitaria aísla una pieza de lógica; una E2E recorre un flujo completo desde la interfaz; una smoke comprueba rápidamente que una aplicación empaquetada inicia y ejecuta su recorrido esencial.
+- **¿Por qué se afirma 90% de correcciones?** El informe original contiene diez fallos y existe evidencia defendible para nueve: `9 / 10 × 100 = 90%`.
+- **¿Qué queda pendiente?** `Actividad reciente` permanece como no demostrada. No se presenta como corregida hasta contar con implementación y evidencia reproducible suficiente.
 
 ## Control aritmético del escenario
 

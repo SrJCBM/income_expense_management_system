@@ -2,7 +2,7 @@
 
 ## Preparación previa
 
-- Sustituir `[Nombre del Integrante 1]`, `[Nombre del Integrante 2]` y `[Nombre del Integrante 3]` por los nombres reales antes de ensayar.
+- Mantener la asignación durante todo el ensayo: **Integrante 1: Andrade Danna**, **Integrante 2: Santi Jeancarlo** e **Integrante 3: Tufiño Erick**.
 - Tener iniciados el backend, la aplicación web, Electron y el emulador Android.
 - Iniciar las tres aplicaciones con la misma cuenta preparada y la misma base de datos; no usar datos personales reales.
 - Dejar abiertas las evidencias antes/después y los reportes de pruebas. Desactivar notificaciones y cerrar ventanas ajenas.
@@ -26,7 +26,7 @@
 **00:00-01:00 — Integrante 1**
 
 - **Acción:** Mostrar la portada con el nombre del proyecto y los integrantes.
-- **Parlamento literal:** “Buenos días. Somos `[Nombre del Integrante 1]`, `[Nombre del Integrante 2]` y `[Nombre del Integrante 3]`. Presentamos FinanceApp, un sistema de control de ingresos y gastos personales o familiares.”
+- **Parlamento literal:** “Buenos días. Somos Andrade Danna, Integrante 1; Santi Jeancarlo, Integrante 2; y Tufiño Erick, Integrante 3. Presentamos FinanceApp, un sistema de control de ingresos y gastos personales o familiares.”
 - **Resultado visible:** Portada de FinanceApp y nombres de los tres integrantes.
 
 **01:00-02:00 — Integrante 1**
@@ -70,7 +70,7 @@
 **08:15-09:00 — Integrante 1: comprobar el primer balance**
 
 - **Acción:** Volver al dashboard y actualizar los datos si fuera necesario.
-- **Parlamento literal:** “El balance de esta historia es mil menos ciento veinticinco con cincuenta: debe mostrarse ochocientos setenta y cuatro con cincuenta. Entrego ahora la demostración a `[Nombre del Integrante 2]`, quien comprobará desde Android que estos datos no dependen del navegador.”
+- **Parlamento literal:** “El balance de esta historia es mil menos ciento veinticinco con cincuenta: debe mostrarse ochocientos setenta y cuatro con cincuenta. Entrego ahora la demostración a Santi Jeancarlo, Integrante 2, quien comprobará desde Android que estos datos no dependen del navegador.”
 - **Resultado esperado:** Ingresos `1000,00`, gastos `125,50` y balance `874,50`.
 
 ### 09:00-15:00 — Sincronización y operación móvil
@@ -96,7 +96,7 @@
 **13:45-15:00 — Integrante 2: comprobar el nuevo balance**
 
 - **Acción:** Volver al dashboard móvil y actualizar.
-- **Parlamento literal:** “Al descontar veinticuatro con cincuenta del balance anterior, el nuevo balance es exactamente ochocientos cincuenta. `[Nombre del Integrante 3]` abrirá ahora el escritorio y comprobará que esta escritura móvil ya forma parte del estado compartido.”
+- **Parlamento literal:** “Al descontar veinticuatro con cincuenta del balance anterior, el nuevo balance es exactamente ochocientos cincuenta. Tufiño Erick, Integrante 3, abrirá ahora el escritorio y comprobará que esta escritura móvil ya forma parte del estado compartido.”
 - **Resultado esperado:** Ingresos `1000,00`, gastos acumulados `150,00` y balance `850,00`.
 
 ### 15:00-20:00 — Confirmación y modificación en escritorio
@@ -191,7 +191,7 @@ Comprobación adicional: `125,50 + 24,50 = 150,00`; por tanto, `1100,00 - 150,00
 
 ## Lista de control para el ensayo
 
-- [ ] Los nombres reales sustituyen los tres campos de la introducción y las transiciones.
+- [ ] Los nombres reales y su asignación se mantienen: Andrade Danna (Integrante 1), Santi Jeancarlo (Integrante 2) y Tufiño Erick (Integrante 3).
 - [ ] Cada bloque empieza y termina dentro del intervalo de la tabla; el total es de 30 minutos.
 - [ ] Las tres plataformas utilizan la misma cuenta y la misma API.
 - [ ] Los montos visibles coinciden con `874,50`, `850,00` y `950,00` en el momento indicado.

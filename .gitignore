@@ -134,6 +134,14 @@ venv/
 env/
 ENV/
 cypress-mcp/
+graphify-out/
+
+# Metadata local de agentes y workflows internos de módulos
+*/.agents/
+*/.github/
+
+# Paquetes de entrega generados localmente
+FinanceApp*.zip
 
 # ============================================
 # INTERNAL MARKDOWN NOTES

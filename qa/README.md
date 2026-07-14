@@ -1,11 +1,12 @@
 # FinanceApp QA Framework
 
-Orquestador común para validar los módulos web, instalador Electron y móvil.
+Orquestador común para validar backend, web, instalador Electron y móvil.
 
 ## Uso
 
 ```powershell
 node qa/run-tests.mjs web
+node qa/run-tests.mjs backend --profile full
 node qa/run-tests.mjs installer --profile quick
 node qa/run-tests.mjs mobile --profile full
 node qa/run-tests.mjs all --profile full

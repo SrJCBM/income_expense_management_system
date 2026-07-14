@@ -269,3 +269,11 @@ El framework se defenderá como una arquitectura de calidad propia, no como un m
 - Evidencias reproducibles en formatos humano y procesable.
 - Capacidad de incorporar automatización Android posteriormente sin rediseñar el núcleo.
 
+## 15. Ampliación aprobada: backend y suite Cypress completa
+
+El backend se incorpora como cuarto selector del framework: `backend`. El perfil `quick` ejecutará las pruebas unitarias y el perfil `full` ejecutará la suite completa con cobertura V8 y umbral del 70%. El selector `all` incluirá backend, web, instalador y móvil.
+
+La documentación deberá reflejar los 16 archivos y 436 casos del backend, distinguiendo unitarias e integración. Los errores de infraestructura de `mongodb-memory-server` se tratarán como fallos reales del entorno de pruebas, no como pruebas aprobadas ni como reglas de negocio fallidas.
+
+El perfil web `full` ejecutará las 73 pruebas Cypress exactamente una vez. El smoke de 3 casos se conserva únicamente en `quick`; accesibilidad permanece dentro de la suite completa y no se repite como una segunda ejecución.
+

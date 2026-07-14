@@ -2,8 +2,9 @@
 
 ## 1. Propósito
 
-Este documento describe cómo se comprueba el funcionamiento de los tres módulos distribuibles de FinanceApp:
+Este documento describe cómo se comprueba el funcionamiento de la API y de los tres módulos distribuibles de FinanceApp:
 
+- **Backend:** API REST, reglas de negocio y persistencia MongoDB.
 - **Web:** aplicación React ejecutada en un navegador.
 - **Instalador:** aplicación de escritorio para Windows construida con Electron y NSIS.
 - **Móvil:** aplicación Android construida con Capacitor que reutiliza el frontend React.
@@ -17,7 +18,7 @@ La estrategia diferencia cuatro conceptos que no deben confundirse:
 
 ## 2. FinanceApp QA Framework
 
-El proyecto incorpora una capa de pruebas propia en `qa/`. No pretende reemplazar herramientas maduras; las coordina bajo una interfaz, perfiles, estados, criterios y reportes comunes.
+El proyecto incorpora una capa de pruebas propia en `qa/`. No pretende reemplazar herramientas maduras; las coordina bajo una interfaz, perfiles, estados, criterios y reportes comunes para backend, web, instalador y móvil.
 
 ```text
 qa/
@@ -33,6 +34,7 @@ qa/
 
 ```powershell
 node qa/run-tests.mjs web --profile quick
+node qa/run-tests.mjs backend --profile full
 node qa/run-tests.mjs installer --profile quick
 node qa/run-tests.mjs mobile --profile full
 node qa/run-tests.mjs all --profile full
@@ -62,6 +64,9 @@ Los códigos de salida son `0` sin fallos, `1` con al menos un fallo obligatorio
 
 | Módulo | Nivel | Herramienta | Automatización actual | Evidencia principal |
 |---|---|---|---|---|
+| Backend | Unitarias | Vitest | Sí | Resumen por archivo y caso |
+| Backend | Integración API | Vitest + Supertest + MongoMemoryServer | Sí | 428 casos totales junto con unitarias |
+| Backend | Cobertura | V8 | Sí | HTML, JSON y LCOV; umbral mínimo 70% |
 | Web | Unitarias | Vitest | Sí | Resumen de 17 aserciones |
 | Web | Compilación | Vite | Sí | `web/dist/` y salida del build |
 | Web | E2E smoke | Cypress | Sí | Resultado de `regression.cy.js`; screenshot solo al fallar |
@@ -74,9 +79,52 @@ Los códigos de salida son `0` sin fallos, `1` con al menos un fallo obligatorio
 | Móvil | APK debug | Gradle | Sí | `app-debug.apk`, tamaño y fecha |
 | Móvil | Flujo funcional | Emulador/dispositivo | Manual en esta fase | Checklist de login y operación |
 
-## 4. Pruebas del módulo web
+## 4. Pruebas del backend
 
-### 4.1 Pruebas unitarias con Vitest
+### 4.1 Estructura y cantidad
+
+El backend contiene **16 archivos y 436 casos**:
+
+| Grupo | Archivos | Casos |
+|---|---:|---:|
+| Integración: autenticación, categorías, gastos, ingresos y reportes | 5 | 189 |
+| Unitarias: servicios, presupuestos, paginación, CORS, validadores y utilidades | 11 | 247 |
+| **Total** | **16** | **436** |
+
+Las pruebas de integración usan Supertest para ejercitar rutas HTTP y `mongodb-memory-server` para disponer de una base temporal y aislada. No leen la base local ni datos reales del usuario.
+
+### 4.2 Perfil rápido
+
+```powershell
+node qa/run-tests.mjs backend --profile quick
+```
+
+Ejecuta `npm run test:unit` en `backend/`. Cubre servicios de autenticación, categorías, gastos e ingresos; paginación; configuración CORS; validadores y utilidades.
+
+### 4.3 Perfil completo y cobertura
+
+```powershell
+node qa/run-tests.mjs backend --profile full
+```
+
+Ejecuta los 436 casos con cobertura V8. `vitest.config.js` exige al menos 70% en líneas, funciones, ramas y sentencias. Los reportes se generan en `backend/coverage/`.
+
+### 4.4 Estabilidad de MongoMemoryServer
+
+Cada archivo crea una instancia MongoDB temporal. Vitest 4 ya no utiliza la opción antigua `threads: 1`; al ejecutar archivos en paralelo se iniciaban varios procesos `mongod` y WiredTiger competía por memoria, provocando `fassert() failure`. La configuración actual usa:
+
+```js
+fileParallelism: false,
+maxWorkers: 1,
+```
+
+Esto serializa archivos, conserva el aislamiento y permite ejecutar los **436/436 casos**. No se desactivó ninguna prueba ni se sustituyó MongoDB por mocks.
+
+La suite añadió ocho casos de `budgetService`: creación, duplicados, límites cercanos, presupuestos excedidos, actualización, eliminación y alertas. Con ellos la cobertura global verificada es 82.57% de sentencias, 74.25% de ramas, 80.55% de funciones y 82.59% de líneas.
+
+## 5. Pruebas del módulo web
+
+### 5.1 Pruebas unitarias con Vitest
 
 Comando:
 
@@ -91,7 +139,7 @@ Actualmente se ejecutan dos archivos y 17 casos:
 
 Estas pruebas son rápidas y aisladas. Detectan errores en reglas puras sin abrir un navegador, pero no demuestran que los formularios rendericen ni que la API responda.
 
-### 4.2 Build de Vite
+### 5.2 Build de Vite
 
 Comando:
 
@@ -101,7 +149,7 @@ npm --prefix web run build
 
 Comprueba imports, sintaxis JSX, resolución de dependencias y generación de recursos optimizados. El criterio es código de salida `0` y existencia de `web/dist/`. Una advertencia de tamaño de bundle se registra, pero no equivale a un fallo funcional.
 
-### 4.3 Smoke test E2E
+### 5.3 Smoke test E2E
 
 Comando directo:
 
@@ -117,13 +165,15 @@ El script levanta y cierra Vite automáticamente. Ejecuta `regression.cy.js` y v
 
 Estos tres casos representan regresiones concretas y ofrecen una señal rápida antes de ejecutar toda la suite.
 
-### 4.4 Suite E2E completa con Cypress
+### 5.4 Suite E2E completa con Cypress
 
 Comando:
 
 ```powershell
 npm --prefix web run test:e2e
 ```
+
+La suite contiene **73 casos**. El perfil `full` la ejecuta exactamente una vez: no repite el smoke ni vuelve a ejecutar accesibilidad por separado.
 
 Cobertura por archivo:
 
@@ -142,7 +192,7 @@ Cobertura por archivo:
 
 La mayoría de pruebas intercepta peticiones HTTP con respuestas controladas. Esto las hace reproducibles y evita modificar información real, aunque no sustituye una prueba de integración contra un backend desplegado.
 
-### 4.5 Accesibilidad
+### 5.5 Accesibilidad
 
 Comando:
 
@@ -152,16 +202,16 @@ npm --prefix web run test:a11y
 
 Comprueba la estructura de login y registro, además de landmarks y botones del dashboard. `cypress-axe` analiza problemas detectables automáticamente. Una auditoría automática no reemplaza pruebas humanas con teclado y lector de pantalla.
 
-### 4.6 Evidencias web
+### 5.6 Evidencias web
 
 - Cypress conserva screenshots cuando una prueba falla.
 - Las exportaciones descargadas pueden comprobarse en `web/cypress/downloads/`.
 - `web/cypress/a11y-violations.json` registra hallazgos de accesibilidad.
 - La grabación de video está desactivada porque duplicaba evidencia, consumía espacio y no aportaba valor suficiente al diagnóstico habitual.
 
-## 5. Pruebas del instalador Electron
+## 6. Pruebas del instalador Electron
 
-### 5.1 Smoke test automatizado con Playwright
+### 6.1 Smoke test automatizado con Playwright
 
 Comando:
 
@@ -181,7 +231,7 @@ El caso comprueba que:
 
 Impacto: detecta pantalla en blanco, entrada incorrecta, fallo de preload, ausencia de ventana y problemas de integración entre React y Electron. No prueba la instalación de NSIS ni las operaciones financieras completas, porque estas ya pertenecen a Cypress.
 
-### 5.2 Build de distribución
+### 6.2 Build de distribución
 
 Comando:
 
@@ -193,7 +243,7 @@ El proceso compila web, prepara los recursos del backend y ejecuta Electron Buil
 
 Un build correcto demuestra que el paquete puede generarse; no demuestra que el asistente gráfico se instale correctamente en todas las versiones de Windows.
 
-### 5.3 Checklist manual NSIS
+### 6.3 Checklist manual NSIS
 
 Estado: `PENDING_MANUAL` hasta registrar evidencia.
 
@@ -206,13 +256,13 @@ Estado: `PENDING_MANUAL` hasta registrar evidencia.
 7. Desinstalarla desde Windows.
 8. Confirmar que los accesos directos se retiraron.
 
-## 6. Pruebas del módulo móvil
+## 7. Pruebas del módulo móvil
 
-### 6.1 Arquitectura comprobada
+### 7.1 Arquitectura comprobada
 
 Android no contiene una segunda interfaz: Capacitor empaqueta el build de `web/`. Por eso las pruebas Vitest y Cypress también protegen gran parte de su lógica visual y funcional. Aun así, la WebView, permisos, red, SDK y empaquetado requieren verificaciones específicas.
 
-### 6.2 Sincronización Capacitor
+### 7.2 Sincronización Capacitor
 
 Comando:
 
@@ -222,7 +272,7 @@ npm --prefix mobile run sync:dev
 
 Ejecuta el build web en modo móvil y `cap sync android`. Usa la URL de desarrollo preparada para el emulador (`10.0.2.2`). El criterio es salida `0` y recursos sincronizados dentro del proyecto Android.
 
-### 6.3 Build del APK
+### 7.3 Build del APK
 
 Comando:
 
@@ -238,7 +288,7 @@ mobile/android/app/build/outputs/apk/debug/app-debug.apk
 
 El framework registra ruta, tamaño y fecha. La existencia del APK no prueba que la WebView cargue ni que la conexión al backend funcione.
 
-### 6.4 Smoke test manual Android
+### 7.4 Smoke test manual Android
 
 La automatización de interfaz Android queda fuera de esta fase. El control mínimo es:
 
@@ -251,7 +301,7 @@ La automatización de interfaz Android queda fuera de esta fase. El control mín
 7. Recargar o volver al listado y confirmar persistencia.
 8. Registrar dispositivo/AVD, versión Android, fecha y resultado.
 
-## 7. Pruebas del propio framework
+## 8. Pruebas del propio framework
 
 Comando:
 
@@ -271,7 +321,7 @@ Estas pruebas comprueban:
 - Comportamiento de `--dry-run`.
 - Conservación de controles manuales como pendientes.
 
-## 8. Cómo interpretar un reporte
+## 9. Cómo interpretar un reporte
 
 Cada ejecución escribe dos archivos en `qa/reports/`:
 
@@ -282,7 +332,7 @@ qa-report-AAAA-MM-DD-HHMMSS.json
 
 Markdown es la evidencia para personas; JSON permite integrar CI posteriormente. Para aprobar una entrega no debe existir ningún `FAIL`. Los `PENDING_MANUAL` deben ejecutarse y registrarse antes de afirmar que la plataforma correspondiente fue verificada por completo.
 
-## 9. Cobertura pendiente y mejoras futuras
+## 10. Cobertura pendiente y mejoras futuras
 
 | Pendiente | Riesgo cubierto | Prioridad sugerida |
 |---|---|---|
@@ -292,20 +342,20 @@ Markdown es la evidencia para personas; JSON permite integrar CI posteriormente.
 | Añadir CI para perfiles quick | Regresiones en pull requests | Alta |
 | Pruebas manuales con teclado/lector de pantalla | Barreras no detectadas por axe | Media |
 
-## 10. Guion breve para defender el proyecto
+## 11. Guion breve para defender el proyecto
 
-> FinanceApp tiene tres formas de distribución que comparten lógica, pero presentan riesgos diferentes. Por eso construimos un framework de calidad propio que ofrece un comando, perfiles, estados y reportes comunes. No reinventamos motores de prueba: Vitest valida funciones puras, Cypress prueba los flujos web, Playwright abre el Electron real, y Capacitor/Gradle validan el paquete Android.
+> FinanceApp tiene una API y tres formas de distribución que comparten lógica, pero presentan riesgos diferentes. Por eso construimos un framework de calidad propio que ofrece un comando, perfiles, estados y reportes comunes. No reinventamos motores de prueba: Vitest y Supertest validan backend, Vitest y Cypress prueban web, Playwright abre el Electron real, y Capacitor/Gradle validan el paquete Android.
 >
 > Nuestro perfil rápido sirve durante el desarrollo y el completo antes de una entrega. Además, el framework es honesto: compilar no significa que una función opere correctamente, y una comprobación manual pendiente nunca aparece como aprobada. Los resultados se guardan en Markdown para la revisión humana y en JSON para una futura integración continua.
 >
 > Actualmente web y Electron tienen ejecución automatizada real. Android reutiliza la cobertura web y valida su build, mientras su smoke funcional sigue documentado como manual hasta incorporar pruebas instrumentadas en una fase posterior.
 
-## 11. Evidencia verificada durante la implementación
+## 12. Evidencia verificada durante la implementación
 
 - Vitest: 2 archivos, 17 pruebas aprobadas.
 - Build Vite: completado correctamente.
 - Cypress smoke: 3 pruebas aprobadas.
 - Playwright Electron: 1 smoke test aprobado.
 - Framework QA: pruebas de núcleo, adaptadores y CLI aprobadas.
+- Backend: 16 archivos y 436 pruebas aprobadas en ejecución serial; los cuatro umbrales de cobertura superan 70%.
 - Android: prueba Gradle inicial bloqueada antes de sincronizar Capacitor; se mantiene como cobertura pendiente conforme al alcance aprobado.
-

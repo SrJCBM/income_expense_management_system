@@ -131,6 +131,25 @@
 
 ### 20:00-24:00 — Correcciones antes/después
 
+#### Matriz de los diez fallos originales
+
+La columna **Antes** se contrasta con `evidencias/PracticaLab_Pruebas.pdf` dentro del ZIP de entrega. La columna **Después** limita cada afirmación a la evidencia preparada o automatizada disponible; `Actividad reciente` permanece explícitamente pendiente.
+
+| # | Fallo original | Antes | Después | Estado defendible |
+|---:|---|---|---|---|
+| 1 | Nombre compuesto únicamente por símbolos | El registro aceptaba un nombre sin letras. | La interfaz rechaza el valor y muestra que el nombre debe incluir al menos una letra; está cubierto por `web/cypress/e2e/regression.cy.js`. | Corregido |
+| 2 | Edición de ingresos | El formulario no recuperaba correctamente los datos del ingreso. | Concepto, monto, fecha y notas se precargan al editar; está cubierto por `web/cypress/e2e/regression.cy.js`. | Corregido |
+| 3 | Desfase de fecha | La fecha visible podía cambiar respecto de la guardada. | La fecha se normaliza como `YYYY-MM-DD` al mostrar y editar; está cubierta por `web/cypress/e2e/incomes.cy.js`. | Corregido |
+| 4 | Filtros por categoría y mes | Los filtros no reflejaban correctamente la selección. | Los escenarios de búsqueda y filtros están incluidos en `web/cypress/e2e/expenses.cy.js` y en la evidencia preparada de Cypress. | Corregido |
+| 5 | Ausencia de marzo | Marzo no aparecía correctamente en el resultado filtrado. | La evidencia comparativa y el escenario de filtro por mes preparado muestran marzo en el resultado esperado. | Corregido |
+| 6 | Selector de categoría duplicado | El formulario de gastos mostraba más de un selector. | Cypress comprueba que el formulario contiene exactamente un selector en `web/cypress/e2e/regression.cy.js`. | Corregido |
+| 7 | Monto alto omitido | Un monto alto no se representaba correctamente. | El dashboard recibe `9999999999.99` y conserva visibles las tarjetas en `web/cypress/e2e/dashboard.cy.js`. | Corregido |
+| 8 | Desbordamiento visual | El contenido numérico salía de las tarjetas. | La evidencia visual después muestra el monto contenido dentro de las tarjetas; Cypress respalda que estas permanecen visibles con montos altos. | Corregido |
+| 9 | Actividad reciente | La sección no mostraba el comportamiento esperado. | No existe evidencia suficiente preparada para defender esta corrección en la exposición. | **No demostrada / restante** |
+| 10 | Iconos | La selección de iconos no se conservaba correctamente. | `web/cypress/e2e/categories.cy.js` verifica la selección y conservación del icono de categoría. | Corregido |
+
+**Cálculo defendible:** `9 / 10 × 100 = 90%` de los fallos originales están corregidos. No se presenta `Actividad reciente` como aprobada.
+
 **20:00-22:00 — Integrante 1**
 
 - **Acción:** Mostrar la tabla comparativa del informe original y señalar las observaciones corregidas.
@@ -139,29 +158,40 @@
 
 **22:00-24:00 — Integrante 2**
 
-- **Acción:** Demostrar de forma breve las correcciones representativas preparadas: rechazo de nombres compuestos solo por símbolos, recuperación de datos y fecha al editar un ingreso, y ausencia del selector duplicado en gastos. Señalar además la evidencia de filtros, montos altos e iconos.
-- **Parlamento literal:** “Estas correcciones atacan el comportamiento observado: el formulario rechaza un nombre hecho solo de símbolos, la edición conserva los datos y la fecha, y gastos presenta un único selector de categoría. Las evidencias preparadas cubren también filtros, montos altos sin desbordamiento y selección de iconos.”
+- **Acción:** Demostrar, en este orden, tres correcciones visuales: (1) rechazo de un nombre compuesto únicamente por símbolos; (2) edición de un ingreso con sus datos y fecha precargados correctamente; y (3) un monto alto contenido dentro de las tarjetas del dashboard.
+- **Parlamento literal:** “Mostramos tres correcciones visuales y distintas: el formulario rechaza un nombre hecho solo de símbolos, la edición del ingreso conserva sus datos y fecha, y el dashboard contiene un monto alto dentro de sus tarjetas. Las demás correcciones se respaldan con Cypress y con el PDF comparativo para no repetir funciones ni consumir el tiempo de la exposición.”
 - **Resultado esperado:** Cada comportamiento mostrado coincide con su evidencia después; la aplicación sigue respondiendo.
 
 ### 24:00-27:00 — Robustez, arquitectura y pruebas
 
 **24:00-25:00 — Integrante 3: entrada inválida**
 
-- **Acción:** Enviar el formulario preparado con una entrada inválida y luego corregirla.
-- **Parlamento literal:** “Ante una entrada inválida, el sistema no se bloquea ni guarda datos inconsistentes: conserva el formulario y presenta un mensaje comprensible para corregir el valor.”
-- **Resultado esperado:** Mensaje de validación visible, ninguna operación nueva y navegación aún funcional.
+- **Acción:** Intentar registrar una operación con monto `0` y comprobar que el formulario no se envía; después corregir el valor sin abandonar el recorrido.
+- **Parlamento literal:** “Intento registrar un monto cero. El formulario no se envía, no se guarda una operación inconsistente y el mensaje permite corregir el valor sin bloquear la aplicación.”
+- **Resultado esperado:** Mensaje de validación visible, ninguna petición de guardado confirmada, ninguna operación nueva y navegación aún funcional.
 
 **25:00-26:00 — Integrante 3: evidencia preparada de fallo de comunicación**
 
-- **Acción:** Mostrar una captura o evidencia previamente preparada y reproducible de una respuesta de red fallida, obtenida con una interceptación controlada en pruebas. Mantener la API compartida encendida y sin modificaciones.
-- **Parlamento literal:** “Esta evidencia preparada reproduce de forma controlada una respuesta de red fallida sin interrumpir la API que usan las tres plataformas. El cliente informa el problema sin fingir que la operación fue guardada y permite reintentar cuando existe comunicación.”
+- **Acción:** Mostrar una captura o resultado previamente preparado del comportamiento offline, obtenido con una condición controlada. Mantener la API compartida encendida y sin modificaciones durante el recorrido integrado.
+- **Parlamento literal:** “Esta evidencia preparada muestra de forma controlada el comportamiento offline sin apagar la API que usan las tres plataformas. El objetivo es demostrar recuperación y mensajes comprensibles, no provocar una caída impredecible durante la exposición.”
 - **Resultado esperado:** La captura evidencia un mensaje de red comprensible, una interfaz no bloqueada y ninguna operación inexistente confirmada; la API compartida continúa funcionando.
 
 **26:00-27:00 — Integrante 3: arquitectura y evidencia de pruebas**
 
-- **Acción:** Mostrar el diagrama de arquitectura y abrir `docs/PRUEBAS_MODULOS.md` en sus secciones **4.1 Estructura y cantidad** y **5.4 Suite E2E completa con Cypress**. Enseñar los reportes preparados, sin ejecutar las suites largas durante la exposición.
-- **Parlamento literal:** “Los clientes React se comunican con la API Express; el backend aplica el flujo rutas, controladores, servicios y modelos, y MongoDB concentra la persistencia. Los 436 casos backend están documentados en la sección 4.1 de `docs/PRUEBAS_MODULOS.md` y se obtienen con `node qa/run-tests.mjs backend --profile full`; su cobertura queda en `backend/coverage/`. Los 73 casos Cypress están desglosados en la sección 5.4 y se ejecutan con `npm --prefix web run test:e2e`; sus screenshots de fallos quedan en `web/cypress/screenshots/`. Mostramos evidencia ya preparada porque ejecutar ambas suites largas consumiría el tiempo de la demostración. El smoke de Electron y el control manual Android se identifican por separado.”
-- **Resultado esperado:** Documento y evidencias legibles y trazables de 436 casos backend y 73 Cypress, junto con el smoke de Electron; no se inicia ninguna suite larga y la prueba móvil manual no figura como aprobación automática.
+- **Acción:** Mostrar el diagrama de arquitectura, abrir `docs/PRUEBAS_MODULOS.md` en sus secciones **4.1 Estructura y cantidad** y **5.4 Suite E2E completa con Cypress**, y enseñar los reportes preparados sin ejecutar suites largas.
+- **Parlamento literal:** “React se reutiliza en web, Electron y Capacitor. Los tres clientes consumen la API REST de Express. Express aplica validaciones y reglas de negocio, y MongoDB conserva la información compartida. Vitest verifica backend, Cypress valida los flujos web y Playwright realiza el smoke de Electron. La evidencia preparada registra `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`.”
+- **Resultado esperado:** Documento y evidencias legibles y trazables de `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`; no se inicia ninguna suite larga y la prueba móvil manual no figura como aprobación automática.
+
+#### Comandos breves de evidencia
+
+Estos comandos se documentan para una comprobación corta o para responder preguntas; no sustituyen los reportes de las ejecuciones completas ni deben convertirse en una suite larga durante la exposición:
+
+```powershell
+node --test qa/tests/*.test.mjs
+node qa/run-tests.mjs all --profile full --dry-run
+```
+
+Antes de exponer, abrir `qa/reports/` o las capturas de la ejecución completa. Si el docente pide detalle, mostrar esa evidencia ya preparada en lugar de lanzar Vitest o Cypress completos dentro de los 30 minutos.
 
 ### 27:00-30:00 — Conclusiones y preguntas
 
@@ -203,7 +233,9 @@ Comprobación adicional: `125,50 + 24,50 = 150,00`; por tanto, `1100,00 - 150,00
 - [ ] Los montos visibles coinciden con `874,50`, `850,00` y `950,00` en el momento indicado.
 - [ ] Cada escritura se confirma desde un cliente diferente.
 - [ ] Las evidencias de correcciones y pruebas están abiertas y son legibles.
+- [ ] La matriz conserva nueve correcciones y deja `Actividad reciente` como no demostrada/restante: `9 / 10 × 100 = 90%`.
+- [ ] Las tres correcciones en vivo son nombre con símbolos, edición de ingreso precargada y monto alto contenido; las restantes se muestran con Cypress y el PDF.
 - [ ] Los controles manuales pendientes no se presentan como pruebas automatizadas aprobadas.
 - [ ] El fallo de comunicación se explica con captura o evidencia preparada reproducible; nadie apaga ni modifica la API compartida.
-- [ ] Las cifras 436 y 73 se enlazan con `docs/PRUEBAS_MODULOS.md`, los comandos y las rutas de evidencia, sin ejecutar suites largas.
+- [ ] Las cifras `436/436 backend`, `73/73 Cypress` y `20/20 framework QA` se enlazan con `docs/PRUEBAS_MODULOS.md`, los comandos y las rutas de evidencia, sin ejecutar suites largas.
 - [ ] La conclusión termina a los 28:00 y se preservan dos minutos efectivos para preguntas.

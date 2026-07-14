@@ -19,7 +19,7 @@
     "cwd": "web",
     "command": ["npm", "run", "test:e2e:smoke"],
     "dependsOn": "web-build",
-    "evidence": ["web/cypress/videos", "web/cypress/screenshots"]
+    "evidence": ["web/cypress/screenshots"]
   },
   "web-e2e": {
     "module": "web",
@@ -27,7 +27,7 @@
     "cwd": "web",
     "command": ["npm", "run", "test:e2e"],
     "dependsOn": "web-build",
-    "evidence": ["web/cypress/videos", "web/cypress/screenshots"]
+    "evidence": ["web/cypress/screenshots"]
   },
   "web-a11y": {
     "module": "web",
@@ -36,5 +36,56 @@
     "command": ["npm", "run", "test:a11y"],
     "dependsOn": "web-build",
     "evidence": ["web/cypress/a11y-violations.json"]
+  },
+  "installer-smoke": {
+    "module": "installer",
+    "name": "Smoke de Electron con Playwright",
+    "cwd": "installer",
+    "command": ["npm", "run", "test:smoke"],
+    "evidence": ["installer/test-results/results.json"]
+  },
+  "installer-dist": {
+    "module": "installer",
+    "name": "Build de distribución NSIS",
+    "cwd": "installer",
+    "command": ["npm", "run", "build:dist"],
+    "dependsOn": "installer-smoke"
+  },
+  "installer-artifact": {
+    "module": "installer",
+    "name": "Artefacto instalable de Windows",
+    "artifact": "installer/release/*.exe",
+    "dependsOn": "installer-dist"
+  },
+  "installer-nsis-manual": {
+    "module": "installer",
+    "name": "Instalación y desinstalación NSIS",
+    "manual": true,
+    "reason": "Instalar el .exe, verificar accesos directos, abrir FinanceApp y desinstalarla."
+  },
+  "mobile-sync-dev": {
+    "module": "mobile",
+    "name": "Build web y sincronización Capacitor",
+    "cwd": "mobile",
+    "command": ["npm", "run", "sync:dev"]
+  },
+  "mobile-apk-debug": {
+    "module": "mobile",
+    "name": "Build del APK debug",
+    "cwd": "mobile",
+    "command": ["npm", "run", "apk:debug"],
+    "dependsOn": "mobile-sync-dev"
+  },
+  "mobile-artifact": {
+    "module": "mobile",
+    "name": "Artefacto APK debug",
+    "artifact": "mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+    "dependsOn": "mobile-apk-debug"
+  },
+  "mobile-emulator-smoke": {
+    "module": "mobile",
+    "name": "Smoke funcional en emulador",
+    "manual": true,
+    "reason": "Instalar el APK, abrirlo, iniciar sesión, navegar, crear una operación y comprobar su persistencia."
   }
 }

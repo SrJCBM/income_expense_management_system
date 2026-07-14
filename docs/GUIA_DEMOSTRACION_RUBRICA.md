@@ -245,7 +245,7 @@ Antes de exponer, abrir `evidencias/RESULTADOS_PRUEBAS.md`. Las capturas de una 
 | Funcionamiento móvil | 09:00-15:00 | Consulta y creación sin cierre inesperado |
 | Integración | 03:00-20:00 | Escrituras y lecturas cruzadas |
 | Correcciones | 20:00-24:00 | `9 / 10` y demostraciones antes/después |
-| Robustez | 24:00-25:30 | Validación y recuperación controlada |
+| Robustez | 24:00-26:00 | Validación y recuperación controlada |
 | Demostración | 00:00-30:00 | Participación y explicación técnica |
 
 La tabla de tiempos contiene siete bloques continuos: 3 + 6 + 6 + 5 + 4 + 3 + 3 = **30 minutos exactos**, desde 00:00 hasta 30:00.

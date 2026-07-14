@@ -6,7 +6,7 @@ const Pagination = ({ page, totalPages, onPageChange, disabled = false }) => {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="pagination" role="navigation" aria-label={t('pagination.nav')}>
+    <nav className="pagination" aria-label={t('pagination.nav')}>
       <button
         type="button"
         className="btn-secondary btn-filter"
@@ -28,7 +28,7 @@ const Pagination = ({ page, totalPages, onPageChange, disabled = false }) => {
       >
         {t('pagination.next')}
       </button>
-    </div>
+    </nav>
   );
 };
 

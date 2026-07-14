@@ -151,6 +151,7 @@ const Budgets = () => {
           <p className="subtitle">{t('budgets.subtitle')}</p>
         </div>
         <button
+          type="button"
           className="btn-primary"
           onClick={openCreateForm}
           disabled={showForm}
@@ -308,6 +309,7 @@ const Budgets = () => {
                   <h3 className="budget-category-name">{categoryName}</h3>
                   <div className="actions-cell">
                     <button
+                      type="button"
                       className="btn-icon btn-edit"
                       onClick={() => openEditForm(budget)}
                       title={t('budgets.editBudgetTitle')}
@@ -317,6 +319,7 @@ const Budgets = () => {
                       ✏️
                     </button>
                     <button
+                      type="button"
                       className="btn-icon btn-delete"
                       onClick={() => handleDelete(budget)}
                       title={t('budgets.deleteBudgetTitle')}

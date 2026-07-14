@@ -61,6 +61,7 @@ const Layout = () => {
               <span className="user-plan">Premium plan</span>
             </div>
             <button
+              type="button"
               className="btn-lang-toggle"
               onClick={toggleLang}
               aria-label={t('common.changeLang')}
@@ -69,6 +70,7 @@ const Layout = () => {
               {t('lang.toggle')}
             </button>
             <button
+              type="button"
               className="btn-logout"
               onClick={handleLogout}
               data-testid="logout-button"
@@ -98,6 +100,7 @@ const Layout = () => {
           </button>
           <h2>Finance<span style={{ color: '#a5b4fc' }}>App</span></h2>
           <button
+            type="button"
             className="btn-lang-toggle"
             onClick={toggleLang}
             aria-label={t('common.changeLang')}

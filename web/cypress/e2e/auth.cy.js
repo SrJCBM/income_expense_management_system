@@ -129,7 +129,7 @@ describe('Authentication Flow', () => {
       cy.getByDataTest('confirm-password-input')
         .should('have.attr', 'type', 'password')
         .and('have.attr', 'aria-required', 'true');
-      cy.get('[role="main"]').should('exist');
+      cy.get('main').should('exist');
     });
   });
 

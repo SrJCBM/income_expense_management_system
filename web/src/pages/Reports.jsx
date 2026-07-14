@@ -242,6 +242,7 @@ const Reports = () => {
           {hasReportData && !waitingForRange && !rangeInvalid && (
             <div className="export-buttons">
               <button
+                type="button"
                 onClick={() => handleExportPDF(summary, buildPeriod())}
                 className="btn-secondary"
                 disabled={isExporting}
@@ -253,6 +254,7 @@ const Reports = () => {
                 {isExporting ? t('reports.exporting') : t('reports.exportPDF')}
               </button>
               <button
+                type="button"
                 onClick={() => handleExportExcel(summary, buildPeriod())}
                 className="btn-secondary"
                 disabled={isExporting}
@@ -318,8 +320,12 @@ const Reports = () => {
           <div className="card list-card">
             <h3>{t('reports.expensesByCategory')}</h3>
             <div className="category-bars">
-              {summary.expensesByCategory.map((cat, idx) => (
-                <div key={idx} className="category-bar-item" data-testid="category-bar-item">
+              {summary.expensesByCategory.map((cat) => (
+                <div
+                  key={cat.categoryId || cat.id || cat._id || cat.name}
+                  className="category-bar-item"
+                  data-testid="category-bar-item"
+                >
                   <div className="bar-info flex-between">
                     <span className="cat-name">{cat.name}</span>
                     <span className="cat-amount">${cat.amount.toFixed(2)} ({cat.percentage}%)</span>

@@ -212,9 +212,3 @@ export const exportToExcel = async (data, period) => {
     throw new Error(errorMessage);
   }
 };
-
-export default {
-  exportToPDF,
-  exportToExcel,
-  validateExportData,
-};

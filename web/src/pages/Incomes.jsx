@@ -263,6 +263,7 @@ const Incomes = () => {
           <p className="subtitle">{t('incomes.subtitle')}</p>
         </div>
         <button
+          type="button"
           className="btn-primary"
           onClick={handleShowCreateForm}
           disabled={showForm}
@@ -516,8 +517,9 @@ const Incomes = () => {
                       <td data-label={t('incomes.colCategory')}>{income.category?.name || t('incomes.noCategory')}</td>
                       <td className="amount positive" data-label={t('incomes.colAmount')}>+{formatCurrency(income.amount)}</td>
                       <td className="actions-cell" data-label={t('incomes.colActions')}>
-                        <button className="btn-icon" onClick={() => handleEdit(income)} title={t('incomes.editTitle')} data-testid="edit-income">✏️</button>
+                        <button type="button" className="btn-icon" onClick={() => handleEdit(income)} title={t('incomes.editTitle')} data-testid="edit-income">✏️</button>
                         <button
+                          type="button"
                           className="btn-icon"
                           onClick={() => handleDuplicate(income)}
                           title={t('incomes.duplicateTitle')}
@@ -526,7 +528,7 @@ const Incomes = () => {
                         >
                           📋
                         </button>
-                        <button className="btn-icon" onClick={() => handleDelete(incomeId)} title={t('incomes.deleteTitle')} data-testid="delete-income">🗑️</button>
+                        <button type="button" className="btn-icon" onClick={() => handleDelete(incomeId)} title={t('incomes.deleteTitle')} data-testid="delete-income">🗑️</button>
                       </td>
                     </tr>
                   );

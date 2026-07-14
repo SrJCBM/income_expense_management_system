@@ -37,12 +37,12 @@ const Login = () => {
 
       <div className="auth-form-side">
         <div className="auth-lang-toggle">
-          <button className="btn-lang-toggle" onClick={toggleLang} aria-label={t('common.changeLang')}>
+          <button type="button" className="btn-lang-toggle" onClick={toggleLang} aria-label={t('common.changeLang')}>
             {t('lang.toggle')}
           </button>
         </div>
 
-        <div className="auth-card" role="main" aria-labelledby="login-title">
+        <main className="auth-card" aria-labelledby="login-title">
           <div className="auth-header">
             <h2 id="login-title">{t('auth.login.title')}</h2>
             <p>{t('auth.login.subtitle')}</p>
@@ -109,7 +109,7 @@ const Login = () => {
           <div className="auth-footer">
             <p>{t('auth.login.noAccount')} <Link to="/register">{t('auth.login.registerLink')}</Link></p>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

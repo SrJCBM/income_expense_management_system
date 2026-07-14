@@ -5,13 +5,6 @@
 
 import { toDateInputValue } from './dateUtils.js';
 
-export const formatCurrency = (amount, currency = 'USD') => {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: currency,
-  }).format(amount);
-};
-
 export const formatDate = (date, locale = 'es-MX') => {
   const dateOnly = toDateInputValue(date);
 
@@ -21,14 +14,6 @@ export const formatDate = (date, locale = 'es-MX') => {
 
   const [year, month, day] = dateOnly.split('-').map(Number);
   return new Date(year, month - 1, day).toLocaleDateString(locale);
-};
-
-export const formatDatetime = (dateTime, locale = 'es-MX') => {
-  return new Date(dateTime).toLocaleString(locale);
-};
-
-export const truncateText = (text, length = 50) => {
-  return text.length > length ? `${text.substring(0, length)}...` : text;
 };
 
 export const getMonthName = (month) => {

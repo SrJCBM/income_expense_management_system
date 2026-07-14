@@ -33,8 +33,8 @@ const DarkTooltip = ({ active, payload, label, formatter }) => {
       pointerEvents: 'none',
     }}>
       {label && <p style={{ color: '#94a3b8', marginBottom: 6, fontSize: 12 }}>{label}</p>}
-      {payload.map((entry, i) => (
-        <p key={i} style={{ color: entry.payload?.fill || '#f8fafc', fontWeight: 600 }}>
+      {payload.map((entry) => (
+        <p key={entry.dataKey || entry.name} style={{ color: entry.payload?.fill || '#f8fafc', fontWeight: 600 }}>
           {entry.payload?.name || entry.name}: {formatter ? formatter(entry.value) : entry.value}
         </p>
       ))}
@@ -98,8 +98,8 @@ const TrendTooltip = ({ active, payload, label, formatter }) => {
       pointerEvents: 'none',
     }}>
       <p style={{ color: '#94a3b8', marginBottom: 6, fontSize: 12 }}>{label}</p>
-      {payload.map((entry, i) => (
-        <p key={i} style={{ color: entry.color, fontWeight: 600 }}>
+      {payload.map((entry) => (
+        <p key={entry.dataKey || entry.name} style={{ color: entry.color, fontWeight: 600 }}>
           {entry.name}: {formatter ? formatter(entry.value) : entry.value}
         </p>
       ))}
@@ -145,6 +145,7 @@ const ReportCharts = ({ data, yearlyData = null }) => {
   }
 
   const chartData = data.expensesByCategory.map((cat) => ({
+    id: cat.categoryId || cat.id || cat._id || cat.name,
     name: cat.name,
     amount: cat.amount,
     percentage: cat.percentage,
@@ -195,8 +196,8 @@ const ReportCharts = ({ data, yearlyData = null }) => {
                 cursor={{ fill: 'rgba(255,255,255,0.04)' }}
               />
               <Bar dataKey="amount" radius={[8, 8, 0, 0]} maxBarSize={72}>
-                {incomeExpenseData.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} />
+                {incomeExpenseData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.fill} />
                 ))}
               </Bar>
             </BarChart>
@@ -232,8 +233,8 @@ const ReportCharts = ({ data, yearlyData = null }) => {
                   labelLine={false}
                   label={renderPieLabel}
                 >
-                  {chartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} stroke="none" />
+                  {chartData.map((entry) => (
+                    <Cell key={entry.id} fill={entry.color} stroke="none" />
                   ))}
                 </Pie>
                 <Tooltip content={<PieTooltip formatter={formatCurrency} />} />
@@ -244,8 +245,8 @@ const ReportCharts = ({ data, yearlyData = null }) => {
             <caption>{t('reports.expensesByCategory')}</caption>
             <thead><tr><th>{t('reports.colCategory')}</th><th>{t('reports.colAmount')}</th><th>%</th></tr></thead>
             <tbody>
-              {chartData.map((row, i) => (
-                <tr key={i}><td>{row.name}</td><td>{formatCurrency(row.amount)}</td><td>{row.percentage}%</td></tr>
+              {chartData.map((row) => (
+                <tr key={row.id}><td>{row.name}</td><td>{formatCurrency(row.amount)}</td><td>{row.percentage}%</td></tr>
               ))}
             </tbody>
           </table>
@@ -256,7 +257,7 @@ const ReportCharts = ({ data, yearlyData = null }) => {
       <section className="chart-wrapper" aria-labelledby="summary-title">
         <h3 id="summary-title">{t('reports.detailedSummary')}</h3>
         <div className="summary-table-scroll">
-        <table className="summary-table" role="table" aria-label={t('reports.summaryAriaLabel')}>
+        <table className="summary-table" aria-label={t('reports.summaryAriaLabel')}>
           <thead>
             <tr>
               <th scope="col">{t('reports.colCategory')}</th>
@@ -265,8 +266,8 @@ const ReportCharts = ({ data, yearlyData = null }) => {
             </tr>
           </thead>
           <tbody>
-            {chartData.map((row, i) => (
-              <tr key={i}>
+            {chartData.map((row) => (
+              <tr key={row.id}>
                 <td data-label={t('reports.colCategory')}>
                   <span className="category-dot" style={{ backgroundColor: row.color }} aria-hidden="true" />
                   {row.name}

@@ -14,7 +14,15 @@
   "bugs": {
     "url": "https://github.com/Ricardo-lainez/income_expense_management_system/issues"
   },
-  "keywords": ["finance", "income", "expense", "budget", "reports", "react", "vite"],
+  "keywords": [
+    "finance",
+    "income",
+    "expense",
+    "budget",
+    "reports",
+    "react",
+    "vite"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -30,7 +38,8 @@
     "test:a11y": "start-server-and-test \"npm run dev -- --host 127.0.0.1 --port 3000\" http://127.0.0.1:3000/index.html test:a11y:raw",
     "test:a11y:raw": "node scripts/run-cypress.cjs run --spec cypress/e2e/accessibility.cy.js",
     "test:unit": "vitest run",
-    "test:unit:watch": "vitest"
+    "test:unit:watch": "vitest",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "axios": "^1.5.0",

@@ -61,6 +61,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete
               <td className="amount negative" data-label={t('expenses.colAmount')}>-{formatCurrency(expense.amount)}</td>
               <td className="actions-cell" data-label={t('expenses.colActions')}>
                 <button
+                  type="button"
                   className="btn-icon btn-edit"
                   onClick={() => onEdit(expense)}
                   title={t('expenses.editTitle')}
@@ -69,6 +70,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete
                   ✏️
                 </button>
                 <button
+                  type="button"
                   className="btn-icon btn-duplicate"
                   onClick={() => onDuplicate(expense)}
                   title={t('expenses.duplicateTitle')}
@@ -78,6 +80,7 @@ const ExpenseList = ({ expenses, isLoading, error, onEdit, onDuplicate, onDelete
                   📋
                 </button>
                 <button
+                  type="button"
                   className="btn-icon btn-delete"
                   onClick={() => onDelete(expense.id || expense._id)}
                   title={t('expenses.deleteTitle')}

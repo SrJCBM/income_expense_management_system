@@ -277,6 +277,7 @@ const Expenses = () => {
           <p className="subtitle">{t('expenses.subtitle')}</p>
         </div>
         <button
+          type="button"
           className="btn-primary"
           onClick={handleNewExpense}
           disabled={showForm}

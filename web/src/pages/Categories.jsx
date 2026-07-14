@@ -23,10 +23,10 @@ const ALL_ICONS = ICON_GROUPS.flatMap((group) => group.icons);
 
 const displayIcon = (icon) => (ALL_ICONS.includes(icon) ? icon : ALL_ICONS[0]);
 
-const IconPicker = ({ value, onChange, disabled }) => {
+const IconPicker = ({ value, onChange, disabled, labelledBy }) => {
   const { t } = useLanguage();
   return (
-    <div className="icon-picker" role="radiogroup" aria-label={t('categories.selectIconLabel')}>
+    <div className="icon-picker" role="radiogroup" aria-labelledby={labelledBy}>
       {ICON_GROUPS.map((group) => (
         <section key={group.key} className="icon-group">
           <h4>{t(`categories.iconGroups.${group.key}`)}</h4>
@@ -161,6 +161,7 @@ const Categories = () => {
           <p className="subtitle">{t('categories.subtitle')}</p>
         </div>
         <button
+          type="button"
           className="btn-primary"
           onClick={handleCreateClick}
           disabled={showForm}
@@ -244,7 +245,9 @@ const Categories = () => {
             </div>
 
             <div className="form-group">
-              <label>{t('categories.fieldIcon')}</label>
+              <span id="category-icon-label" className="form-label">
+                {t('categories.fieldIcon')}
+              </span>
               <input
                 type="hidden"
                 name="icon"
@@ -255,6 +258,7 @@ const Categories = () => {
                 value={values.icon}
                 onChange={(icon) => setFieldValue('icon', icon)}
                 disabled={isSubmitting}
+                labelledBy="category-icon-label"
               />
               {errors.icon && <span className="error-text" role="alert" data-testid="category-error-icon">{errors.icon}</span>}
             </div>
@@ -345,12 +349,14 @@ const Categories = () => {
                       </td>
                       <td className="actions-cell" data-label={t('categories.colActions')}>
                         <button
+                          type="button"
                           className="btn-icon"
                           onClick={() => handleEditClick(category)}
                           title={t('categories.editTitle')}
                           data-testid="edit-category"
                         >✏️</button>
                         <button
+                          type="button"
                           className="btn-icon"
                           onClick={() => handleDeleteClick(category)}
                           title={t('categories.deleteTitle')}

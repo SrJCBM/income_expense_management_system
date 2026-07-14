@@ -7,6 +7,7 @@ const fs = require('fs');
 const Module = require('module');
 
 const isDev = process.env.ELECTRON === '1' || !app.isPackaged;
+const isQa = process.env.FINANCEAPP_QA === '1';
 
 const WEB_URL = 'http://127.0.0.1:3000';
 const BACKEND_URL = 'http://127.0.0.1:5000/api/health';
@@ -223,7 +224,9 @@ app.whenReady().then(async () => {
   logError('App ready - starting initialization...');
 
   try {
-    if (isDev) {
+    if (isQa) {
+      logError('Starting in QA mode with externally managed web server');
+    } else if (isDev) {
       logError('Starting in DEV mode');
       await startDevProcesses();
     } else {

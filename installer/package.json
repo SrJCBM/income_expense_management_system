@@ -9,11 +9,13 @@
   "scripts": {
     "electron-dev": "cross-env ELECTRON=1 electron .",
     "electron": "electron .",
+    "test:smoke": "playwright test tests/electron.smoke.spec.mjs",
     "build:dist": "powershell -ExecutionPolicy Bypass -File scripts/build-dist.ps1",
     "electron-build": "npm run build:dist",
     "electron-dist": "npm run build:dist"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "cross-env": "^7.0.3",
     "electron": "^31.7.7",
     "electron-builder": "^24.13.3"

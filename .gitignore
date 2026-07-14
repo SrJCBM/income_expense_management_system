@@ -152,3 +152,6 @@ installer/README_BUILD.md
 # ============================================
 docs/superpowers/
 frontend/release/
+
+# Local isolated Git worktrees
+.worktrees/

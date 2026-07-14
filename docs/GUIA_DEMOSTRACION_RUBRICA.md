@@ -7,7 +7,7 @@
 - Tener iniciados el backend, la aplicación web y Electron en la laptop, además del emulador Android Studio.
 - Iniciar las tres aplicaciones con la misma cuenta demo preparada y la misma base de datos; no usar datos personales reales. La contraseña debe estar autocompletada u oculta antes de proyectar.
 - No escribir, abrir ni mostrar durante la exposición la contraseña, el token de autenticación o archivos `.env`. Si la sesión caduca, detener la proyección y restablecerla fuera de pantalla.
-- Dejar abiertas las evidencias antes/después y los reportes de pruebas. Desactivar notificaciones y cerrar ventanas ajenas.
+- Dejar abierta la evidencia estable `evidencias/RESULTADOS_PRUEBAS.md`; las capturas antes/después son apoyo opcional. Desactivar notificaciones y cerrar ventanas ajenas.
 - Preparar una captura o evidencia reproducible del error de comunicación. No apagar, desconectar ni alterar la API compartida durante la demostración.
 
 ### Checklist de la víspera
@@ -21,7 +21,7 @@
 - [ ] Ajustar el zoom del navegador para que formularios, montos y mensajes sean legibles desde el proyector.
 - [ ] Desactivar notificaciones del sistema, navegador, mensajería y correo.
 - [ ] Preparar cargador, extensión eléctrica y una conexión de respaldo que permita llegar a la API.
-- [ ] Abrir y auditar `evidencias/PracticaLab_Pruebas.pdf` y `evidencias/Rubrica.pdf`; comprobar que corresponden al informe de observaciones y a la rúbrica usada en esta demostración.
+- [ ] Abrir y auditar `evidencias/PracticaLab_Pruebas.pdf`, `evidencias/Rubrica.pdf` y `evidencias/RESULTADOS_PRUEBAS.md`; comprobar que corresponden al informe de observaciones, la rúbrica y los resultados verificados usados en esta demostración.
 
 ### Checklist de 15 minutos antes
 
@@ -31,7 +31,7 @@
 4. Iniciar el emulador y abrir FinanceApp.
 5. Confirmar la misma cuenta en los tres clientes.
 6. Limpiar únicamente los datos creados en ensayos anteriores.
-7. Abrir PDF de observaciones y reporte QA.
+7. Abrir PDF de observaciones y `evidencias/RESULTADOS_PRUEBAS.md` como evidencia QA principal.
 8. Cerrar terminales y ventanas no utilizadas.
 
 ## Tabla de tiempos
@@ -202,9 +202,9 @@ La columna **Antes** se contrasta con `evidencias/PracticaLab_Pruebas.pdf` dentr
 
 **26:00-27:00 — Integrante 3: arquitectura y evidencia de pruebas**
 
-- **Acción:** Mostrar el diagrama de arquitectura, abrir `docs/PRUEBAS_MODULOS.md` en sus secciones **4.1 Estructura y cantidad** y **5.4 Suite E2E completa con Cypress**, y enseñar los reportes preparados sin ejecutar suites largas.
+- **Acción:** Mostrar el diagrama de arquitectura y abrir `evidencias/RESULTADOS_PRUEBAS.md` como evidencia principal. Si se solicita detalle, abrir `docs/PRUEBAS_MODULOS.md` en sus secciones **4.1 Estructura y cantidad** y **5.4 Suite E2E completa con Cypress**, sin ejecutar suites largas.
 - **Parlamento literal:** “React se reutiliza en web, Electron y Capacitor. Los tres clientes consumen la API REST de Express. Express aplica validaciones y reglas de negocio, y MongoDB conserva la información compartida. Vitest verifica backend, Cypress valida los flujos web y Playwright realiza el smoke de Electron. La evidencia preparada registra `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`.”
-- **Resultado esperado:** Documento y evidencias legibles y trazables de `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`; no se inicia ninguna suite larga y la prueba móvil manual no figura como aprobación automática.
+- **Resultado esperado:** `evidencias/RESULTADOS_PRUEBAS.md` muestra de forma legible y trazable `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`; no se inicia ninguna suite larga y la prueba móvil manual no figura como aprobación automática.
 
 #### Comandos breves de evidencia
 
@@ -215,7 +215,7 @@ node --test qa/tests/*.test.mjs
 node qa/run-tests.mjs all --profile full --dry-run
 ```
 
-Antes de exponer, abrir `qa/reports/` o las capturas de la ejecución completa. Si el docente pide detalle, mostrar esa evidencia ya preparada en lugar de lanzar Vitest o Cypress completos dentro de los 30 minutos.
+Antes de exponer, abrir `evidencias/RESULTADOS_PRUEBAS.md`. Las capturas de una ejecución completa son opcionales; si el docente pide detalle, mostrar la evidencia estable y la documentación trazable en lugar de lanzar Vitest o Cypress completos dentro de los 30 minutos.
 
 ### 27:00-30:00 — Conclusiones y preguntas
 
@@ -258,7 +258,7 @@ En cualquier contingencia se describe primero el estado real. La evidencia prepa
 - **API de Render despertando:** explicar que la primera solicitud puede estar esperando el arranque del servicio; conservar la pantalla y usar el reporte o captura preparada si excede el margen. Reanudar la lectura cruzada solo cuando la API responda.
 - **Electron sin conexión:** mostrar el mensaje real, comprobar la conectividad sin cambiar secretos y continuar con web junto con la evidencia de escritorio preparada. No atribuir a Electron una lectura que no ocurrió.
 - **Dato que tarda en aparecer:** actualizar una sola vez y esperar la respuesta; si continúa ausente, reconocer que la sincronización no se confirmó en vivo y mostrar la evidencia previa trazable.
-- **Cypress tarda demasiado:** detener la intención de ejecución en vivo y abrir el reporte completo ya preparado de `73/73 Cypress`; aclarar que se está mostrando el resultado registrado, no una ejecución nueva.
+- **Cypress tarda demasiado:** detener la intención de ejecución en vivo y abrir `evidencias/RESULTADOS_PRUEBAS.md`, que registra `73/73 Cypress`; aclarar que se está mostrando el resultado histórico verificado, no una ejecución nueva.
 - **Pregunta cuya respuesta no se conoce:** responder: “No tengo evidencia suficiente para afirmarlo ahora. Lo registraré y lo verificaré en el código o en una prueba reproducible antes de dar una respuesta definitiva”.
 
 ## Preguntas probables y respuestas breves
@@ -290,10 +290,10 @@ Comprobación adicional: `125,50 + 24,50 = 150,00`; por tanto, `1100,00 - 150,00
 - [ ] La cuenta demo tiene la contraseña autocompletada y oculta; no se proyectan contraseña, token ni archivos `.env`.
 - [ ] Los montos visibles coinciden con `874,50`, `850,00` y `950,00` en el momento indicado.
 - [ ] Cada escritura se confirma desde un cliente diferente.
-- [ ] Las evidencias de correcciones y pruebas están abiertas y son legibles.
+- [ ] `evidencias/RESULTADOS_PRUEBAS.md` está abierto y legible; las capturas opcionales están disponibles si aportan contexto.
 - [ ] La matriz conserva nueve correcciones y deja `Actividad reciente` como no demostrada/restante: `9 / 10 × 100 = 90%`.
 - [ ] Las tres correcciones en vivo son nombre con símbolos, edición de ingreso precargada y monto alto contenido; las restantes se muestran con Cypress y el PDF.
 - [ ] Los controles manuales pendientes no se presentan como pruebas automatizadas aprobadas.
 - [ ] El fallo de comunicación se explica con captura o evidencia preparada reproducible; nadie apaga ni modifica la API compartida.
-- [ ] Las cifras `436/436 backend`, `73/73 Cypress` y `20/20 framework QA` se enlazan con `docs/PRUEBAS_MODULOS.md`, los comandos y las rutas de evidencia, sin ejecutar suites largas.
+- [ ] Las cifras `436/436 backend`, `73/73 Cypress` y `20/20 framework QA` se enlazan con `evidencias/RESULTADOS_PRUEBAS.md`, `docs/PRUEBAS_MODULOS.md` y sus comandos, sin ejecutar suites largas.
 - [ ] La conclusión termina a los 28:00 y se preservan dos minutos efectivos para preguntas.

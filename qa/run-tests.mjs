@@ -4,17 +4,18 @@ import { fileURLToPath } from 'node:url';
 import { getWebChecks } from './checks/web.mjs';
 import { getInstallerChecks } from './checks/installer.mjs';
 import { getMobileChecks } from './checks/mobile.mjs';
+import { getBackendChecks } from './checks/backend.mjs';
 import { runArtifactCheck, runCommand } from './lib/command-runner.mjs';
 import { writeReports } from './lib/report-writer.mjs';
 
 const qaRoot = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.dirname(qaRoot);
-const validModules = ['web', 'installer', 'mobile', 'all'];
+const validModules = ['backend', 'web', 'installer', 'mobile', 'all'];
 const validProfiles = ['quick', 'full'];
 
 function usage(message) {
   if (message) console.error(message);
-  console.error('Uso: node qa/run-tests.mjs <web|installer|mobile|all> [--profile quick|full] [--dry-run]');
+  console.error('Uso: node qa/run-tests.mjs <backend|web|installer|mobile|all> [--profile quick|full] [--dry-run]');
   process.exitCode = 2;
 }
 
@@ -33,8 +34,9 @@ function parseArgs(args) {
 }
 
 function checksFor(module, profile) {
-  const modules = module === 'all' ? ['web', 'installer', 'mobile'] : [module];
+  const modules = module === 'all' ? ['backend', 'web', 'installer', 'mobile'] : [module];
   return modules.flatMap((name) => ({
+    backend: getBackendChecks,
     web: getWebChecks,
     installer: getInstallerChecks,
     mobile: getMobileChecks,

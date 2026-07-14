@@ -2,6 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { getInstallerChecks } from '../checks/installer.mjs';
 import { getMobileChecks } from '../checks/mobile.mjs';
+import { getBackendChecks } from '../checks/backend.mjs';
+
+test('backend separa unitarias rápidas y suite completa con cobertura', () => {
+  assert.deepEqual(getBackendChecks('quick').map(({ id }) => id), ['backend-unit']);
+  assert.deepEqual(getBackendChecks('full').map(({ id }) => id), ['backend-coverage']);
+});
 
 test('installer separa smoke rápido y distribución completa', () => {
   assert.deepEqual(getInstallerChecks('quick').map(({ id }) => id), ['installer-smoke']);

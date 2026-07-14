@@ -1,4 +1,17 @@
 {
+  "backend-unit": {
+    "module": "backend",
+    "name": "Pruebas unitarias Vitest",
+    "cwd": "backend",
+    "command": ["npm", "run", "test:unit"]
+  },
+  "backend-coverage": {
+    "module": "backend",
+    "name": "Suite completa y cobertura V8",
+    "cwd": "backend",
+    "command": ["npm", "run", "test:coverage"],
+    "evidence": ["backend/coverage/index.html", "backend/coverage/lcov.info"]
+  },
   "web-unit": {
     "module": "web",
     "name": "Pruebas unitarias Vitest",

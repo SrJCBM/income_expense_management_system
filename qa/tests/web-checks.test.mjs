@@ -10,13 +10,11 @@ test('perfil quick selecciona unitarias, build y smoke', () => {
   ]);
 });
 
-test('perfil full agrega E2E completo y accesibilidad sin repetir smoke', () => {
+test('perfil full ejecuta las 73 pruebas Cypress una vez sin repetir smoke', () => {
   assert.deepEqual(getWebChecks('full').map(({ id }) => id), [
     'web-unit',
     'web-build',
-    'web-e2e-smoke',
     'web-e2e',
-    'web-a11y',
   ]);
 });
 

@@ -14,8 +14,18 @@ function run(...args) {
 }
 
 test('rechaza módulos y perfiles desconocidos con código 2', () => {
-  assert.equal(run('backend', '--dry-run').status, 2);
+  assert.equal(run('api', '--dry-run').status, 2);
   assert.equal(run('web', '--profile', 'slow', '--dry-run').status, 2);
+});
+
+test('acepta backend y lo incluye en all', () => {
+  const backend = run('backend', '--dry-run');
+  assert.equal(backend.status, 0, backend.stderr);
+  assert.match(backend.stdout, /backend: Pruebas unitarias/);
+
+  const all = run('all', '--dry-run');
+  assert.equal(all.status, 0, all.stderr);
+  assert.match(all.stdout, /backend: Pruebas unitarias/);
 });
 
 test('quick es el perfil predeterminado y dry-run genera reportes', () => {

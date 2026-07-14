@@ -24,6 +24,7 @@
     "cypress:run": "node scripts/run-cypress.cjs run",
     "cypress:video:expenses": "node scripts/run-cypress.cjs run --headed --browser electron --spec cypress/e2e/expenses.cy.js",
     "test:e2e": "node scripts/run-cypress.cjs run",
+    "test:e2e:smoke": "node scripts/run-cypress.cjs run --spec cypress/e2e/regression.cy.js",
     "test:a11y": "node scripts/run-cypress.cjs run --spec cypress/e2e/accessibility.cy.js",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest"

@@ -1,0 +1,40 @@
+{
+  "web-unit": {
+    "module": "web",
+    "name": "Pruebas unitarias Vitest",
+    "cwd": "web",
+    "command": ["npm", "run", "test:unit"]
+  },
+  "web-build": {
+    "module": "web",
+    "name": "Build de producción Vite",
+    "cwd": "web",
+    "command": ["npm", "run", "build"],
+    "dependsOn": "web-unit",
+    "evidence": ["web/dist"]
+  },
+  "web-e2e-smoke": {
+    "module": "web",
+    "name": "Smoke E2E de regresión",
+    "cwd": "web",
+    "command": ["npm", "run", "test:e2e:smoke"],
+    "dependsOn": "web-build",
+    "evidence": ["web/cypress/videos", "web/cypress/screenshots"]
+  },
+  "web-e2e": {
+    "module": "web",
+    "name": "Suite E2E completa",
+    "cwd": "web",
+    "command": ["npm", "run", "test:e2e"],
+    "dependsOn": "web-build",
+    "evidence": ["web/cypress/videos", "web/cypress/screenshots"]
+  },
+  "web-a11y": {
+    "module": "web",
+    "name": "Accesibilidad con Cypress Axe",
+    "cwd": "web",
+    "command": ["npm", "run", "test:a11y"],
+    "dependsOn": "web-build",
+    "evidence": ["web/cypress/a11y-violations.json"]
+  }
+}

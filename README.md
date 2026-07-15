@@ -11,6 +11,8 @@ Aplicacion financiera full-stack para registrar, consultar y analizar ingresos, 
 - Categorias para ingresos y gastos con selector de emojis por secciones.
 - Presupuestos mensuales con progreso y alertas.
 - Dashboard con resumen financiero, tendencias y alertas.
+- Actualizacion manual y automatica de datos cada 30 segundos, al recuperar
+  foco, volver a una pestana visible o restablecer la conexion.
 - Reportes con graficos, tendencia anual y desglose por categoria.
 - Exportacion a PDF y Excel.
 - Perfil de usuario con moneda configurable y restablecimiento de datos.
@@ -71,6 +73,7 @@ http://localhost:5000/api
 | [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) | Flujo de desarrollo. |
 | [docs/CYPRESS_GUIDE.md](docs/CYPRESS_GUIDE.md) | Uso, actualizacion y troubleshooting de Cypress. |
 | [TESTING.md](TESTING.md) | Resumen de pruebas del proyecto. |
+| [evidencias/INTEGRACION_TRES_CLIENTES.md](evidencias/INTEGRACION_TRES_CLIENTES.md) | Evidencia del mismo registro en web, Android y Electron. |
 
 La documentacion de despliegue y configuraciones de hosting debe mantenerse en las guias tecnicas, no en este README general.
 
@@ -94,13 +97,13 @@ Frontend:
 - Axios.
 - Recharts.
 - jsPDF, jspdf-autotable y XLSX.
-- Cypress 15.16.0 y cypress-axe.
+- Cypress 15.18.1 y cypress-axe.
 
 Distribucion y calidad:
 
 - Electron, electron-builder y NSIS.
 - Capacitor 6 y Gradle para Android.
-- Playwright para el smoke test de Electron.
+- Playwright para los smoke tests de Electron en QA y en el release.
 - Framework QA propio en `qa/`.
 
 ## Estructura Base
@@ -213,12 +216,26 @@ npm test
 npm run test:coverage
 ```
 
+Frontend unitario:
+
+```bash
+cd web
+npm run test:unit
+```
+
+Resultado verificado actual: **28/28** en tres archivos, incluidos 11 casos de
+actualizacion automatica y manual en `useDataRefresh.test.js`.
+
 Frontend E2E:
 
 ```bash
 cd web
-npm run cypress:run
+npm run test:e2e
 ```
+
+Resultado verificado actual: **78/78** en 10 specs. `expenses.cy.js` incluye
+cinco escenarios para el boton `Actualizar`, su traduccion, el ciclo de 30 segundos y
+la conservacion de filtros.
 
 Pruebas E2E focalizadas usadas para validar los flujos tocados con offline, categorias y formularios:
 
@@ -265,6 +282,18 @@ cd installer
 npm run build:dist
 ```
 
+Pruebas del cliente de escritorio:
+
+```bash
+cd installer
+node --test tests/app-protocol.test.mjs tests/production-api-config.test.mjs tests/presentation-evidence-support.test.mjs
+npm run test:smoke
+npm run test:smoke:production
+```
+
+El release utiliza `app://financeapp/` y la API compartida. No empaqueta ni
+inicia un backend en el puerto 5000.
+
 Salida local:
 
 ```text
@@ -286,7 +315,7 @@ El nombre del instalador se calcula desde `installer/package.json`, usando `buil
 | Perfil de usuario | Completo |
 | Offline create/sync | Completo para ingresos y gastos |
 | Electron desktop | Completo |
-| Android con Capacitor | Completo para build y ejecucion en emulador; smoke funcional manual |
+| Android con Capacitor | Completo para build y ejecucion; integración manual documentada en Pixel 8 Pro |
 | Framework QA | Completo |
 
 ## Soporte

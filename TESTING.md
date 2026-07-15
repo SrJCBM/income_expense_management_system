@@ -7,10 +7,10 @@ Esta guia explica que ejecutar. La estrategia, cobertura por riesgo y justificac
 | Area | Herramienta | Alcance |
 |---|---|---|
 | Backend | Vitest, Supertest, MongoMemoryServer, V8 | Servicios, validadores, API, persistencia y cobertura |
-| Web unitario | Vitest | Reglas puras de contraseña y montos |
-| Web E2E | Cypress | Flujos visibles, regresion e integracion controlada |
+| Web unitario | Vitest | Contraseñas, montos y controlador de actualización de datos |
+| Web E2E | Cypress | Flujos visibles, regresión, botón Actualizar e integración controlada |
 | Accesibilidad | Cypress + cypress-axe | Violaciones automatizables WCAG |
-| Electron | Playwright | Arranque y render del cliente real |
+| Electron | Node Test + Playwright | Protocolo seguro, empaquetado y arranque QA/release |
 | Android | Vite, Capacitor, Gradle y emulador | Sincronizacion, APK y smoke funcional manual |
 | Orquestacion | `qa/run-tests.mjs` | Perfiles, dependencias, estados y reportes comunes |
 
@@ -75,7 +75,15 @@ npm run test:unit
 npm run build
 ```
 
-Las unitarias validan reglas puras en `passwordRules.test.js` y `parseAmount.test.js`. El build confirma que Vite produce `web/dist`; no demuestra que los flujos funcionen.
+Las unitarias ejecutan **28 casos en tres archivos**:
+
+- `passwordRules.test.js`: nueve casos de reglas y fortaleza.
+- `parseAmount.test.js`: ocho casos de conversión de montos.
+- `useDataRefresh.test.js`: once casos de actualización manual/automática,
+  intervalo de 30 segundos, foco, visibilidad, reconexión, deduplicación,
+  desactivación, limpieza y recuperación después de errores.
+
+El build confirma que Vite produce `web/dist`; no demuestra que los flujos funcionen.
 
 Cypress completo:
 
@@ -83,7 +91,15 @@ Cypress completo:
 npm run test:e2e
 ```
 
-El comando levanta Vite en `127.0.0.1:3000` y ejecuta las 10 especificaciones Cypress. El inventario verificado de la entrega contiene 73 casos.
+El comando levanta Vite en `127.0.0.1:3000` y ejecuta las 10 especificaciones
+Cypress. El resultado verificado el 14/07/2026 es **78/78**. Dentro de
+`expenses.cy.js`, cinco casos comprueban:
+
+1. botón visible, accesible y con `type="button"`;
+2. traducción visible y accesible al cambiar la interfaz a inglés;
+3. nueva solicitud al pulsar `Actualizar`;
+4. pausa del polling mientras el formulario está abierto y reanudación al cerrarlo;
+5. conservación del filtro activo durante la actualización manual.
 
 Smoke y accesibilidad:
 
@@ -112,11 +128,17 @@ Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
 
 ```powershell
 cd installer
+node --test tests/app-protocol.test.mjs tests/production-api-config.test.mjs tests/presentation-evidence-support.test.mjs
 npm run test:smoke
 npm run build:dist
+npm run test:smoke:production
 ```
 
-Playwright inicia el Electron real y comprueba contenido esencial. El `.exe` aparece en `installer/release/`. El build valida empaquetado, no instalacion real.
+Las pruebas Node aprobaron **14/14** y cubren el protocolo `app://financeapp`,
+la API de producción, ausencia de backend empaquetado, resolución segura de
+archivos, cierre de procesos y manifiestos de evidencia. Playwright aprobó el
+smoke QA y el smoke del ejecutable producido. El `.exe` aparece en
+`installer/release/`; el build valida empaquetado, no instalación NSIS real.
 
 Control manual obligatorio para una entrega Windows:
 
@@ -154,7 +176,10 @@ Smoke en Android Studio:
 6. Crear o editar desde web y actualizar movil.
 7. Probar una entrada invalida y una perdida de comunicacion.
 
-Esto demuestra integracion bidireccional. Ver la pantalla inicial o generar un APK no la demuestra.
+Esto demuestra integración bidireccional. Ver la pantalla inicial o generar un
+APK no la demuestra. La evidencia manual vigente del registro `DEMO INTEGRACION`
+en los tres clientes está en
+[evidencias/INTEGRACION_TRES_CLIENTES.md](evidencias/INTEGRACION_TRES_CLIENTES.md).
 
 ## Pruebas del framework QA
 
@@ -181,5 +206,7 @@ Validan perfiles, dependencias, comandos, adaptadores, estados y reportes. El re
 - No commitear `coverage`, `dist`, `release`, APK ni reportes temporales.
 - Distinguir entre resultado ejecutado, historico y actividad manual pendiente.
 - No actualizar cifras sin volver a ejecutar la herramienta correspondiente.
+- Conservar separadas las capturas fuente de web, Android y Electron; la
+  composición no reemplaza los originales.
 
 Ultima revision: 14 de julio de 2026.

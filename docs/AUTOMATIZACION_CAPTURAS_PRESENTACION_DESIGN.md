@@ -39,7 +39,7 @@ Un ejecutor debe lanzar y conservar la salida de:
 
 Los logs se guardarán como texto. A partir de esos resultados se generará una lámina HTML local y Playwright la capturará como imagen. La lámina debe distinguir pruebas ejecutadas de comprobaciones omitidas o manuales.
 
-No se volverá a ejecutar automáticamente la suite completa de 436 backend y 73 Cypress solo para tomar una captura si ya existe evidencia vigente en `evidencias/RESULTADOS_PRUEBAS.md`. Si se muestran esas cifras, deben etiquetarse con la fecha de su ejecución documentada.
+No se volverá a ejecutar automáticamente la suite completa de 436 backend y 78 Cypress solo para tomar una captura si ya existe evidencia vigente en `evidencias/RESULTADOS_PRUEBAS.md`. Si se muestran esas cifras, deben etiquetarse con la fecha de su ejecución documentada.
 
 ## Captura Android
 

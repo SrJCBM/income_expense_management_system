@@ -60,6 +60,14 @@ describe('CRUD de Gastos (E2E)', () => {
       .and('contain', 'Actualizar');
   });
 
+  it('Debe traducir el botón Actualizar al cambiar la interfaz a inglés', () => {
+    cy.get('.btn-lang-toggle:visible').first().click();
+
+    cy.get('[data-testid="refresh-button"]')
+      .should('have.attr', 'aria-label', 'Update data')
+      .and('contain', 'Update');
+  });
+
   it('Debe solicitar nuevamente los gastos al pulsar Actualizar', () => {
     cy.intercept('GET', '**/api/expenses*', {
       statusCode: 200,

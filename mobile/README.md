@@ -4,6 +4,11 @@ App Android construida con **Capacitor 6**, reutilizando el build React de
 `../web` (`webDir: '../web/dist'`). Sin codigo duplicado: la UI se mantiene
 solo en `web/`.
 
+La interfaz empaquetada incluye el botón `Actualizar` y el controlador
+`useDataRefresh`: actualiza manualmente, cada 30 segundos mientras la vista está
+visible, al recuperar foco y al volver la conexión. La misma lógica se prueba en
+web con Vitest y Cypress antes de sincronizarla con Capacitor.
+
 ## Requisitos
 
 - Android Studio con SDK y emulador (probado con Pixel 8 Pro).
@@ -45,9 +50,18 @@ con el esquema `https` por defecto, Chromium bloquea las llamadas a
 cleartext.
 
 > Nota: el backend en Render debe tener el commit que permite los origenes
-> `capacitor://localhost` / `https://localhost` en CORS
+> `http://localhost`, `capacitor://localhost` y `https://localhost` en CORS
 > (`backend/src/config/corsConfig.js`). Redeployar Render es decision del
 > usuario; no se hace automaticamente.
+
+Para incorporar los últimos cambios React y usar la API compartida antes de la
+demostración:
+
+```powershell
+npm run sync:prod
+npm run apk:debug
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+```
 
 ## APK por linea de comandos
 
@@ -63,3 +77,15 @@ cleartext.
 | `sync:prod`     | build web modo `mobile-prod` + `cap sync android`    |
 | `open:android`  | abre `android/` en Android Studio                    |
 | `apk:debug`     | `gradlew assembleDebug`                              |
+
+## Verificación y evidencia
+
+La navegación Android sigue siendo un control manual, pero ya existe evidencia
+vigente del Pixel 8 Pro mostrando el mismo gasto que web y Electron:
+
+- [Integración de los tres clientes](../evidencias/INTEGRACION_TRES_CLIENTES.md)
+- [Captura Android fuente](../evidencias/capturas-presentacion/integracion-android-real.png)
+
+La evidencia automatizada heredada de React corresponde a **28/28** unitarias y
+**78/78** Cypress. Estos conteos no sustituyen la comprobación de WebView, red y
+APK en el emulador.

@@ -433,6 +433,10 @@ export default {
   },
   common: {
     changeLang: 'Change language',
+    refresh: 'Update',
+    refreshing: 'Updating…',
+    refreshData: 'Update data',
+    refreshingData: 'Updating data',
     closeMenu: 'Close menu',
     openMenu: 'Open menu',
     mainNav: 'Main navigation',

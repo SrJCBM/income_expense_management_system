@@ -174,17 +174,29 @@ La columna **Antes** se contrasta con `evidencias/referencias/PracticaLab_Prueba
 
 **Cálculo defendible:** `9 / 10 × 100 = 90%` de los fallos originales están corregidos. No se presenta `Actividad reciente` como aprobada.
 
-**20:00-22:00 — Integrante 1**
+**20:00-20:30 — Integrante 1: establecer el punto de partida**
 
-- **Acción:** Mostrar la tabla comparativa del informe original y señalar las observaciones corregidas.
-- **Parlamento literal:** “El informe original registró diez casos fallidos de veinte. La afirmación verificable que defendemos es que corregimos nueve de esas diez observaciones, es decir, el noventa por ciento. Aquí vinculamos cada observación con su evidencia antes y después.”
-- **Resultado esperado:** Tabla con los diez hallazgos, nueve marcados como corregidos y sus evidencias, sin presentar el pendiente como aprobado.
+- **Acción:** Mostrar el resumen del informe original: veinte casos, diez aprobados y diez fallidos.
+- **Parlamento literal:** “El informe original registró diez casos fallidos de veinte. La afirmación verificable que defendemos es que corregimos nueve de esas diez observaciones, es decir, el noventa por ciento.”
+- **Resultado esperado:** El docente identifica el punto de partida y entiende que cada corrección siguiente corresponde a una observación concreta del PDF.
 
-**22:00-24:00 — Integrante 2**
+**20:30-22:15 — Integrante 1: correcciones 1 a 5**
 
-- **Acción:** Demostrar, en este orden, tres correcciones visuales: (1) rechazo de un nombre compuesto únicamente por símbolos; (2) edición de un ingreso con sus datos y fecha precargados correctamente; y (3) un monto alto contenido dentro de las tarjetas del dashboard.
-- **Parlamento literal:** “Mostramos tres correcciones visuales y distintas: el formulario rechaza un nombre hecho solo de símbolos, la edición del ingreso conserva sus datos y fecha, y el dashboard contiene un monto alto dentro de sus tarjetas. Las demás correcciones se respaldan con Cypress y con el PDF comparativo para no repetir funciones ni consumir el tiempo de la exposición.”
-- **Resultado esperado:** Cada comportamiento mostrado coincide con su evidencia después; la aplicación sigue respondiendo.
+- **Acción:** Recorrer las diapositivas 10 a 14: nombre con símbolos, edición de ingreso, fecha estable, filtros aplicados y marzo visible.
+- **Parlamento guía:** En cada lámina leer únicamente el fragmento breve de la observación, indicar en una frase qué se corrigió y señalar el elemento visible en la captura. Mantener una cadencia aproximada de veinte segundos por corrección.
+- **Resultado esperado:** Cada observación original queda conectada con una captura distinta y con su prueba automatizada, sin abrir nueve flujos dentro de la aplicación.
+
+**22:15-23:45 — Integrante 2: correcciones 6 a 9**
+
+- **Acción:** Recorrer las diapositivas 15 a 18: selector de categoría único, monto alto representado, monto contenido en las tarjetas y selector visual de iconos.
+- **Parlamento guía:** “En estos cuatro casos no solo cambió la apariencia: las pruebas comprueban la cantidad de controles, los datos mostrados, los límites geométricos de las tarjetas y la selección del icono.”
+- **Resultado esperado:** Las nueve observaciones corregidas han sido comentadas individualmente y cuentan con evidencia visual legible.
+
+**23:45-24:00 — Integrante 2: reconocer el pendiente**
+
+- **Acción:** Cerrar con `9/10 = 90%` y señalar `Actividad reciente` como la única observación no demostrada.
+- **Parlamento literal:** “No presentamos Actividad reciente como corregida porque no tenemos evidencia suficiente. Esta separación mantiene verificable el noventa por ciento que sí demostramos.”
+- **Resultado esperado:** El pendiente queda explícito y no se confunde con las nueve correcciones satisfechas.
 
 ### 24:00-27:00 — Robustez, arquitectura y pruebas
 
@@ -203,8 +215,8 @@ La columna **Antes** se contrasta con `evidencias/referencias/PracticaLab_Prueba
 **26:00-27:00 — Integrante 3: arquitectura y evidencia de pruebas**
 
 - **Acción:** Mostrar el diagrama de arquitectura y abrir `evidencias/RESULTADOS_PRUEBAS.md` como evidencia principal. Si se solicita detalle, abrir `docs/PRUEBAS_MODULOS.md` en sus secciones **4.1 Estructura y cantidad** y **5.4 Suite E2E completa con Cypress**, sin ejecutar suites largas.
-- **Parlamento literal:** “React se reutiliza en web, Electron y Capacitor. Los tres clientes consumen la API REST de Express. Express aplica validaciones y reglas de negocio, y MongoDB conserva la información compartida. Vitest verifica backend, Cypress valida los flujos web y Playwright realiza el smoke de Electron. La evidencia preparada registra `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`.”
-- **Resultado esperado:** `evidencias/RESULTADOS_PRUEBAS.md` muestra de forma legible y trazable `436/436 backend`, `73/73 Cypress` y `20/20 framework QA`; no se inicia ninguna suite larga y la prueba móvil manual no figura como aprobación automática.
+- **Parlamento literal:** “React se reutiliza en web, Electron y Capacitor. Los tres clientes consumen la API REST de Express. Express aplica validaciones y reglas de negocio, y MongoDB conserva la información compartida. Vitest verifica backend y la actualización de datos, Cypress valida los flujos web y Playwright abre Electron. La evidencia registra `28/28 unitarias web`, `78/78 Cypress`, `14 pruebas Node más dos smoke Electron`, `436/436 backend` como última suite completa y `20/20 framework QA`.”
+- **Resultado esperado:** `evidencias/RESULTADOS_PRUEBAS.md` distingue resultados ejecutados el 14/07/2026 de los consolidados anteriores; la prueba móvil manual no figura como aprobación automática.
 
 #### Comandos breves de evidencia
 
@@ -258,7 +270,7 @@ En cualquier contingencia se describe primero el estado real. La evidencia prepa
 - **API de Render despertando:** explicar que la primera solicitud puede estar esperando el arranque del servicio; conservar la pantalla y usar el reporte o captura preparada si excede el margen. Reanudar la lectura cruzada solo cuando la API responda.
 - **Electron sin conexión:** mostrar el mensaje real, comprobar la conectividad sin cambiar secretos y continuar con web junto con la evidencia de escritorio preparada. No atribuir a Electron una lectura que no ocurrió.
 - **Dato que tarda en aparecer:** actualizar una sola vez y esperar la respuesta; si continúa ausente, reconocer que la sincronización no se confirmó en vivo y mostrar la evidencia previa trazable.
-- **Cypress tarda demasiado:** detener la intención de ejecución en vivo y abrir `evidencias/RESULTADOS_PRUEBAS.md`, que registra `73/73 Cypress`; aclarar que se está mostrando el resultado histórico verificado, no una ejecución nueva.
+- **Cypress tarda demasiado:** detener la intención de ejecución en vivo y abrir `evidencias/RESULTADOS_PRUEBAS.md`, que registra `78/78 Cypress` ejecutadas el 14/07/2026; no volver a lanzar la suite completa durante la exposición.
 - **Pregunta cuya respuesta no se conoce:** responder: “No tengo evidencia suficiente para afirmarlo ahora. Lo registraré y lo verificaré en el código o en una prueba reproducible antes de dar una respuesta definitiva”.
 
 ## Preguntas probables y respuestas breves
@@ -292,8 +304,8 @@ Comprobación adicional: `125,50 + 24,50 = 150,00`; por tanto, `1100,00 - 150,00
 - [ ] Cada escritura se confirma desde un cliente diferente.
 - [ ] `evidencias/RESULTADOS_PRUEBAS.md` está abierto y legible; las capturas opcionales están disponibles si aportan contexto.
 - [ ] La matriz conserva nueve correcciones y deja `Actividad reciente` como no demostrada/restante: `9 / 10 × 100 = 90%`.
-- [ ] Las tres correcciones en vivo son nombre con símbolos, edición de ingreso precargada y monto alto contenido; las restantes se muestran con Cypress y el PDF.
+- [ ] Las nueve correcciones cuentan con una diapositiva individual que une la observación original, el comentario de satisfacción, la captura y su verificación; `Actividad reciente` permanece marcada como pendiente.
 - [ ] Los controles manuales pendientes no se presentan como pruebas automatizadas aprobadas.
 - [ ] El fallo de comunicación se explica con captura o evidencia preparada reproducible; nadie apaga ni modifica la API compartida.
-- [ ] Las cifras `436/436 backend`, `73/73 Cypress` y `20/20 framework QA` se enlazan con `evidencias/RESULTADOS_PRUEBAS.md`, `docs/PRUEBAS_MODULOS.md` y sus comandos, sin ejecutar suites largas.
+- [ ] Las cifras `28/28 unitarias web`, `78/78 Cypress`, `14 + 2 instalador`, `436/436 backend` y `20/20 framework QA` se enlazan con `evidencias/RESULTADOS_PRUEBAS.md`, `docs/PRUEBAS_MODULOS.md` y sus comandos, sin ejecutar suites largas.
 - [ ] La conclusión termina a los 28:00 y se preservan dos minutos efectivos para preguntas.

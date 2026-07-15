@@ -210,16 +210,11 @@ function formatBytes(bytes) {
 }
 
 async function renderResultsBoard(page) {
-  const qa = readLogSummary(path.join(LOG_DIR, '01-framework-qa.txt'));
-  const smoke = readLogSummary(path.join(LOG_DIR, '02-electron-smoke.txt'));
-  const rubric = readLogSummary(path.join(LOG_DIR, '03-rubrica-playwright.txt'));
-  const dryRun = readLogSummary(path.join(LOG_DIR, '04-qa-full-dry-run.txt'));
-  const executed = [qa, smoke, rubric].filter((item) => item.exists).length;
   const content = `<div class="grid">
-    <section class="card"><span class="tag">Ejecutado ahora</span><h2>Framework QA</h2><div class="metric ${qa.exists ? 'pass' : 'pending'}">${qa.exists ? `${qa.pass} PASS` : 'Sin log'}</div><p class="meta">Pruebas del núcleo, comandos, adaptadores y reportes.</p></section>
-    <section class="card"><span class="tag">Ejecutado ahora</span><h2>Electron + Playwright</h2><div class="metric ${smoke.exists ? 'pass' : 'pending'}">${smoke.exists ? 'Log real' : 'Sin log'}</div><p class="meta">Smoke del bridge seguro y evidencia de correcciones.</p></section>
-    <section class="card"><span class="tag">Simulado / omitido</span><h2>Perfil QA completo</h2><div class="metric ${dryRun.exists ? 'pending' : 'pending'}">Dry-run</div><p class="meta">${dryRun.exists ? `${dryRun.skipped} comprobaciones omitidas de forma explícita.` : 'Se genera al ejecutar el coordinador.'}</p></section>
-    <section class="card wide"><span class="tag">Resultado consolidado 2026-07-14</span><div class="grid"><div><h2>Backend</h2><div class="metric pass">436/436</div></div><div><h2>Web E2E</h2><div class="metric pass">73/73</div></div><div><h2>Logs del lote</h2><div class="metric">${executed}/3</div></div></div><p class="meta">Las cifras 436 y 73 provienen del resultado consolidado fechado; no se volvieron a ejecutar únicamente para producir esta imagen.</p></section>
+    <section class="card"><span class="tag">Ejecutado 14/07/2026</span><h2>Web unitario</h2><div class="metric pass">28/28</div><p class="meta">Incluye 11 casos del controlador de actualización manual y automática.</p></section>
+    <section class="card"><span class="tag">Ejecutado 14/07/2026</span><h2>Cypress completo</h2><div class="metric pass">78/78</div><p class="meta">Gastos 16/16: botón traducible, nueva solicitud, polling y filtros.</p></section>
+    <section class="card"><span class="tag">Ejecutado 14/07/2026</span><h2>Electron</h2><div class="metric pass">14 + 2</div><p class="meta">14 pruebas Node y dos smoke tests Playwright: QA y release.</p></section>
+    <section class="card wide"><span class="tag">Resultados consolidados anteriores</span><div class="grid"><div><h2>Backend completo</h2><div class="metric pass">436/436</div></div><div><h2>Framework QA</h2><div class="metric pass">20/20</div></div><div><h2>Android</h2><div class="metric pending">Manual</div></div></div><p class="meta">Los dos casos CORS añadidos después se verificaron focalmente; Android conserva evidencia real sin contarlo como prueba automatizada.</p></section>
   </div>`;
   await page.setContent(boardShell('Resultados verificables, sin inflar el alcance', 'Pruebas y trazabilidad', content));
   await page.screenshot({ path: output('08-resultados-pruebas.png') });

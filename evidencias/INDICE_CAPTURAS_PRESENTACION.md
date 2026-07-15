@@ -15,13 +15,13 @@ Este índice identifica qué demuestra cada imagen, de dónde proviene y qué l�
 | `05-comunicacion-recuperada.png` | Determinista, Playwright web | La vista vuelve a mostrar los datos después de restablecer la respuesta. | Demuestra recuperación del cliente con datos controlados. | 8 o respaldo |
 | `06-web-datos-deterministas.png` | Determinista, Playwright web | La versión web presenta el registro identificable de demostración. | No debe etiquetarse como integración real. | Respaldo |
 | `07-electron-datos-deterministas.png` | Determinista, Playwright + Electron | El cliente de escritorio presenta el mismo conjunto controlado. | Comparte los datos interceptados, no la base real. | Respaldo |
-| `08-resultados-pruebas.png` | Derivada de logs reales y resultado consolidado | Distingue lo ejecutado ahora, el `dry-run` y las cifras consolidadas `436/436` y `73/73` del 14/07/2026. | Backend y Cypress no se volvieron a ejecutar solo para crear la imagen. | 7 |
+| `08-resultados-pruebas.png` | Resumen de resultados verificables | Muestra 28/28 unitarias web, 78/78 Cypress, 14 pruebas Node + 2 smoke Electron y separa los resultados consolidados de backend/framework del control manual Android. | Backend completo y framework QA se identifican como resultados anteriores; Android no se presenta como automatizado. | 7 |
 | `09-artefactos-distribuibles.png` | Derivada del sistema de archivos | Existencia, tamaño, fecha y SHA-256 del instalador Windows y el APK debug. | No sustituye la instalación manual ni el smoke en emulador. | 5 o respaldo |
 | `android-emulador.png` | Semiautomática, ADB + Pixel 8 Pro | FinanceApp ejecuta la pantalla de Gastos y muestra registros en el emulador de Android Studio. | El script automatiza la captura, no la navegación ni confirma por sí solo la sincronización con los otros clientes. | 4 o 6 |
 | `android-studio-pixel-8-pro-gastos.png` | Captura visual de Android Studio | Presenta la pantalla de Gastos dentro del marco completo del Pixel 8 Pro, incluyendo el recorte de cámara y los límites físicos del dispositivo. | Es la versión recomendada para las diapositivas; conserva el mismo estado funcional que la captura ADB. | 4 |
-| `integracion-web-real.png` | Fuente de integración real, web desplegada | El gasto `DEMO INTEGRACION` aparece con fecha `2026-07-15`, categoría `Transporte` y monto `$14,07`. | Captura fuente para la composición; conserva el contexto visible del navegador. | Respaldo |
-| `integracion-android-real.png` | Fuente de integración real, Pixel 8 Pro | El gasto creado aparece inmediatamente en Android junto al mensaje de creación exitosa. | En el ancho móvil se ven fecha, concepto y categoría; el monto se contrasta en web y Electron. | Respaldo |
-| `integracion-electron-real.png` | Fuente de integración real, Electron | El mismo gasto aparece en el cliente de escritorio con fecha, categoría y monto coincidentes. | Captura fuente para la composición; incluye el marco de la aplicación de escritorio. | Respaldo |
+| `integracion-web-real.png` | Fuente de integración real, web desplegada | El gasto `DEMO INTEGRACION` aparece con fecha `2026-07-15`, categoría `Transporte`, monto `$14,07`, estado `Online` y botón `Actualizar`. | Captura fuente para la composición; conserva la URL visible del despliegue web. | Respaldo |
+| `integracion-android-real.png` | Fuente de integración real, Pixel 8 Pro | El mismo gasto aparece como tarjeta responsive junto al estado `Online` y el botón `Actualizar`. | La captura verifica lectura y adaptación móvil; no identifica por sí sola el cliente que creó el dato. | Respaldo |
+| `integracion-electron-real.png` | Fuente de integración real, Electron | El gasto aparece en la ventana de escritorio con fecha, categoría y monto coincidentes, además del botón `Actualizar`. | Incluye el marco de la aplicación Electron para distinguirla del navegador. | Respaldo |
 | `10-integracion-real-web-android-electron.png` | Integración real confirmada | El mismo registro en web, Android y Electron mediante una cuenta, API y base compartidas. | Solo se genera cuando existe `integracion-real.json` confirmado y tres PNG reales válidos. | 6 |
 
 ## Estado actual
@@ -30,16 +30,21 @@ Este índice identifica qué demuestra cada imagen, de dónde proviene y qué l�
 - La captura Android se generó en el AVD `Pixel_8_Pro`, se validó como PNG y se revisó para evitar datos personales visibles. También se conserva una versión enmarcada de Android Studio para la presentación.
 - La composición `10` se generó con tres capturas reales del gasto `DEMO INTEGRACION`: `2026-07-15`, `Transporte`, `$14,07`.
 - Las fuentes confirman que el mismo estado aparece en web, Android y Electron mediante la cuenta y API compartidas.
+- La ficha [INTEGRACION_TRES_CLIENTES.md](./INTEGRACION_TRES_CLIENTES.md) documenta cada captura, las pruebas del botón `Actualizar` y los límites de la evidencia.
 
 ## Resultados conservados
 
 Los logs del último lote se guardan en `evidencias/capturas-presentacion/logs/`:
 
-- `01-framework-qa.txt`: 20 pruebas aprobadas.
-- `02-electron-smoke.txt`: una prueba aprobada.
+- `01-framework-qa.txt`: 20 pruebas aprobadas en la ejecución conservada.
+- `02-electron-smoke.txt`: una prueba de Electron aprobada en la ejecución conservada.
 - `03-rubrica-playwright.txt`: una prueba aprobada y nueve capturas de correcciones regeneradas.
 - `04-qa-full-dry-run.txt`: 10 comprobaciones omitidas y dos controles manuales, sin presentarlos como aprobados.
 - `05-capturas-presentacion.txt`: una prueba aprobada y capturas `01` a `10` regeneradas.
+
+Resultados adicionales verificados el 14/07/2026 y documentados en
+`RESULTADOS_PRUEBAS.md`: 28/28 unitarias web, 78/78 Cypress, 14/14 pruebas Node
+del instalador, 1/1 smoke Electron QA y 1/1 smoke del release.
 
 ## Reproducción
 

@@ -1,6 +1,6 @@
 # FinanceApp
 
-Aplicacion financiera full-stack para registrar, consultar y analizar ingresos, gastos, presupuestos y reportes personales o familiares. FinanceApp incluye version web, API REST, sincronizacion offline para creacion de ingresos/gastos y empaquetado de escritorio con Electron.
+Aplicacion financiera full-stack para registrar, consultar y analizar ingresos, gastos, presupuestos y reportes personales o familiares. FinanceApp incluye API REST, version web, escritorio Electron y aplicacion Android con Capacitor. Las tres interfaces consumen la misma API para mantener los datos sincronizados.
 
 ## Caracteristicas
 
@@ -19,6 +19,8 @@ Aplicacion financiera full-stack para registrar, consultar y analizar ingresos, 
 - Interfaz responsive con mejoras para uso movil.
 - Pruebas E2E con Cypress.
 - Build de escritorio con Electron y electron-builder.
+- Aplicacion Android con Capacitor 6 que reutiliza el build React.
+- Framework QA propio para coordinar pruebas de backend, web, instalador y movil.
 
 ## Inicio Rapido
 
@@ -93,7 +95,13 @@ Frontend:
 - Recharts.
 - jsPDF, jspdf-autotable y XLSX.
 - Cypress 15.16.0 y cypress-axe.
-- Electron y electron-builder.
+
+Distribucion y calidad:
+
+- Electron, electron-builder y NSIS.
+- Capacitor 6 y Gradle para Android.
+- Playwright para el smoke test de Electron.
+- Framework QA propio en `qa/`.
 
 ## Estructura Base
 
@@ -145,7 +153,16 @@ income_expense_management_system/
     scripts/
 
   mobile/
-    (App Android con Capacitor 6, sync desde web/, se abre en Android Studio)
+    android/
+    capacitor.config.json
+    package.json
+
+  qa/
+    checks/
+    lib/
+    tests/
+    run-tests.mjs
+    test.config.json
 
   docs/
 ```
@@ -178,6 +195,15 @@ VITE_APP_VERSION=1.2.0
 No subir archivos `.env` al repositorio.
 
 ## Testing
+
+Ejecucion centralizada recomendada:
+
+```powershell
+node qa/run-tests.mjs all --profile quick
+node qa/run-tests.mjs all --profile full
+```
+
+El perfil `quick` prioriza retroalimentacion rapida. El perfil `full` agrega suites, builds y comprobacion de artefactos. Los controles manuales se reportan como `PENDING_MANUAL`, nunca como aprobados automaticos.
 
 Backend:
 
@@ -260,6 +286,8 @@ El nombre del instalador se calcula desde `installer/package.json`, usando `buil
 | Perfil de usuario | Completo |
 | Offline create/sync | Completo para ingresos y gastos |
 | Electron desktop | Completo |
+| Android con Capacitor | Completo para build y ejecucion en emulador; smoke funcional manual |
+| Framework QA | Completo |
 
 ## Soporte
 
@@ -273,6 +301,6 @@ MIT
 
 ---
 
-Version: 1.2.0  
-Ultima actualizacion: Junio 2026  
+Version: 1.2.0
+Ultima actualizacion: Julio 2026
 Estado: Produccion

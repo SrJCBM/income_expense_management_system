@@ -140,6 +140,12 @@ graphify-out/
 */.agents/
 */.github/
 
+# Metadata local de asistentes en la raiz
+/.agents/
+/.claude/
+/.codex/
+/.superpowers/
+
 # Paquetes de entrega generados localmente
 FinanceApp*.zip
 

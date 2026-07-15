@@ -1,8 +1,34 @@
-# ⚡ Inicio Rápido - 3 Pasos
+# Inicio rapido de FinanceApp
 
-> **¿Primer vistazo?** Lee este archivo (2 min). **¿Instalación completa?** Ve a [docs/SETUP.md](docs/SETUP.md)
+Esta guia permite levantar la API y la interfaz web, abrir la version de escritorio, preparar Android y ejecutar las verificaciones comunes.
 
-## 🚀 Paso 1: Backend (Terminal 1)
+## Requisitos
+
+- Node.js 18 o superior y npm.
+- MongoDB local o una conexion MongoDB Atlas.
+- PowerShell en Windows.
+- Android Studio y un JDK compatible solo para el modulo movil.
+
+## 1. Preparar variables de entorno
+
+Desde la raiz del repositorio:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item web/.env.example web/.env
+```
+
+Configura como minimo `MONGODB_URI` y `JWT_SECRET` en `backend/.env`. Para desarrollo local, `web/.env` debe apuntar a:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+No publiques los archivos `.env` ni sus secretos.
+
+## 2. Levantar backend y web
+
+Terminal 1:
 
 ```powershell
 cd backend
@@ -10,9 +36,9 @@ npm install
 npm run dev
 ```
 
-Espera el mensaje: `✅ Servidor ejecutándose en puerto 5000`
+El backend queda en `http://localhost:5000`. Comprueba su estado en `http://localhost:5000/api/health`. El servidor no abre un navegador automaticamente.
 
-## 🚀 Paso 2: Frontend (Terminal 2)
+Terminal 2:
 
 ```powershell
 cd web
@@ -20,274 +46,79 @@ npm install
 npm run dev
 ```
 
-El navegador abrirá en **http://localhost:3000** 🎉
+Abre `http://localhost:3000`. La interfaz usa la API configurada en `VITE_API_URL`.
 
-## 🚀 Paso 3: Login
+## 3. Ejecutar Electron
 
-- Email: `demo@example.com`
-- Password: `Password123`
+Primero deja el backend disponible. Luego instala y abre el cliente de escritorio:
 
----
-
-## 📚 Siguiente
-
-- **¿Problemas?** → [ERRORES_COMUNES.md](ERRORES_COMUNES.md)
-- **Instalación detallada** → [docs/SETUP.md](docs/SETUP.md)
-- **Arquitectura** → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- **API Endpoints** → [docs/API.md](docs/API.md)
-- **Guía de desarrollo** → [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md)
-
-│                                                                            │
-│  📦 Backend                                                                │
-│  ├── 📁 Controllers      [6 archivos]  ← Lógica de solicitudes            │
-│  ├── 📁 Models          [5 archivos]  ← Esquemas MongoDB                 │
-│  ├── 📁 Services        [4 archivos]  ← Lógica de negocio               │
-│  ├── 📁 Routes          [7 archivos]  ← Endpoints                        │
-│  ├── 📁 Middlewares     [2 archivos]  ← Auth, errores                   │
-│  ├── 📁 Validators      [2 archivos]  ← Validación entrada              │
-│  ├── 📁 Config          [2 archivos]  ← CORS, BD                        │
-│  ├── 📁 Utils           [2 archivos]  ← JWT, formateo                   │
-│  └── server.js          [PUNTO DE ENTRADA]                               │
-│                                                                            │
-│  🎨 Frontend                                                               │
-│  ├── 📁 Components      [2+ archivos] ← Componentes reutilizables       │
-│  ├── 📁 Pages          [5 archivos]  ← Dashboard, Gastos, Reportes     │
-│  ├── 📁 Services       [6 archivos]  ← API, autenticación              │
-│  ├── 📁 Hooks          [3 archivos]  ← useAuth, useForm, useExpenses  │
-│  ├── 📁 Models         [1 archivo]   ← Clases de datos                │
-│  ├── 📁 Styles         [7 archivos]  ← CSS del proyecto                │
-│  ├── 📁 Utils          [2 archivos]  ← Validadores, formateadores     │
-│  ├── App.jsx           [COMPONENTE RAÍZ]                               │
-│  └── main.jsx          [ENTRY POINT]                                   │
-│                                                                            │
-│  📚 Documentación                                                          │
-│  ├── README.md                       ← Descripción general               │
-│  ├── ARQUITECTURA_COMPLETADA.md      ← Este archivo                    │
-│  ├── docs/ARCHITECTURE.md            ← Guía de arquitectura             │
-│  ├── docs/SETUP.md                   ← Instalación y deploy             │
-│  ├── docs/API.md                     ← Endpoints REST                   │
-│  ├── docs/PROJECT_STRUCTURE.md       ← Mapa completo                    │
-│  └── docs/DEVELOPMENT_GUIDE.md       ← Próximos pasos                   │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 🚀 CÓMO EMPEZAR (4 PASOS)                                                  │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  PASO 1: Backend - Instalar y Ejecutar                                     │
-│  -----------                                                               │
-│  Abre PowerShell/Terminal en la CARPETA DEL PROYECTO                      │
-│                                                                            │
-│  $ cd backend                                                              │
-│  $ npm install                                                             │
-│  $ npm run dev                                                             │
-│                                                                            │
-│  ✅ Verás: ✅ Servidor ejecutándose en puerto 5000                         │
-│  ✅ Browser abre automáticamente en http://localhost:5000                  │
-│                                                                            │
-│  PASO 2: Frontend - Instalar y Ejecutar (NUEVA TERMINAL)                  │
-│  -----------                                                               │
-│  Abre OTRA terminal en la CARPETA DEL PROYECTO                            │
-│                                                                            │
-│  $ cd web                                                                  │
-│  $ npm install                                                             │
-│  $ npm run dev                                                             │
-│                                                                            │
-│  ✅ Verás: VITE v4.4.0 ready in...                                        │
-│  ✅ Browser abre automáticamente en http://localhost:3000                 │
-│  ✅ Verás la página con "💰 Sistema de Control de Gastos e Ingresos"      │
-│                                                                            │
-│  PASO 3: Configuración de Entorno (Opcional inicialmente)                 │
-│  -----------                                                               │
-│  $ cp .env.example .env  (en backend Y frontend)                          │
-│  → Edita los valores de MONGODB_URI, JWT_SECRET, etc.                     │
-│                                                                            │
-│  PASO 4: Desarrollar                                                       │
-│  -----------                                                               │
-│  → Ver: docs/DEVELOPMENT_GUIDE.md ← Para saber qué hacer                  │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 📋 FEATURES COMPLETADOS                                                    │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│ ✅ Autenticación               JWT + bcrypt                               │
-│ ✅ Base de Datos               MongoDB + Mongoose                         │
-│ ✅ CORS                        Configurado                                │
-│ ✅ Manejo de Errores           Centralizado                               │
-│ ✅ Validación                  Frontend + Backend                         │
-│ ✅ Variables de Entorno        .env seguro                                │
-│ ✅ Rutas Protegidas            Middleware JWT                             │
-│ ✅ Servicios Reutilizables     Services + Hooks                           │
-│ ✅ Componentes React           Button, Forms, Pages                       │
-│ ✅ Axios Configurado           Interceptores                              │
-│ ✅ Custom Hooks                useAuth, useForm, useExpenses              │
-│ ✅ Documentación API           Endpoints documentados                     │
-│ ✅ Deploy Ready                Render configuration                       │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 📊 ESTADÍSTICAS                                                            │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  Archivos Creados:        60+                                             │
-│  Líneas de Código:        3,000+                                          │
-│  Carpetas:                25+                                             │
-│  Controllers:             6                                               │
-│  Models:                  5                                               │
-│  Services:                4                                               │
-│  Rutas:                   7                                               │
-│  Componentes React:       10+                                             │
-│  Páginas:                 5                                               │
-│  Custom Hooks:            3                                               │
-│  Documentos:              7                                               │
-│  Archivos .env:           2                                               │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 🔒 SEGURIDAD IMPLEMENTADA                                                  │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  🔐 JWT           Tokens seguros para autenticación                       │
-│  🔐 Bcrypt        Contraseñas hasheadas con salt                          │
-│  🔐 CORS          Restringido a dominios permitidos                       │
-│  🔐 Helmet        Headers de seguridad HTTP                               │
-│  🔐 .env          Variables sensibles protegidas                          │
-│  🔐 Validación    Input validado en frontend Y backend                    │
-│  🔐 Middlewares   Autenticación en rutas privadas                         │
-│  🔐 MongoDB       Conexión cifrada (Atlas)                                │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 🎯 FLUJO DE DATOS (EJEMPLO: CREAR GASTO)                                  │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  1. Usuario llena formulario en React                                      │
-│     ↓                                                                      │
-│  2. useForm() valida datos localmente                                      │
-│     ↓                                                                      │
-│  3. expenseService.createExpense() envía POST                              │
-│     ↓                                                                      │
-│  4. Axios interceptor agrega JWT token                                     │
-│     ↓                                                                      │
-│  5. Backend recibe en POST /api/expenses                                   │
-│     ↓                                                                      │
-│  6. authMiddleware valida JWT                                              │
-│     ↓                                                                      │
-│  7. expenseValidator valida entrada                                        │
-│     ↓                                                                      │
-│  8. expenseController procesa solicitud                                    │
-│     ↓                                                                      │
-│  9. expenseService aplica lógica de negocio                                │
-│     ↓                                                                      │
-│  10. Expense.create() guarda en MongoDB                                    │
-│      ↓                                                                     │
-│  11. Respuesta JSON formateada se retorna                                  │
-│      ↓                                                                     │
-│  12. Frontend actualiza estado (setExpenses)                               │
-│      ↓                                                                     │
-│  13. UI se refresca mostrando el nuevo gasto                               │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 📖 DOCUMENTACIÓN DISPONIBLE                                                │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  📘 README.md                                                              │
-│     └─ Descripción general del proyecto                                    │
-│                                                                            │
-│  📗 docs/ARCHITECTURE.md                                                   │
-│     └─ Explica patrón MVC, seguridad y Clean Code                          │
-│                                                                            │
-│  📙 docs/SETUP.md                                                          │
-│     └─ Cómo instalar, configurar y hacer deploy                            │
-│                                                                            │
-│  📕 docs/API.md                                                            │
-│     └─ Documentación de todos los endpoints REST                           │
-│                                                                            │
-│  📓 docs/PROJECT_STRUCTURE.md                                              │
-│     └─ Mapa completo de carpetas y archivos                                │
-│                                                                            │
-│  📔 docs/DEVELOPMENT_GUIDE.md                                              │
-│     └─ Guía de qué implementar primero                                     │
-│                                                                            │
-│  📒 ARQUITECTURA_COMPLETADA.md                                             │
-│     └─ Checklist de lo que está hecho                                     │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-┌────────────────────────────────────────────────────────────────────────────┐
-│ ❓ PREGUNTAS FRECUENTES                                                     │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  P: ¿Por dónde empiezo?                                                    │
-│  A: Sigue los 3 pasos en "CÓMO EMPEZAR" arriba ↑                          │
-│                                                                            │
-│  P: ¿Qué implemento primero?                                               │
-│  A: Lee docs/DEVELOPMENT_GUIDE.md (te guía paso a paso)                   │
-│                                                                            │
-│  P: ¿Cómo agrego un nuevo endpoint?                                        │
-│  A: Controllers → Services → Validators → Routes                           │
-│                                                                            │
-│  P: ¿Dónde pongo las contraseñas y claves?                                │
-│  A: Nunca en código. Siempre en .env (archivo GITIGNORED)                 │
-│                                                                            │
-│  P: ¿Cómo hago deploy?                                                     │
-│  A: Ver docs/SETUP.md - sección "Deploy en Render"                        │
-│                                                                            │
-│  P: ¿MongoDB local o en la nube?                                           │
-│  A: Recomendado MongoDB Atlas (gratis 512MB)                              │
-│                                                                            │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-╔════════════════════════════════════════════════════════════════════════════╗
-║                                                                            ║
-║  ✨ LA ARQUITECTURA ESTÁ LISTA                                            ║
-║                                                                            ║
-║  Todo está:                                                                ║
-║  ✅ Bien estructurado (MVC)                                                ║
-║  ✅ Bien documentado (7 guías)                                             ║
-║  ✅ Bien protegido (JWT, bcrypt, CORS)                                     ║
-║  ✅ Bien codificado (Clean Code)                                           ║
-║  ✅ Escalable y profesional                                                ║
-║                                                                            ║
-║  PRÓXIMO PASO: Implementar la lógica en Controllers y Services            ║
-║                                                                            ║
-║  Guía: → docs/DEVELOPMENT_GUIDE.md                                        ║
-║                                                                            ║
-║  ¡A CODIFICAR! 🚀                                                          ║
-║                                                                            ║
-╚════════════════════════════════════════════════════════════════════════════╝
+```powershell
+cd installer
+npm install
+npm run electron-dev
 ```
 
----
+Para producir el instalador de Windows:
 
-## 📎 Links Rápidos
+```powershell
+npm run build:dist
+```
 
-| Necesito... | Ir a... |
-|-----------|---------|
-| Entender la estructura | `docs/ARCHITECTURE.md` |
-| Instalar el proyecto | `docs/SETUP.md` |
-| Ver endpoints disponibles | `docs/API.md` |
-| Saber qué codificar | `docs/DEVELOPMENT_GUIDE.md` |
-| Ver el mapa completo | `docs/PROJECT_STRUCTURE.md` |
-| Configuración backend | `backend/.env.example` |
-| Configuración frontend | `web/.env.example` |
+El artefacto se genera en `installer/release/`. Esa carpeta es local y no se versiona.
 
----
+## 4. Preparar Android
 
-**¿Una última cosa?** La arquitectura está 100% lista. Solo necesitas implementar la lógica! 🚀
+La aplicacion movil reutiliza el build React de `web/`. Para sincronizarlo con Capacitor:
+
+```powershell
+cd mobile
+npm install
+npm run sync:dev
+npm run open:android
+```
+
+Android Studio abre el proyecto `mobile/android`. Para el emulador, la API debe ser accesible desde Android; no uses `localhost` si el backend corre en la laptop. Configura la URL correspondiente al host y la red de prueba antes de construir el frontend movil.
+
+Para crear un APK debug:
+
+```powershell
+npm run apk:debug
+```
+
+Salida esperada: `mobile/android/app/build/outputs/apk/debug/app-debug.apk`.
+
+## 5. Ejecutar pruebas
+
+El framework QA coordina las herramientas de cada modulo:
+
+```powershell
+node qa/run-tests.mjs all --profile quick
+node qa/run-tests.mjs all --profile full
+```
+
+También puede ejecutarse por modulo:
+
+```powershell
+node qa/run-tests.mjs backend --profile full
+node qa/run-tests.mjs web --profile full
+node qa/run-tests.mjs installer --profile quick
+node qa/run-tests.mjs mobile --profile full
+```
+
+`PASS` significa que una comprobacion automatica termino bien. `PENDING_MANUAL` indica una actividad humana pendiente y no equivale a un aprobado.
+
+## Direcciones locales
+
+| Servicio | Direccion |
+|---|---|
+| Web | `http://localhost:3000` |
+| API | `http://localhost:5000/api` |
+| Health check | `http://localhost:5000/api/health` |
+
+## Siguiente lectura
+
+- [Configuracion detallada](docs/SETUP.md)
+- [Arquitectura](docs/ARCHITECTURE.md)
+- [API REST](docs/API.md)
+- [Estrategia de pruebas](docs/PRUEBAS_MODULOS.md)
+- [Errores comunes](ERRORES_COMUNES.md)

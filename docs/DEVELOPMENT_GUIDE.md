@@ -1,388 +1,173 @@
-## 🧭 Memoria de Proyecto
+# Guia de desarrollo de FinanceApp
 
-La aplicación nació como un sistema web de control de gastos e ingresos y luego evolucionó hasta convertirse en una versión de escritorio con Electron. El desarrollo se planteó de forma incremental para mantener control sobre la arquitectura, validar cada módulo de manera independiente y llegar a una entrega estable y empaquetable.
+## Alcance actual
 
-## 📋 Pasos Seguidos en el Desarrollo
+El repositorio mantiene cinco piezas relacionadas:
 
-### 1. Concepción del proyecto y primera estructura
-En la primera etapa se definió el objetivo general del sistema: registrar ingresos y gastos, organizar categorías, consultar reportes y facilitar el control financiero desde una interfaz simple. Antes de programar funcionalidades, se decidió separar el proyecto en dos bloques principales: un backend para la lógica de negocio y el acceso a datos, y un frontend para la interacción del usuario.
-### 2. Implementación del backend base
+- `backend`: API REST y persistencia.
+- `web`: interfaz React compartida.
+- `installer`: contenedor Electron y paquete NSIS.
+- `mobile`: contenedor Capacitor para Android.
+- `qa`: orquestador comun de verificaciones.
 
-Una vez definida la base, se implementó primero el backend porque allí residía la lógica crítica del sistema. Se trabajó la autenticación de usuarios, la conexión con MongoDB, el manejo de variables de entorno y la base de los endpoints REST.
-### 3. Construcción del frontend
+Antes de modificar un modulo, revisa [ARCHITECTURE.md](ARCHITECTURE.md), [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) y el estado de Git.
 
-Con el backend ya funcional, se construyó la interfaz visual en React. Primero se resolvió el login y el registro, luego se desarrollaron las pantallas principales del sistema: dashboard, ingresos, gastos y reportes.
-### 4. Integración y corrección de flujos reales
+## Preparacion local
 
-Una vez que ambas capas estaban montadas, se conectaron entre sí y se probaron los flujos completos de la aplicación. Aquí aparecieron los problemas más importantes de uso real: rutas que no cargaban en producción, empaquetado incompleto del backend, categorías enviadas con valores inválidos y reportes que todavía no consumían datos reales.
-### 5. Testing y validación
-
-Con la implementación ya estable se ejecutaron pruebas unitarias, de integración y end-to-end. El objetivo fue comprobar que la aplicación no solo compilara, sino que realmente funcionara con datos reales, autenticación, navegación y persistencia.
-### 6. Exportación como aplicación de escritorio
-
-La etapa final fue convertir la solución web en una aplicación de escritorio para Windows. Para eso se ajustó el build de Vite, se empaquetó el backend como recurso externo, se configuró Electron para iniciar backend y frontend de forma coordinada y se generó un instalador NSIS.
-# 🎯 Guía de Desarrollo - Próximos Pasos
-
-## 🧭 Memoria de Proyecto
-
-La aplicación nació como un sistema web de control de gastos e ingresos y luego evolucionó hasta convertirse en una versión de escritorio con Electron. El desarrollo se planteó de forma incremental para mantener control sobre la arquitectura, validar cada módulo de manera independiente y llegar a una entrega estable y empaquetable.
-
-### 1. Concepción del proyecto y primera estructura
-
-El proyecto se planteó para administrar finanzas personales o familiares con una interfaz clara, funcional y orientada al seguimiento de ingresos, gastos, categorías y reportes. Desde el inicio se definió que la solución debía ser mantenible, por lo que se separaron las responsabilidades principales en dos capas bien delimitadas: backend para la lógica de negocio y persistencia, y frontend para la interacción visual.
-
-En esta etapa se organizó la estructura inicial del repositorio, se agruparon los archivos por dominio funcional y se estableció un patrón de trabajo basado en módulos. El objetivo fue evitar una base monolítica y construir una arquitectura donde cada carpeta respondiera a una responsabilidad concreta: controladores, servicios, modelos, validadores, rutas, hooks, componentes y páginas.
-
-La primera estructura también sirvió para definir el flujo general de la aplicación. Antes de escribir la lógica completa se dejaron claros los puntos de entrada, los módulos de autenticación, los espacios para formularios reutilizables y la base para futuros reportes y exportaciones.
-
-### 2. Implementación del backend base
-
-Una vez definida la base, se implementó primero el backend porque allí residía la lógica crítica del sistema. Se trabajó la autenticación de usuarios, la conexión con MongoDB, el manejo de variables de entorno y la base de los endpoints REST.
-
-Durante esta fase se desarrollaron los módulos de ingresos, gastos, categorías y reportes. Cada entidad se estructuró con un patrón claro: modelo para persistencia, servicio para reglas de negocio, controlador para respuesta HTTP y validador para proteger la entrada de datos.
-
-### 3. Construcción del frontend
-
-Con el backend ya funcional, se construyó la interfaz visual en React. Primero se resolvió el login y el registro, luego se desarrollaron las pantallas principales del sistema: dashboard, ingresos, gastos y reportes.
-
-En esta etapa también se crearon hooks personalizados para centralizar el consumo de la API y el manejo de formularios. Esto permitió mantener los componentes más limpios y reutilizar lógica entre pantallas similares.
-
-Durante esta fase se ajustaron detalles clave para que la aplicación no dependiera solo de datos de prueba. Se conectaron los formularios a la API real, se validaron categorías y montos, y se incorporaron vistas con información dinámica en lugar de valores estáticos.
-
-### 4. Integración y corrección de flujos reales
-
-Una vez que ambas capas estaban montadas, se conectaron entre sí y se probaron los flujos completos de la aplicación. Aquí aparecieron los problemas más importantes de uso real: rutas que no cargaban en producción, empaquetado incompleto del backend, categorías enviadas con valores inválidos y reportes que todavía no consumían datos reales.
-
-Se corrigieron también detalles de comportamiento en la interfaz: formularios que no mostraban bien los errores, filtros que no coincidían con la API y un dashboard que todavía mostraba valores estáticos. Cada corrección se fue validando con pruebas y builds para evitar romper lo ya implementado.
-
-### 5. Testing y validación
-
-Con la implementación ya estable se ejecutaron pruebas unitarias, de integración y end-to-end. El objetivo fue comprobar que la aplicación no solo compilara, sino que realmente funcionara con datos reales, autenticación, navegación y persistencia.
-
-El testing sirvió para detectar y corregir fallos concretos que no eran visibles en una ejecución simple de desarrollo. Entre los problemas resueltos estuvieron la carga incorrecta del frontend en producción, la ubicación del backend empaquetado, la resolución de módulos dentro de Electron, el envío de categorías inválidas en gastos y el dashboard que aún no consumía datos reales.
-
-Cada corrección se volvió a validar con build y con una nueva ejecución de la app para confirmar que el cambio no introdujera regresiones. Ese ciclo permitió pasar de un prototipo funcional a una versión consistente y demostrable.
-
-### 6. Exportación como aplicación de escritorio
-
-La última etapa consistió en preparar la exportación como aplicación de escritorio para Windows. Para ello se ajustó el proceso de build con Vite, se empaquetó el backend como recurso externo, se configuró Electron para iniciar backend y frontend de forma coordinada y se generó un instalador NSIS listo para distribución.
-
-El resultado final es una aplicación que se abre como programa nativo, carga la interfaz React desde archivos locales y conecta con el backend en modo producción sin requerir que el usuario abra varias terminales. Esa transformación es la diferencia principal entre una app web en construcción y una entrega final instalable.
-
-**Resultado esperado**: una aplicación de escritorio estable, con arquitectura clara, pruebas aplicadas en puntos críticos y un instalador listo para demostración o distribución.
-
----
-- [x] `incomeService.js` - ✅ Completado
-- [x] Endpoints: GET, POST, PUT, DELETE funcionales
-
-#### 1.5 CRUD de Categorías
-- [x] `categoryController.js` - ✅ Completado
-- [x] `categoryService.js` - ✅ Completado
-- [x] Default categories seeding on user registration
-
-#### 1.6 Reportes
-- [x] `reportController.js` - ✅ Completado
-- [x] Endpoints: summary, monthly, yearly, category-breakdown, filters
-
-**Resultado esperado**: API funcional con todos los endpoints
-
----
-
-### Fase 2: Frontend Base (Semana 2)
-
-#### 2.1 Setup Inicial
-- [ ] `npm install` en web/
-- [ ] Crear `.env` con `VITE_API_URL`
-- [ ] `npm run dev` - debe abrir en localhost:3000
-
-#### 2.2 Autenticación (Login/Register)
-**Archivos a editar**:
-- `web/src/pages/Login.jsx` 
-  - Formulario de login
-  - Usar `useAuth()` hook
-  - Guardar token
-
-- `web/src/components/LoginForm.jsx` (nuevo)
-  - Componente del formulario
-  - Validar email/password
-  - Mostrar errores
-
-- `web/src/services/authService.js` - Implementar métodos
-
-**Resultado**: Poder registrarse e iniciar sesión
-
-#### 2.3 Páginas Principales
-- [ ] `Dashboard.jsx` - Página de inicio
-- [ ] `Expenses.jsx` - Lista de gastos
-- [ ] `Reports.jsx` - Visualización de reportes
-
-#### 2.4 Componentes Reutilizables
-- [ ] `ExpenseForm.jsx` - Formulario para crear gasto
-- [ ] `ExpenseTable.jsx` - Tabla de gastos
-- [ ] `ExpenseItem.jsx` - Fila de gastos
-- [ ] `Modal.jsx` - Para diálogos
-- [ ] `Alert.jsx` - Para mensajes
-
-#### 2.5 Enrutamiento
-- [ ] Configurar React Router
-- [ ] Rutas públicas (login, register)
-- [ ] Rutas privadas (dashboard, expenses, etc)
-- [ ] Proteger rutas no autenticadas
-
-**Resultado esperado**: App funcional con UI
-
----
-
-### Fase 3: Integración Completa (Semana 3)
-
-#### 3.1 Conectar Servicios
-- [ ] Hacer que frontend consume API real
-- [ ] Solucionar errores CORS si los hay
-- [ ] Probar flujos completos
-
-#### 3.2 Features Avanzadas
-- [ ] Gráficos de reportes (Chart.js o Recharts)
-- [ ] Exportar a PDF
-- [ ] Filtros avanzados
-- [ ] Paginación
-
-#### 3.3 Testing
-- [ ] Pruebas de API (Postman/Thunder Client)
-- [ ] Pruebas unitarias
-- [ ] Testing de integración
-
----
-
-## 📝 Convenciones a Seguir
-
-### Backend
-
-#### Estructura de Controlador
-```javascript
-// ✅ CORRECTO
-export const createExpense = asyncHandler(async (req, res) => {
-  // 1. Validar entrada
-  const { amount, category } = req.body;
-  
-  // 2. Llamar servicio
-  const expense = await expenseService.createExpense(
-    req.user.userId,
-    { amount, category }
-  );
-  
-  // 3. Respuesta formateada
-  res.status(201).json(
-    successResponse(expense, 'Gasto creado')
-  );
-});
-
-// ❌ INCORRECTO - No usar así
-export const createExpense = (req, res) => {
-  // Falta validación
-  // Falta try-catch
-  // Respuesta sin formato
-};
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item web/.env.example web/.env
+npm --prefix backend install
+npm --prefix web install
+npm --prefix installer install
+npm --prefix mobile install
 ```
 
-#### Estructura de Servicio
-```javascript
-// ✅ CORRECTO
-class ExpenseService {
-  async createExpense(userId, data) {
-    // 1. Validar datos
-    if (!data.amount || data.amount <= 0) {
-      throw new ValidationError('Monto inválido');
-    }
-    
-    // 2. Lógica de negocio
-    const expense = await Expense.create({
-      userId,
-      ...data,
-    });
-    
-    return expense;
-  }
-}
+Configura `MONGODB_URI`, `JWT_SECRET` y `FRONTEND_URL` sin publicar secretos. Para desarrollo web, `VITE_API_URL` suele ser `http://localhost:5000/api`.
 
-// ❌ INCORRECTO
-async function createExpense(data) {
-  // No separa lógica
-  // Acceso directo a BD
-}
+Arranque:
+
+```powershell
+npm --prefix backend run dev
+npm --prefix web run dev
 ```
 
-### Frontend
+## Convenciones del backend
 
-#### Estructura de Hook
-```javascript
-// ✅ CORRECTO
-export const useExpenses = () => {
-  const [expenses, setExpenses] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const fetchExpenses = async () => {
-    setIsLoading(true);
-    try {
-      const data = await expenseService.getExpenses();
-      setExpenses(data);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  return { expenses, isLoading, fetchExpenses };
-};
+Mantener el flujo:
 
-// ❌ INCORRECTO
-export const fetchData = async () => {
-  // No usa estados
-  // Lógica directa
-};
+```text
+route -> validator/middleware -> controller -> service -> model
 ```
 
----
+- La ruta declara verbo, URL y middlewares.
+- El validador comprueba formato y campos obligatorios.
+- El controlador se limita a HTTP, parametros y respuesta.
+- El servicio contiene reglas, consultas y errores de negocio.
+- El modelo define persistencia e indices.
+- Las respuestas comunes usan `responseFormatter.js`.
+- Toda consulta privada filtra por el usuario autenticado.
 
-## 🐛 Debugging Tips
+Para un endpoint nuevo, actualizar en el mismo cambio la ruta, controlador, servicio, validacion, pruebas y [API.md](API.md). No introducir contratos visibles solo en el frontend.
 
-### Backend No Inicia
-```bash
-# Ver logs detallados
-npm run dev
+## Convenciones del frontend
 
-# Problema común: Puerto en uso
-lsof -i :5000
-kill -9 <PID>
+- Pantallas completas en `web/src/pages`.
+- Componentes compartidos en `web/src/components`.
+- Estado y efectos reutilizables en `web/src/hooks`.
+- HTTP en `web/src/services` y rutas en `constants/apiEndpoints.js`.
+- Funciones puras en `web/src/utils`, acompañadas de Vitest cuando sea apropiado.
+- Estilos en el CSS existente bajo `web/src/styles`.
+- Textos visibles sincronizados en `locales/es.js` y `locales/en.js`.
+
+No hacer llamadas Axios directamente desde varias paginas. No duplicar reglas de contraseña, formato monetario ni mensajes de red.
+
+Cuando una creacion de gasto o ingreso funcione offline, debe conservar `clientRequestId`, persistir la cola y tolerar reintentos. Los cambios en ese flujo requieren revisar las pruebas Cypress de ambos tipos de movimiento.
+
+## Electron
+
+Electron reutiliza la salida web. Los cambios normales de interfaz pertenecen a `web`, no a una copia dentro de `installer`.
+
+```powershell
+npm --prefix installer run electron-dev
+npm --prefix installer run test:smoke
+npm --prefix installer run build:dist
 ```
 
-### Frontend No Conecta
-```javascript
-// En console (DevTools) verificar:
-console.log(import.meta.env.VITE_API_URL);
+Modificar `electron/main.cjs` o `preload.cjs` solo para comportamiento del contenedor: ventana, ciclo de vida, seguridad o APIs expuestas. No habilitar `nodeIntegration` en el renderer ni desactivar `contextIsolation` sin una justificacion de seguridad.
 
-// Probar petición manual
-fetch('http://localhost:5000/api/health')
-  .then(r => r.json())
-  .then(console.log)
+`installer/release/` contiene salidas generadas y no debe commitearse.
+
+## Android y Capacitor
+
+La fuente de interfaz sigue siendo `web/src`. El flujo es:
+
+```powershell
+npm --prefix mobile run sync:dev
+npm --prefix mobile run open:android
 ```
 
-### Errores de CORS
-```javascript
-// Backend: Verificar corsConfig.js
-// Frontend: Verificar VITE_API_URL en .env
-// Común: URL con trailing slash diferente
+Para una entrega:
+
+```powershell
+npm --prefix mobile run sync:prod
+npm --prefix mobile run apk:debug
 ```
 
----
+No editar manualmente archivos web copiados dentro de Android: se reemplazan en el siguiente `cap sync`. Los cambios nativos se hacen en `mobile/android`; la configuracion general vive en `mobile/capacitor.config.json`.
 
-## 🧪 Testeo Manual
+En emulador, `localhost` apunta al propio Android. La URL de API debe resolverse hacia la laptop antes del build movil. Verificar login, navegacion, una escritura y lectura desde web para demostrar integracion real.
 
-### 1. Test de Registro
-```bash
-curl -X POST http://localhost:5000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email":"test@example.com",
-    "password":"password123",
-    "name":"Test User"
-  }'
+## Pruebas durante el desarrollo
+
+Comprobacion centralizada rapida:
+
+```powershell
+node qa/run-tests.mjs all --profile quick
 ```
 
-### 2. Test de Login
-```bash
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email":"test@example.com",
-    "password":"password123"
-  }'
+Antes de una entrega:
+
+```powershell
+node qa/run-tests.mjs all --profile full
 ```
 
-### 3. Test de API Protegida
-```bash
-# Reemplazar TOKEN con el obtenido en login
-curl -X GET http://localhost:5000/api/expenses \
-  -H "Authorization: Bearer TOKEN"
+Comandos directos utiles:
+
+```powershell
+npm --prefix backend run test:unit
+npm --prefix backend run test:coverage
+npm --prefix web run test:unit
+npm --prefix web run build
+npm --prefix web run test:e2e
+npm --prefix web run test:a11y
+npm --prefix installer run test:smoke
 ```
 
----
+Un build aprobado solo confirma compilacion o empaquetado. No reemplaza Cypress, Playwright ni el smoke manual de Android. `PENDING_MANUAL` no debe reportarse como `PASS`.
 
-## 📊 Checklist Diario
+## Flujo recomendado para un cambio
 
-Cada vez que desarrolles:
+1. Revisar `git status --short` y preservar cambios ajenos.
+2. Identificar el modulo dueño de la conducta.
+3. Agregar o actualizar la prueba mas cercana al riesgo.
+4. Implementar el cambio sin duplicar responsabilidades.
+5. Ejecutar pruebas focalizadas.
+6. Ejecutar build o perfil QA correspondiente.
+7. Actualizar documentación si cambia un contrato, comando o flujo.
+8. Revisar el diff y evitar artefactos generados.
 
-- [ ] Los cambios siguen Clean Code
-- [ ] Las funciones son pequeñas (< 20 líneas)
-- [ ] Los nombres son descriptivos
-- [ ] Hay validación de entrada
-- [ ] Hay manejo de errores
-- [ ] Está documentado (comentarios JSDoc)
-- [ ] Funciona en local
-- [ ] Sin logs de debug
-- [ ] Sin código comentado muerto
+## Diagnostico en Windows
 
----
+Puertos ocupados:
 
-## 🚀 Cuando Termines
-
-1. **Hacer commit**
-```bash
-git add .
-git commit -m "feat: agregar autenticación"
+```powershell
+Get-NetTCPConnection -LocalPort 3000,5000 -ErrorAction SilentlyContinue
 ```
 
-2. **Verificar en Git**
-```bash
-git log --oneline
+Health check:
+
+```powershell
+Invoke-RestMethod http://localhost:5000/api/health
 ```
 
-3. **Preparar para deploy**
-```bash
-# Backend
-npm run build
+Si Cypress hereda una variable de Electron incompatible:
 
-# Frontend
-npm run build
+```powershell
+Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
 ```
 
-4. **Deploy en Render**
-- Push a GitHub
-- Render detectará cambios automáticamente
+Si Android no alcanza la API, confirmar la URL incorporada al build, el puerto 5000, firewall y que laptop/emulador compartan una ruta de red válida.
 
----
+## Criterio de terminado
 
-## ❓ Preguntas Frecuentes
+Un cambio esta listo cuando:
 
-**P: ¿Dónde agrego la lógica de validación?**
-A: En `validators/` (backend) y `utils/validators.js` (frontend)
+- el comportamiento solicitado funciona;
+- las pruebas relacionadas pasan;
+- el build afectado termina correctamente;
+- no se agregaron secretos ni artefactos;
+- la documentación coincide con el codigo;
+- los controles manuales pendientes quedan declarados.
 
-**P: ¿Cómo agrego una nueva tabla?**
-A: 
-1. Crear modelo en `backend/src/models/`
-2. Crear controlador y servicio
-3. Crear rutas
-4. Conectar en `server.js`
-
-**P: ¿Cómo manejo errores en frontend?**
-A: En hooks, usar try-catch y guardar en estado `error`
-
-**P: ¿Necesito tests unitarios?**
-A: Según requerimientos, agregar Jest + Testing Library
-
----
-
-## 📞 Contacto & Soporte
-
-Si algo no funciona:
-1. Revisar logs (`npm run dev`)
-2. Consultar `/docs/` del proyecto
-3. Verificar `.env` está creado
-4. Reiniciar terminal si es necesario
-
----
-
-**¡Ahora a codificar! 🚀**  
-La arquitectura está lista. El siguiente paso es la implementación.
-
-Para ver la estructura completa: `docs/PROJECT_STRUCTURE.md`
+Ultima revision: 14 de julio de 2026.

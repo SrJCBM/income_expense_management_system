@@ -65,7 +65,7 @@ Los códigos de salida son `0` sin fallos, `1` con al menos un fallo obligatorio
 | Módulo | Nivel | Herramienta | Automatización actual | Evidencia principal |
 |---|---|---|---|---|
 | Backend | Unitarias | Vitest | Sí | Resumen por archivo y caso |
-| Backend | Integración API | Vitest + Supertest + MongoMemoryServer | Sí | 428 casos totales junto con unitarias |
+| Backend | Integración API | Vitest + Supertest + MongoMemoryServer | Sí | 436 casos totales junto con unitarias |
 | Backend | Cobertura | V8 | Sí | HTML, JSON y LCOV; umbral mínimo 70% |
 | Web | Unitarias | Vitest | Sí | Resumen de 17 aserciones |
 | Web | Compilación | Vite | Sí | `web/dist/` y salida del build |
@@ -358,4 +358,4 @@ Markdown es la evidencia para personas; JSON permite integrar CI posteriormente.
 - Playwright Electron: 1 smoke test aprobado.
 - Framework QA: pruebas de núcleo, adaptadores y CLI aprobadas.
 - Backend: 16 archivos y 436 pruebas aprobadas en ejecución serial; los cuatro umbrales de cobertura superan 70%.
-- Android: prueba Gradle inicial bloqueada antes de sincronizar Capacitor; se mantiene como cobertura pendiente conforme al alcance aprobado.
+- Android: el framework contempla build web, sincronización Capacitor y APK debug; el smoke funcional en emulador permanece identificado como control manual.

@@ -1,242 +1,129 @@
-# Guía de Arquitectura - Sistema de Control de Gastos e Ingresos
+# Arquitectura de FinanceApp
 
-## 📐 Arquitectura MVC Adaptada
+## Vision general
 
-### Backend: Model-Controller (MC)
+FinanceApp es un sistema cliente-servidor. Una sola API REST concentra autenticacion, reglas de negocio y persistencia; tres clientes presentan esas capacidades en navegador, escritorio y Android.
 
-El backend implementa **Model-Controller** sin vista porque es una API REST:
-
-```
-REQUEST → MIDDLEWARE → ROUTES → CONTROLLER → MODEL → DATABASE
-         ↓
-       AUTH
-       VALIDATION
-       ERROR HANDLING
+```text
+Navegador web ---------+
+Electron --------------+--> API REST Express --> Servicios --> Mongoose --> MongoDB
+Android/Capacitor ------+
 ```
 
-**Componentes**:
+Los clientes no comparten una base local como fuente principal. Web, Electron y Android consumen los mismos endpoints `/api`, por lo que un cambio confirmado en el backend puede consultarse desde las otras plataformas. La cola offline de web y movil solo conserva temporalmente creaciones de ingresos y gastos hasta recuperar conectividad.
 
-1. **Models** (`src/models/`)
-   - Esquemas MongoDB con Mongoose
-   - Validaciones de esquema
-   - Índices para optimización
-   - Métodos de instancia cuando es necesario
+## Modulos ejecutables
 
-2. **Controllers** (`src/controllers/`)
-   - Lógica de solicitud HTTP
-   - Procesamiento de parámetros
-   - Llamada a services
-   - Respuestas formateadas
+### Backend
 
-3. **Services** (`src/services/`)
-   - Lógica de negocio reutilizable
-   - Operaciones complejas
-   - Llamadas a modelos
+Tecnologias: Node.js, Express, MongoDB, Mongoose, JWT, bcrypt, Helmet y CORS.
 
-4. **Routes** (`src/routes/`)
-   - Definición de endpoints
-   - Middleware por ruta
-   - Validación de entrada
+El flujo normal es:
 
-5. **Middlewares** (`src/middlewares/`)
-   - Autenticación (JWT)
-   - Validación de datos
-   - Manejo de errores
-   - CORS
-
-### Frontend: Model-View (MV)
-
-El frontend implementa **Model-View** (sin Controller porque React ya maneja la lógica):
-
-```
-USER INTERACTION → HOOKS → SERVICES → API → MODELS → COMPONENTS → VIEW
-                   ↓        ↓(MV)
-                VALIDATION UI STATE
+```text
+route -> validator/middleware -> controller -> service -> model -> MongoDB
 ```
 
-**Componentes**:
+- `server.js` configura Express, seguridad, parseo, rutas, health check y errores.
+- `routes/` declara URLs y aplica autenticacion o validacion.
+- `controllers/` traduce HTTP a llamadas de negocio y construye respuestas.
+- `services/` implementa reglas de negocio y acceso coordinado a modelos.
+- `models/` define User, Category, Expense, Income y Budget.
+- `validators/` rechaza entradas invalidas antes de llegar a los servicios.
+- `middlewares/` autentica JWT y centraliza errores.
+- `utils/responseFormatter.js` normaliza respuestas simples y paginadas.
 
-1. **Models** (`src/models/`)
-   - Clases de datos (ExpenseModel, IncomeModel, etc.)
-   - Validación de datos
-   - Métodos de conversión (toJSON)
+Todas las rutas de datos son privadas. El middleware obtiene el usuario del JWT y las consultas se limitan por `userId`.
 
-2. **Views/Components** (`src/components/`)
-   - Componentes reutilizables
-   - Presentación
-   - Sin lógica de negocio
+### Web
 
-3. **Pages** (`src/pages/`)
-   - Páginas principales
-   - Composición de componentes
-   - Estado de página
+Tecnologias: React 18, Vite, React Router, Axios, Recharts, jsPDF y XLSX.
 
-4. **Services** (`src/services/`)
-   - Comunicación con API
-   - Gestión de autenticación
-   - Lógica de datos
-
-5. **Hooks** (`src/hooks/`)
-   - useAuth - Autenticación
-   - useForm - Formularios
-   - Custom hooks personalizados
-
----
-
-## 🔐 Seguridad Implementada
-
-### 1. Frontend
-- Tokens JWT almacenados en localStorage
-- Interceptores de Axios para agregar token
-- Manejo automático de expiración
-- Validación de entrada antes de enviar
-
-### 2. Backend
-- Helmet para headers de seguridad
-- CORS restringido a dominios permitidos
-- Validación con express-validator
-- Errores personalizados sin exponer detalles
-- Rutas protegidas con middleware de autenticación
-
-### 3. Base de Datos
-- Contraseñas hasheadas (bcrypt)
-- Conexión cifrada (MongoDB Atlas)
-- Índices para optimización
-- Campos requeridos validados
-
-### 4. Variables de Entorno
-```
-# Backend
-JWT_SECRET=clave_muy_segura_cambiar_en_produccion
-MONGODB_URI=mongodb+srv://user:pass@cluster
-FRONTEND_URL=https://tu-app.onrender.com
-
-# Frontend
-VITE_API_URL=https://api-tu-app.onrender.com/api
+```text
+main.jsx -> App.jsx -> rutas/paginas -> hooks -> services -> Axios -> API
+                         |              |
+                         +-> componentes +-> estado y reglas reutilizables
 ```
 
----
+- `pages/` contiene las vistas de autenticacion, dashboard, movimientos, categorias, presupuestos, reportes y perfil.
+- `components/` contiene piezas reutilizables y la estructura de navegacion.
+- `hooks/` coordina estado, carga, formularios, red y cola offline.
+- `services/` encapsula llamadas HTTP, exportaciones y persistencia offline.
+- `context/` mantiene idioma y configuraciones visibles.
+- `locales/` contiene textos en español e ingles.
+- `styles/` contiene el CSS existente del proyecto.
 
-## 📊 Flujo de Datos
+`PrivateRoute.jsx` protege rutas del navegador. `api.js` centraliza Axios, la URL base, el timeout y el encabezado de autenticacion.
 
-### Crear un Gasto (Ejemplo Completo)
+### Instalador Electron
 
-```
-1. FRONTEND
-   ├─ Usuario ingresa datos en formulario
-   ├─ useForm valida localmente
-   ├─ ExpenseModel prepara datos
-   └─ expenseService.createExpense(data)
+Electron reutiliza el build Vite, no mantiene un segundo frontend.
 
-2. COMUNICACIÓN
-   ├─ Axios agrega JWT token
-   ├─ POST /api/expenses
-   └─ Backend recibe con CORS
-
-3. BACKEND
-   ├─ authMiddleware valida JWT
-   ├─ validateExpenseInput valida entrada
-   ├─ expenseController.createExpense
-   ├─ expenseService procesa lógica
-   ├─ Expense.create() guarda en BD
-   └─ Respuesta formateada
-
-4. RESPUESTA
-   ├─ Axios interceptor maneja respuesta
-   ├─ Frontend actualiza estado
-   └─ UI se refresca
+```text
+web/src -> Vite build -> installer/dist -> Electron main/preload -> NSIS .exe
 ```
 
----
+- `electron/main.cjs` administra el proceso principal y la ventana.
+- `electron/preload.cjs` define el puente seguro permitido al renderer.
+- `scripts/build-dist.ps1` prepara recursos y ejecuta electron-builder.
+- `release/` recibe artefactos locales y permanece fuera de Git.
 
-## 🎨 Clean Code en Práctica
+El smoke test abre el Electron real con Playwright. El build de NSIS demuestra que puede empaquetarse; la instalacion y desinstalacion siguen siendo controles manuales.
 
-### Naming
-```javascript
-// ❌ Incorrecto
-const x = getD();
-const tmp = x.filter(a => a.amt > 0);
+### Movil Android
 
-// ✅ Correcto
-const expenses = getExpenses();
-const significantExpenses = expenses.filter(exp => exp.amount > 0);
+Capacitor empaqueta el mismo frontend React dentro de una WebView Android.
+
+```text
+web/src -> Vite modo mobile -> web/dist -> cap sync -> mobile/android -> APK
 ```
 
-### Funciones Pequeñas
-```javascript
-// ❌ Incorrecto
-const processData = async (data) => {
-  const valid = validateData(data); // 100 líneas aquí
-  const result = transformData(valid); // 100 líneas aquí
-  return saveData(result); // 100 líneas aquí
-};
+- `capacitor.config.json` define `appId`, nombre y `webDir`.
+- `npm run sync:dev` construye web en modo movil y sincroniza Android.
+- `npm run open:android` abre el proyecto nativo en Android Studio.
+- `npm run apk:debug` genera el APK de depuracion con Gradle.
 
-// ✅ Correcto
-const processData = async (data) => {
-  const validated = validateData(data);
-  const transformed = transformData(validated);
-  return saveToDatabase(transformed);
-};
-```
+Android y web comparten pantallas, servicios y cola offline. La diferencia principal es el contenedor y la direccion desde la que se alcanza la API.
 
-### Comentarios Útiles
-```javascript
-// ✅ Bien - JSDoc
-/**
- * Calcula el porcentaje de gasto por categoría
- * @param {Array} expenses - Array de gastos
- * @returns {Object} Objeto con porcentajes por categoría
- */
-const calculateCategoryPercentage = (expenses) => {
-  // implementación
-};
+## Sincronizacion e integracion
 
-// ❌ Malo - Comentario obvio
-const total = amount + tax; // Suma cantidad y tax
-```
+La comunicacion entre plataformas es bidireccional a traves del backend:
 
----
+1. Un cliente envia una operacion autenticada.
+2. El backend valida y persiste en MongoDB.
+3. La API devuelve el recurso confirmado.
+4. Los otros clientes consultan nuevamente y reciben el mismo estado.
 
-## 📋 Checklist de Desarrollo
+Para creaciones offline, el cliente guarda la solicitud en IndexedDB con `clientRequestId`. Al volver la red, la cola reintenta la operacion. Los indices unicos de Expense e Income por usuario y `clientRequestId` evitan duplicados causados por reintentos.
 
-Cuando desarrolles nuevas características sigue:
+## Seguridad
 
-- [ ] Crear modelo en backend si es nueva entidad
-- [ ] Crear ruta en backend
-- [ ] Crear controlador con lógica
-- [ ] Crear servicio si es lógica compleja
-- [ ] Crear validador de entrada
-- [ ] Crear modelo en frontend
-- [ ] Crear servicio de API en frontend
-- [ ] Crear componentes reutilizables
-- [ ] Crear página/componente contenedor
-- [ ] Crear hook personalizado si es necesario
-- [ ] Agregar estilos CSS
-- [ ] Probar flujo completo
-- [ ] Documentar en README
+- Contraseñas almacenadas con bcrypt.
+- JWT para rutas privadas.
+- Helmet para encabezados HTTP.
+- CORS limitado mediante configuracion de entorno.
+- Validacion en backend, aun cuando el frontend tambien valide.
+- Separacion de datos por `userId`.
+- Secretos locales solo en `.env`, nunca en Git.
 
----
+Guardar el token en almacenamiento del cliente implica un riesgo conocido frente a scripts inyectados. Una migracion a cookies HttpOnly requeriria cambios coordinados de backend, clientes, CORS y pruebas; no debe hacerse como limpieza aislada.
 
-## 🚀 Próximos Pasos
+## Estrategia de calidad
 
-1. **Implementar modelos MongoDB**:
-   - User, Expense, Income, Category, Budget
+- Backend: Vitest, Supertest y MongoMemoryServer.
+- Web: Vitest, Cypress y cypress-axe.
+- Electron: Playwright y build electron-builder/NSIS.
+- Android: build Vite, sincronizacion Capacitor, Gradle y smoke manual en emulador.
+- Coordinacion: framework propio `qa/run-tests.mjs` con perfiles `quick` y `full`.
 
-2. **Crear controladores y rutas**:
-   - Auth, Users, Expenses, Incomes, etc.
+Los detalles y resultados se mantienen en [PRUEBAS_MODULOS.md](PRUEBAS_MODULOS.md) y `evidencias/RESULTADOS_PRUEBAS.md`.
 
-3. **Desarrollar frontend**:
-   - Componentes, páginas, hooks
+## Decisiones vigentes
 
-4. **Testing**:
-   - Pruebas unitarias y de integración
+- La API es la fuente compartida de verdad.
+- Electron y Android reutilizan el frontend React.
+- No se duplica logica de negocio del backend en los clientes.
+- El build no se presenta como equivalente a una prueba funcional.
+- Los controles humanos pendientes se identifican como `PENDING_MANUAL`.
 
-5. **Deploy**:
-   - Configurar en Render
-   - Configurar dominio
-   - SSL/HTTPS
-
----
-
-**Última actualización**: 2026
-**Responsable**: Proyecto de Pruebas de Software
+Ultima revision: 14 de julio de 2026.

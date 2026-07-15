@@ -85,7 +85,7 @@ git commit -m "docs: add integrated demonstration walkthrough"
 
 **Files:**
 - Modify: `docs/GUIA_DEMOSTRACION_RUBRICA.md`
-- Reference: `evidencias/PracticaLab_Pruebas.pdf` dentro del ZIP de entrega
+- Reference: `evidencias/referencias/PracticaLab_Pruebas.pdf` dentro del ZIP de entrega
 - Reference: `web/cypress/e2e/regression.cy.js`
 - Reference: `web/cypress/e2e/dashboard.cy.js`
 - Reference: `backend/vitest.config.js`

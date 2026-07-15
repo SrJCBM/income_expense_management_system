@@ -21,7 +21,7 @@
 - [ ] Ajustar el zoom del navegador para que formularios, montos y mensajes sean legibles desde el proyector.
 - [ ] Desactivar notificaciones del sistema, navegador, mensajería y correo.
 - [ ] Preparar cargador, extensión eléctrica y una conexión de respaldo que permita llegar a la API.
-- [ ] Abrir y auditar `evidencias/PracticaLab_Pruebas.pdf`, `evidencias/Rubrica.pdf` y `evidencias/RESULTADOS_PRUEBAS.md`; comprobar que corresponden al informe de observaciones, la rúbrica y los resultados verificados usados en esta demostración.
+- [ ] Abrir y auditar `evidencias/referencias/PracticaLab_Pruebas.pdf`, `evidencias/referencias/Rubrica.pdf`, `evidencias/INDICE_EVIDENCIAS_RUBRICA.md` y `evidencias/RESULTADOS_PRUEBAS.md`; comprobar que corresponden al informe de observaciones, la rúbrica, las capturas comparativas y los resultados verificados usados en esta demostración.
 
 ### Checklist de 15 minutos antes
 
@@ -157,7 +157,7 @@
 
 #### Matriz de los diez fallos originales
 
-La columna **Antes** se contrasta con `evidencias/PracticaLab_Pruebas.pdf` dentro del ZIP de entrega. La columna **Después** limita cada afirmación a la evidencia preparada o automatizada disponible; `Actividad reciente` permanece explícitamente pendiente.
+La columna **Antes** se contrasta con `evidencias/referencias/PracticaLab_Pruebas.pdf` dentro del ZIP de entrega. La columna **Después** se apoya en `evidencias/INDICE_EVIDENCIAS_RUBRICA.md` y sus capturas Playwright; `Actividad reciente` permanece explícitamente pendiente.
 
 | # | Fallo original | Antes | Después | Estado defendible |
 |---:|---|---|---|---|

@@ -4,7 +4,7 @@
 
 Diseñar una capa propia de organización, ejecución y reporte de pruebas para los módulos web, instalador de escritorio y móvil de FinanceApp. El framework no reemplazará los motores de pruebas existentes: los coordinará mediante una interfaz común, criterios de aprobación consistentes y reportes comprensibles.
 
-La primera implementación se concentrará en automatizar el módulo web y el instalador Electron. El módulo Android quedará documentado y conectado al modelo del framework mediante comprobaciones de build y pasos manuales, sin introducir Espresso, Appium ni nuevas pruebas instrumentadas en esta fase.
+La primera implementación se concentrará en automatizar el módulo web y el instalador Electron. El módulo Android quedará documentado y conectado al modelo del framework mediante comprobaciones de build y pasos manuales, sin introducir nuevas pruebas instrumentadas en esta fase.
 
 React Doctor queda fuera del alcance del framework y de la documentación funcional solicitada.
 
@@ -30,7 +30,7 @@ React Doctor queda fuera del alcance del framework y de la documentación funcio
 - Cambios en contratos del backend o en la lógica funcional de la aplicación.
 - Migración o rediseño de las pruebas del backend.
 - React Doctor.
-- Appium, Espresso y automatización de interfaz Android.
+- Automatización de interfaz Android.
 - Automatización del instalador gráfico NSIS de principio a fin.
 - Firma de ejecutables, publicación de artefactos o despliegue continuo.
 - Sustitución de Cypress por Playwright en el módulo web.

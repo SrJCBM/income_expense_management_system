@@ -1,0 +1,13 @@
+﻿Nombre: 05-capturas-presentacion
+Comando: npx playwright test tests/presentation-evidence.spec.mjs
+Directorio: C:\Users\jcbla\Documents\GitHub\income_expense_management_system\installer
+Inicio: 2026-07-14T21:24:02.2950734-05:00
+Fin: 2026-07-14T21:24:18.4065884-05:00
+Codigo de salida: 0
+
+
+Running 1 test using 1 worker
+
+  ok 1 tests\presentation-evidence.spec.mjs:263:1 › genera las capturas trazables para la presentación (12.7s)
+
+  1 passed (14.7s)

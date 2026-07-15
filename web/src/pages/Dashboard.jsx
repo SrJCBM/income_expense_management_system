@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { useSettings } from '../context/SettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import reportService from '../services/reportService.js';
 import budgetService from '../services/budgetService.js';
+import useDataRefresh from '../hooks/useDataRefresh.js';
+import RefreshButton from '../components/RefreshButton.jsx';
 import '../styles/pages/Dashboard.css';
 
 const TREND_CAP = 500;
@@ -56,35 +58,38 @@ const Dashboard = () => {
   const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
   const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
+  const loadDashboard = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const [currentRes, prevRes] = await Promise.all([
+        reportService.getSummary(currentMonth, currentYear),
+        reportService.getSummary(prevMonth, prevYear),
+      ]);
+      setSummary(currentRes.data || currentRes);
+      setPrevSummary(prevRes.data || prevRes);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+
+    try {
+      const alertsResponse = await budgetService.getAlerts();
+      setBudgetAlerts(alertsResponse.data || []);
+    } catch {
+      setBudgetAlerts([]);
+    }
+  }, [currentMonth, currentYear, prevMonth, prevYear]);
+
   useEffect(() => {
-    const loadDashboard = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const [currentRes, prevRes] = await Promise.all([
-          reportService.getSummary(currentMonth, currentYear),
-          reportService.getSummary(prevMonth, prevYear),
-        ]);
-        setSummary(currentRes.data || currentRes);
-        setPrevSummary(prevRes.data || prevRes);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-
-      try {
-        const alertsResponse = await budgetService.getAlerts();
-        setBudgetAlerts(alertsResponse.data || []);
-      } catch {
-        setBudgetAlerts([]);
-      }
-    };
-
     loadDashboard();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadDashboard]);
+
+  const { refreshNow, isRefreshing } = useDataRefresh(loadDashboard, {
+    intervalMs: 30000,
+  });
 
   const hasIncome = summary.totalIncome > 0;
   const prevHasIncome = prevSummary?.totalIncome > 0;
@@ -108,11 +113,20 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <header className="page-header">
-        <h1>{t('nav.dashboard')}</h1>
-        <p className="subtitle">
-          {t('dashboard.greeting')}, {user?.name || 'Usuario'} · {t('dashboard.period')} {currentPeriodLabel}
-        </p>
+      <header className="page-header flex-between">
+        <div>
+          <h1>{t('nav.dashboard')}</h1>
+          <p className="subtitle">
+            {t('dashboard.greeting')}, {user?.name || 'Usuario'} · {t('dashboard.period')} {currentPeriodLabel}
+          </p>
+        </div>
+        <div className="page-header-actions">
+          <RefreshButton
+            onRefresh={refreshNow}
+            isRefreshing={isRefreshing}
+            disabled={isLoading}
+          />
+        </div>
       </header>
 
       {error && (

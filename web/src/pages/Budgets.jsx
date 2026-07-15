@@ -3,8 +3,10 @@ import { useBudgets } from '../hooks/useBudgets.js';
 import { useCategories } from '../hooks/useCategories.js';
 import { useSettings } from '../context/SettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import useDataRefresh from '../hooks/useDataRefresh.js';
 import { getMonthName } from '../utils/formatters.js';
 import { parseAmount } from '../utils/parseAmount.js';
+import RefreshButton from '../components/RefreshButton.jsx';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Budgets.css';
 
@@ -28,6 +30,19 @@ const Budgets = () => {
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  const refreshBudgets = async () => {
+    if (isLoading) return;
+    await Promise.all([
+      fetchBudgets(period),
+      fetchCategories('expense'),
+    ]);
+  };
+
+  const { refreshNow, isRefreshing } = useDataRefresh(refreshBudgets, {
+    enabled: !showForm,
+    intervalMs: 30000,
+  });
 
   useEffect(() => {
     fetchBudgets(period);
@@ -150,15 +165,22 @@ const Budgets = () => {
           <h1>{t('budgets.title')}</h1>
           <p className="subtitle">{t('budgets.subtitle')}</p>
         </div>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={openCreateForm}
-          disabled={showForm}
-          data-testid="new-budget-button"
-        >
-          {t('budgets.newButton')}
-        </button>
+        <div className="page-header-actions">
+          <RefreshButton
+            onRefresh={refreshNow}
+            isRefreshing={isRefreshing}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={openCreateForm}
+            disabled={showForm}
+            data-testid="new-budget-button"
+          >
+            {t('budgets.newButton')}
+          </button>
+        </div>
       </header>
 
       {successMessage && (

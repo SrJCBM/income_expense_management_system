@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import '../styles/pages/Reports.css';
 import reportService from '../services/reportService.js';
 import ReportCharts from '../components/ReportCharts.jsx';
+import RefreshButton from '../components/RefreshButton.jsx';
 import { useExport } from '../hooks/useExport.js';
+import useDataRefresh from '../hooks/useDataRefresh.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
 
 const DEFAULT_SUMMARY = {
@@ -42,43 +44,49 @@ const Reports = () => {
   // Hook para exportación con feedback
   const { isExporting, exportError, exportSuccess, handleExportPDF, handleExportExcel } = useExport();
 
-  useEffect(() => {
-    const fetchReportFilters = async () => {
+  const fetchReportFilters = useCallback(async ({ preserveSelection = false } = {}) => {
+    if (!preserveSelection) {
       setFiltersLoading(true);
       setError(null);
+    }
 
-      try {
-        const response = await reportService.getFilters();
-        const payload = response?.data || DEFAULT_FILTERS;
-        const years = Array.isArray(payload.years) && payload.years.length > 0
-          ? payload.years.map((item) => Number(item))
-          : [new Date().getFullYear()];
-        const monthsByYear = payload.monthsByYear || {};
-        const suggestedYear = Number(payload.suggestedYear) || years[0];
-        const monthsForYear = monthsByYear[suggestedYear] || [];
-        const suggestedMonth = Number(payload.suggestedMonth);
-        const resolvedMonth = monthsForYear.includes(suggestedMonth)
-          ? suggestedMonth
-          : (monthsForYear[monthsForYear.length - 1] || month);
+    try {
+      const response = await reportService.getFilters();
+      const payload = response?.data || DEFAULT_FILTERS;
+      const years = Array.isArray(payload.years) && payload.years.length > 0
+        ? payload.years.map((item) => Number(item))
+        : [new Date().getFullYear()];
+      const monthsByYear = payload.monthsByYear || {};
+      const suggestedYear = Number(payload.suggestedYear) || years[0];
+      const monthsForYear = monthsByYear[suggestedYear] || [];
+      const suggestedMonth = Number(payload.suggestedMonth);
 
-        setFilters({
-          years,
-          monthsByYear,
-          hasData: Boolean(payload.hasData),
-        });
+      setFilters({
+        years,
+        monthsByYear,
+        hasData: Boolean(payload.hasData),
+      });
 
+      if (!preserveSelection) {
         setYear(suggestedYear);
-        setMonth(resolvedMonth);
-      } catch (err) {
-        setError(err.message || 'No se pudieron cargar los filtros de reportes.');
-      } finally {
+        setMonth((currentMonth) => (
+          monthsForYear.includes(suggestedMonth)
+            ? suggestedMonth
+            : (monthsForYear[monthsForYear.length - 1] || currentMonth)
+        ));
+      }
+    } catch (err) {
+      setError(err.message || 'No se pudieron cargar los filtros de reportes.');
+    } finally {
+      if (!preserveSelection) {
         setFiltersLoading(false);
       }
-    };
-
-    fetchReportFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
   }, []);
+
+  useEffect(() => {
+    fetchReportFilters();
+  }, [fetchReportFilters]);
 
   useEffect(() => {
     if (!filters.hasData) {
@@ -92,54 +100,78 @@ const Reports = () => {
     }
   }, [filters, month, year]);
 
-  useEffect(() => {
+  const fetchReports = useCallback(async () => {
     if (filtersLoading) {
-      return;
+      return false;
     }
     if (mode === 'range' && (!rangeStart || !rangeEnd || rangeStart > rangeEnd)) {
-      return;
+      return false;
     }
 
-    const fetchReports = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = mode === 'range'
-          ? await reportService.getSummary(null, null, { startDate: rangeStart, endDate: rangeEnd })
-          : await reportService.getSummary(month, year);
-        const payload = response?.data || DEFAULT_SUMMARY;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = mode === 'range'
+        ? await reportService.getSummary(null, null, { startDate: rangeStart, endDate: rangeEnd })
+        : await reportService.getSummary(month, year);
+      const payload = response?.data || DEFAULT_SUMMARY;
 
-        setSummary({
-          totalIncome: Number(payload.totalIncome || 0),
-          totalExpense: Number(payload.totalExpense || 0),
-          balance: Number(payload.balance || 0),
-          expensesByCategory: Array.isArray(payload.expensesByCategory)
-            ? payload.expensesByCategory
-            : [],
-        });
-      } catch (err) {
-        setError(err.message || 'No se pudieron cargar los reportes.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      setSummary({
+        totalIncome: Number(payload.totalIncome || 0),
+        totalExpense: Number(payload.totalExpense || 0),
+        balance: Number(payload.balance || 0),
+        expensesByCategory: Array.isArray(payload.expensesByCategory)
+          ? payload.expensesByCategory
+          : [],
+      });
+      return true;
+    } catch (err) {
+      setError(err.message || 'No se pudieron cargar los reportes.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filtersLoading, mode, month, rangeEnd, rangeStart, year]);
 
+  useEffect(() => {
     fetchReports();
-  }, [month, year, mode, rangeStart, rangeEnd, filtersLoading]);
+  }, [fetchReports]);
 
   const yearlyYear = mode === 'range' && rangeStart ? Number(rangeStart.slice(0, 4)) : year;
 
-  useEffect(() => {
-    if (!yearlyYear) return;
-    reportService.getYearlyReport(yearlyYear)
-      .then((res) => setYearlyData(res?.data || null))
-      .catch(() => setYearlyData(null));
+  const fetchYearlyReport = useCallback(async () => {
+    if (!yearlyYear) return false;
+    try {
+      const response = await reportService.getYearlyReport(yearlyYear);
+      setYearlyData(response?.data || null);
+      return true;
+    } catch {
+      setYearlyData(null);
+      return false;
+    }
   }, [yearlyYear]);
+
+  useEffect(() => {
+    fetchYearlyReport();
+  }, [fetchYearlyReport]);
 
   const availableMonths = filters.monthsByYear?.[year] || [];
 
   const rangeInvalid = mode === 'range' && rangeStart && rangeEnd && rangeStart > rangeEnd;
   const waitingForRange = mode === 'range' && (!rangeStart || !rangeEnd);
+
+  const refreshReports = async () => {
+    if (isLoading || filtersLoading || waitingForRange || rangeInvalid) return;
+    await Promise.all([
+      fetchReportFilters({ preserveSelection: true }),
+      fetchReports(),
+      fetchYearlyReport(),
+    ]);
+  };
+
+  const { refreshNow, isRefreshing } = useDataRefresh(refreshReports, {
+    intervalMs: 30000,
+  });
 
   const buildPeriod = () => {
     if (mode === 'range') {
@@ -167,6 +199,11 @@ const Reports = () => {
           <p className="subtitle">{t('reports.subtitle')}</p>
         </div>
         <div className="header-controls">
+          <RefreshButton
+            onRefresh={refreshNow}
+            isRefreshing={isRefreshing}
+            disabled={isLoading || filtersLoading}
+          />
           <div className="mode-toggle" role="group" aria-label={t('reports.modeToggleLabel')} data-testid="report-mode-toggle">
             <button
               type="button"

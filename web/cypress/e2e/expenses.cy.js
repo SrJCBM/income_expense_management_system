@@ -52,6 +52,51 @@ describe('CRUD de Gastos (E2E)', () => {
     cy.get('[data-testid="expense-total"]').invoke('text').should('match', /150[,.]75/);
   });
 
+  it('Debe mostrar un botón accesible para actualizar los datos', () => {
+    cy.get('[data-testid="refresh-button"]')
+      .should('be.visible')
+      .and('have.attr', 'type', 'button')
+      .and('have.attr', 'aria-label', 'Actualizar datos')
+      .and('contain', 'Actualizar');
+  });
+
+  it('Debe solicitar nuevamente los gastos al pulsar Actualizar', () => {
+    cy.intercept('GET', '**/api/expenses*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleExpense] },
+    }).as('refreshExpenses');
+
+    cy.get('[data-testid="refresh-button"]').click();
+
+    cy.wait('@refreshExpenses').its('response.statusCode').should('eq', 200);
+  });
+
+  it('Debe pausar el polling con el formulario abierto y reanudarlo al cerrarlo', () => {
+    let requestCount = 0;
+    let initialRequestCount = 0;
+    cy.intercept('GET', '**/api/expenses?page=1*', (request) => {
+      requestCount += 1;
+      request.reply({ statusCode: 200, body: { success: true, data: [sampleExpense] } });
+    }).as('trackedExpenses');
+
+    cy.clock();
+    cy.reload();
+    cy.wait('@trackedExpenses');
+    cy.wait('@trackedExpenses');
+    cy.then(() => {
+      initialRequestCount = requestCount;
+    });
+
+    cy.get('[data-testid="new-expense-button"]').click();
+    cy.tick(30000);
+    cy.then(() => expect(requestCount).to.eq(initialRequestCount));
+
+    cy.get('[data-testid="expense-cancel"]').click();
+    cy.tick(30000);
+    cy.wait('@trackedExpenses');
+    cy.then(() => expect(requestCount).to.eq(initialRequestCount + 1));
+  });
+
   it('Debe abrir el formulario de nuevo gasto desde la lista', () => {
     cy.get('[data-testid="new-expense-button"]').click();
     cy.get('[data-testid="expense-form"]').should('be.visible');
@@ -188,6 +233,23 @@ describe('Búsqueda y Filtros Avanzados de Gastos (E2E)', () => {
 
     cy.wait('@searchExpenses').its('request.url').should('include', 'search=Supermercado');
     cy.get('[data-testid="expense-item"]').should('have.length', 1);
+  });
+
+  it('Debe conservar el filtro activo al actualizar manualmente', () => {
+    cy.intercept('GET', '**/api/expenses?*search=Supermercado*', {
+      statusCode: 200,
+      body: { success: true, data: [sampleExpense] },
+    }).as('filteredRefresh');
+
+    cy.get('[data-testid="filter-search"]').type('Supermercado');
+    cy.get('[data-testid="apply-filters"]').click();
+    cy.wait('@filteredRefresh');
+
+    cy.get('[data-testid="refresh-button"]').click();
+
+    cy.wait('@filteredRefresh')
+      .its('request.url')
+      .should('include', 'search=Supermercado');
   });
 
   it('Debe buscar al presionar Enter en el campo de búsqueda', () => {

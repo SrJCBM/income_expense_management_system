@@ -9,8 +9,10 @@ import { useSettings } from '../context/SettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import useNetworkStatus from '../hooks/useNetworkStatus.js';
 import useOfflineQueue from '../hooks/useOfflineQueue.js';
+import useDataRefresh from '../hooks/useDataRefresh.js';
 import isNetworkError from '../utils/networkErrors.js';
 import { parseAmount } from '../utils/parseAmount.js';
+import RefreshButton from '../components/RefreshButton.jsx';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'incomes_filters';
@@ -77,6 +79,16 @@ const Incomes = () => {
     }
     return filters;
   };
+
+  const refreshIncomes = async () => {
+    if (isLoading) return;
+    await fetchIncomes(activeFiltersRef.current);
+  };
+
+  const { refreshNow, isRefreshing } = useDataRefresh(refreshIncomes, {
+    enabled: !showForm,
+    intervalMs: 30000,
+  });
 
   const handleApplyFilters = () => {
     setCurrentPage(1);
@@ -262,15 +274,22 @@ const Incomes = () => {
           <h1>{t('incomes.title')}</h1>
           <p className="subtitle">{t('incomes.subtitle')}</p>
         </div>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={handleShowCreateForm}
-          disabled={showForm}
-          data-testid="new-income-button"
-        >
-          {t('incomes.newButton')}
-        </button>
+        <div className="page-header-actions">
+          <RefreshButton
+            onRefresh={refreshNow}
+            isRefreshing={isRefreshing}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={handleShowCreateForm}
+            disabled={showForm}
+            data-testid="new-income-button"
+          >
+            {t('incomes.newButton')}
+          </button>
+        </div>
       </header>
 
       {successMessage && (

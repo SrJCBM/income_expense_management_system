@@ -1,0 +1,26 @@
+﻿Nombre: 04-qa-full-dry-run
+Comando: node qa/run-tests.mjs all --profile full --dry-run
+Directorio: C:\Users\jcbla\Documents\GitHub\income_expense_management_system
+Inicio: 2026-07-14T21:24:02.2139834-05:00
+Fin: 2026-07-14T21:24:02.2930734-05:00
+Codigo de salida: 0
+
+[SKIPPED] backend: Suite completa y cobertura V8
+[SKIPPED] web: Pruebas unitarias Vitest
+[SKIPPED] web: Build de producción Vite
+[SKIPPED] web: Suite E2E completa
+[SKIPPED] installer: Smoke de Electron con Playwright
+[SKIPPED] installer: Build de distribución NSIS
+[SKIPPED] installer: Artefacto instalable de Windows
+[PENDING_MANUAL] installer: Instalación y desinstalación NSIS
+[SKIPPED] mobile: Build web y sincronización Capacitor
+[SKIPPED] mobile: Build del APK debug
+[SKIPPED] mobile: Artefacto APK debug
+[PENDING_MANUAL] mobile: Smoke funcional en emulador
+Perfil: full
+PASS: 0
+FAIL: 0
+SKIPPED: 10
+PENDING_MANUAL: 2
+Reporte Markdown: C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\reports\qa-report-20260715-022402.md
+Reporte JSON: C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\reports\qa-report-20260715-022402.json

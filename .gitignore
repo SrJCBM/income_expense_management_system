@@ -86,6 +86,10 @@ temp/
 *.log
 lerna-debug.log*
 
+# Conservar los logs de evidencia reproducible para la presentacion
+!evidencias/capturas-presentacion/logs/
+!evidencias/capturas-presentacion/logs/*.txt
+
 # ============================================
 # DATABASE
 # ============================================
@@ -148,6 +152,9 @@ graphify-out/
 
 # Paquetes de entrega generados localmente
 FinanceApp*.zip
+
+# Declaracion local para componer evidencia de integracion real
+evidencias/integracion-real.json
 
 # ============================================
 # INTERNAL MARKDOWN NOTES

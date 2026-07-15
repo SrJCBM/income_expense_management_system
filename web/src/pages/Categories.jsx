@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useCategories } from '../hooks/useCategories.js';
 import { useForm } from '../hooks/useForm.js';
+import useDataRefresh from '../hooks/useDataRefresh.js';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import RefreshButton from '../components/RefreshButton.jsx';
 import '../styles/pages/Expenses.css';
 import '../styles/pages/Categories.css';
 
@@ -67,6 +69,16 @@ const Categories = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+
+  const refreshCategories = async () => {
+    if (isLoading) return;
+    await fetchCategories();
+  };
+
+  const { refreshNow, isRefreshing } = useDataRefresh(refreshCategories, {
+    enabled: !showForm,
+    intervalMs: 30000,
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -160,15 +172,22 @@ const Categories = () => {
           <h1>{t('categories.title')}</h1>
           <p className="subtitle">{t('categories.subtitle')}</p>
         </div>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={handleCreateClick}
-          disabled={showForm}
-          data-testid="new-category-button"
-        >
-          {t('categories.newButton')}
-        </button>
+        <div className="page-header-actions">
+          <RefreshButton
+            onRefresh={refreshNow}
+            isRefreshing={isRefreshing}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={handleCreateClick}
+            disabled={showForm}
+            data-testid="new-category-button"
+          >
+            {t('categories.newButton')}
+          </button>
+        </div>
       </header>
 
       {successMessage && (

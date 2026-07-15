@@ -1,0 +1,9 @@
+{
+  "confirmedSharedRecord": true,
+  "recordLabel": "Compra laboratorio DEMO-1407",
+  "images": {
+    "web": "evidencias/capturas-presentacion/integracion-web-real.png",
+    "android": "evidencias/capturas-presentacion/integracion-android-real.png",
+    "electron": "evidencias/capturas-presentacion/integracion-electron-real.png"
+  }
+}

@@ -46,11 +46,13 @@ describe('Análisis y Reportes', () => {
     cy.wait('@getReportFilters');
     cy.wait('@getSummary');
 
+    cy.intercept('GET', '**/api/reports/summary?*month=1*').as('getJanuarySummary');
+
     // Cambiamos el mes y verificamos que se dispare otra llamada
     cy.get('[data-testid="report-month-select"]').select('1'); // Enero, si está disponible en el fixture
 
-    // Como cambiamos el filtro, la app hace fetch del nuevo mes
-    cy.wait('@getSummary').its('request.url').should('include', 'month=1');
+    // Puede existir una revalidación por foco en paralelo; esperamos la consulta específica de enero.
+    cy.wait('@getJanuarySummary').its('request.url').should('include', 'month=1');
   });
 
   it('debería tener la funcionalidad de exportar PDF y Excel sin errores de UI', () => {

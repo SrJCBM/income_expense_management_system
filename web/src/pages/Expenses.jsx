@@ -11,7 +11,9 @@ import { useLanguage } from '../context/LanguageContext.jsx';
 import { useSettings } from '../context/SettingsContext.jsx';
 import useNetworkStatus from '../hooks/useNetworkStatus.js';
 import useOfflineQueue from '../hooks/useOfflineQueue.js';
+import useDataRefresh from '../hooks/useDataRefresh.js';
 import isNetworkError from '../utils/networkErrors.js';
+import RefreshButton from '../components/RefreshButton.jsx';
 import '../styles/pages/Expenses.css';
 
 const STORAGE_KEY = 'expenses_filters';
@@ -80,6 +82,16 @@ const Expenses = () => {
     if (sortOrder) filters.sort = sortOrder;
     return filters;
   };
+
+  const refreshExpenses = async () => {
+    if (isLoading) return;
+    await fetchExpenses(activeFiltersRef.current);
+  };
+
+  const { refreshNow, isRefreshing } = useDataRefresh(refreshExpenses, {
+    enabled: !showForm,
+    intervalMs: 30000,
+  });
 
   useEffect(() => {
     const filters = buildFilters(1);
@@ -276,15 +288,22 @@ const Expenses = () => {
           <h1>{t('expenses.title')}</h1>
           <p className="subtitle">{t('expenses.subtitle')}</p>
         </div>
-        <button
-          type="button"
-          className="btn-primary"
-          onClick={handleNewExpense}
-          disabled={showForm}
-          data-testid="new-expense-button"
-        >
-          {t('expenses.newButton')}
-        </button>
+        <div className="page-header-actions">
+          <RefreshButton
+            onRefresh={refreshNow}
+            isRefreshing={isRefreshing}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={handleNewExpense}
+            disabled={showForm}
+            data-testid="new-expense-button"
+          >
+            {t('expenses.newButton')}
+          </button>
+        </div>
       </header>
 
       {successMessage && (

@@ -1,0 +1,137 @@
+﻿Nombre: 01-framework-qa
+Comando: node --test C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\tests\backend-vitest-config.test.mjs C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\tests\command-runner.test.mjs C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\tests\module-checks.test.mjs C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\tests\report-writer.test.mjs C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\tests\run-tests.test.mjs C:\Users\jcbla\Documents\GitHub\income_expense_management_system\qa\tests\web-checks.test.mjs
+Directorio: C:\Users\jcbla\Documents\GitHub\income_expense_management_system
+Inicio: 2026-07-14T21:23:50.7674081-05:00
+Fin: 2026-07-14T21:23:51.6160850-05:00
+Codigo de salida: 0
+
+TAP version 13
+# Subtest: backend serializa archivos que crean MongoMemoryServer
+ok 1 - backend serializa archivos que crean MongoMemoryServer
+  ---
+  duration_ms: 0.9867
+  type: 'test'
+  ...
+# Subtest: backend aplica los umbrales de cobertura con el formato de Vitest 4
+ok 2 - backend aplica los umbrales de cobertura con el formato de Vitest 4
+  ---
+  duration_ms: 0.8015
+  type: 'test'
+  ...
+# Subtest: normaliza un proceso exitoso como PASS
+ok 3 - normaliza un proceso exitoso como PASS
+  ---
+  duration_ms: 97.9259
+  type: 'test'
+  ...
+# Subtest: normaliza un proceso fallido y conserva la salida relevante
+ok 4 - normaliza un proceso fallido y conserva la salida relevante
+  ---
+  duration_ms: 86.0753
+  type: 'test'
+  ...
+# Subtest: mantiene las comprobaciones manuales como PENDING_MANUAL
+ok 5 - mantiene las comprobaciones manuales como PENDING_MANUAL
+  ---
+  duration_ms: 0.3144
+  type: 'test'
+  ...
+# Subtest: registra una omisión solicitada sin iniciar el proceso
+ok 6 - registra una omisión solicitada sin iniciar el proceso
+  ---
+  duration_ms: 0.3085
+  type: 'test'
+  ...
+# Subtest: valida un artefacto sin modificarlo y registra sus metadatos
+ok 7 - valida un artefacto sin modificarlo y registra sus metadatos
+  ---
+  duration_ms: 7.3106
+  type: 'test'
+  ...
+# Subtest: ejecuta comandos npm de forma compatible con Windows
+ok 8 - ejecuta comandos npm de forma compatible con Windows
+  ---
+  duration_ms: 359.6516
+  type: 'test'
+  ...
+# Subtest: backend separa unitarias rápidas y suite completa con cobertura
+ok 9 - backend separa unitarias rápidas y suite completa con cobertura
+  ---
+  duration_ms: 3.4671
+  type: 'test'
+  ...
+# Subtest: installer separa smoke rápido y distribución completa
+ok 10 - installer separa smoke rápido y distribución completa
+  ---
+  duration_ms: 0.3744
+  type: 'test'
+  ...
+# Subtest: mobile separa sincronización rápida y APK completo
+ok 11 - mobile separa sincronización rápida y APK completo
+  ---
+  duration_ms: 0.3487
+  type: 'test'
+  ...
+# Subtest: los controles humanos nunca se presentan como comandos
+ok 12 - los controles humanos nunca se presentan como comandos
+  ---
+  duration_ms: 0.3547
+  type: 'test'
+  ...
+# Subtest: genera reportes JSON y Markdown con todos los estados
+ok 13 - genera reportes JSON y Markdown con todos los estados
+  ---
+  duration_ms: 23.9166
+  type: 'test'
+  ...
+# Subtest: rechaza módulos y perfiles desconocidos con código 2
+ok 14 - rechaza módulos y perfiles desconocidos con código 2
+  ---
+  duration_ms: 193.5461
+  type: 'test'
+  ...
+# Subtest: acepta backend y lo incluye en all
+ok 15 - acepta backend y lo incluye en all
+  ---
+  duration_ms: 161.1764
+  type: 'test'
+  ...
+# Subtest: quick es el perfil predeterminado y dry-run genera reportes
+ok 16 - quick es el perfil predeterminado y dry-run genera reportes
+  ---
+  duration_ms: 87.7928
+  type: 'test'
+  ...
+# Subtest: all full incluye controles manuales sin aprobarlos
+ok 17 - all full incluye controles manuales sin aprobarlos
+  ---
+  duration_ms: 77.5844
+  type: 'test'
+  ...
+# Subtest: perfil quick selecciona unitarias, build y smoke
+ok 18 - perfil quick selecciona unitarias, build y smoke
+  ---
+  duration_ms: 2.6913
+  type: 'test'
+  ...
+# Subtest: perfil full ejecuta las 73 pruebas Cypress una vez sin repetir smoke
+ok 19 - perfil full ejecuta las 73 pruebas Cypress una vez sin repetir smoke
+  ---
+  duration_ms: 1.6532
+  type: 'test'
+  ...
+# Subtest: rechaza perfiles desconocidos
+ok 20 - rechaza perfiles desconocidos
+  ---
+  duration_ms: 1.0924
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 674.4834

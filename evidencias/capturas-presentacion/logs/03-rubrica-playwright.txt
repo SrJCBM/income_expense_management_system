@@ -1,0 +1,13 @@
+﻿Nombre: 03-rubrica-playwright
+Comando: npx playwright test tests/rubric-evidence.spec.mjs
+Directorio: C:\Users\jcbla\Documents\GitHub\income_expense_management_system\installer
+Inicio: 2026-07-14T21:23:55.6993121-05:00
+Fin: 2026-07-14T21:24:02.2119818-05:00
+Codigo de salida: 0
+
+
+Running 1 test using 1 worker
+
+  ok 1 tests\rubric-evidence.spec.mjs:133:1 › genera evidencia visual de las observaciones corregidas (3.0s)
+
+  1 passed (5.1s)

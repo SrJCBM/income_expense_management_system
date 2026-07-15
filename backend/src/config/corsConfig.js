@@ -12,6 +12,8 @@ const allowedOrigins = [
   'capacitor://localhost',
   'https://localhost',
   'http://localhost',
+  // Origen estable del cliente de escritorio empaquetado con Electron.
+  'app://financeapp',
   process.env.FRONTEND_URL,
   process.env.RENDER_EXTERNAL_URL,
 ].filter(Boolean); // elimina valores vacíos/undefined
@@ -20,7 +22,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export const corsOptions = {
   origin: (origin, callback) => {
-    // Peticiones sin origen (curl, Postman, Electron) o en dev desde localhost
+    // Peticiones sin origen (curl, Postman) o en dev desde localhost
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) return callback(null, true);

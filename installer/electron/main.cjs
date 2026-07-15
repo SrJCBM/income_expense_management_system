@@ -1,47 +1,45 @@
-const { app, BrowserWindow } = require('electron');
-const { spawn } = require('child_process');
-const path = require('path');
-const http = require('http');
-const { pathToFileURL } = require('url');
-const fs = require('fs');
-const Module = require('module');
+const { app, BrowserWindow, net, protocol } = require('electron');
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const http = require('node:http');
+const path = require('node:path');
+const {
+  APP_SCHEME,
+  APP_URL,
+  registerAppProtocol,
+} = require('./app-protocol.cjs');
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: APP_SCHEME,
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+    },
+  },
+]);
 
 const isDev = process.env.ELECTRON === '1' || !app.isPackaged;
 const isQa = process.env.FINANCEAPP_QA === '1';
-
 const WEB_URL = 'http://127.0.0.1:3000';
 const BACKEND_URL = 'http://127.0.0.1:5000/api/health';
 const LOG_FILE = path.join(app.getPath('userData'), 'app-error.log');
 
-function logError(msg) {
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${msg}\n`;
-  console.error(msg);
-  try {
-    fs.appendFileSync(LOG_FILE, logEntry);
-  } catch (e) {
-    console.error('Failed to write to log file:', e);
-  }
-}
-
 let mainWindow = null;
+let backendProcess = null;
 let webProcess = null;
 
-function getBackendPath() {
-  if (isDev) {
-    const installerRoot = path.resolve(__dirname, '..');
-    const projectRoot = path.resolve(installerRoot, '..');
-    return path.resolve(projectRoot, 'backend');
+function logError(message) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}\n`;
+  console.error(message);
+  try {
+    fs.appendFileSync(LOG_FILE, logEntry);
+  } catch (error) {
+    console.error('Failed to write to log file:', error);
   }
-  // Produccion: backend copiado como extraResources fuera de app.asar
-  return path.join(process.resourcesPath, 'backend');
-}
-
-function getWebEntry() {
-  if (isDev) {
-    return WEB_URL;
-  }
-  return path.join(app.getAppPath(), 'dist', 'index.html');
 }
 
 function getNpmCommand() {
@@ -52,23 +50,6 @@ function waitForUrl(url, timeoutMs = 60000, intervalMs = 500) {
   const startedAt = Date.now();
 
   return new Promise((resolve, reject) => {
-    const attempt = () => {
-      const req = http.get(url, (res) => {
-        res.resume();
-        if (res.statusCode && res.statusCode < 500) {
-          resolve();
-          return;
-        }
-        retry();
-      });
-
-      req.on('error', retry);
-      req.setTimeout(2000, () => {
-        req.destroy();
-        retry();
-      });
-    };
-
     const retry = () => {
       if (Date.now() - startedAt >= timeoutMs) {
         reject(new Error(`Timeout esperando ${url} after ${timeoutMs}ms`));
@@ -77,14 +58,31 @@ function waitForUrl(url, timeoutMs = 60000, intervalMs = 500) {
       setTimeout(attempt, intervalMs);
     };
 
+    const attempt = () => {
+      const request = http.get(url, (response) => {
+        response.resume();
+        if (response.statusCode && response.statusCode < 500) {
+          resolve();
+          return;
+        }
+        retry();
+      });
+
+      request.on('error', retry);
+      request.setTimeout(2000, () => {
+        request.destroy();
+        retry();
+      });
+    };
+
     attempt();
   });
 }
 
 function spawnNpmScript(cwd, script, args = []) {
-  const cmd = `${getNpmCommand()} run ${script} ${args.join(' ')}`.trim();
+  const command = `${getNpmCommand()} run ${script} ${args.join(' ')}`.trim();
 
-  return spawn(cmd, {
+  return spawn(command, {
     cwd,
     env: { ...process.env },
     stdio: 'pipe',
@@ -94,68 +92,18 @@ function spawnNpmScript(cwd, script, args = []) {
 }
 
 function pipeLogs(prefix, child) {
-  if (!child) {
-    return;
-  }
+  if (!child) return;
 
   child.stdout.on('data', (chunk) => {
     process.stdout.write(`[${prefix}] ${chunk}`);
   });
-
   child.stderr.on('data', (chunk) => {
     process.stderr.write(`[${prefix}] ${chunk}`);
   });
-
   child.on('exit', (code) => {
     const normalizedCode = code === null ? 'null' : String(code);
-    console.log(`[${prefix}] proceso finalizado con código ${normalizedCode}`);
+    console.log(`[${prefix}] proceso finalizado con codigo ${normalizedCode}`);
   });
-}
-
-async function startBackendProduction() {
-  const backendRoot = getBackendPath();
-  const serverScript = path.join(backendRoot, 'server.js');
-  const nodeModulesPath = path.join(backendRoot, 'node_modules');
-
-  logError(`Starting backend from: ${backendRoot}`);
-  logError(`Server script path: ${serverScript}`);
-  logError(`Node modules path: ${nodeModulesPath}`);
-
-  // Verificar que los archivos existen
-  if (!fs.existsSync(serverScript)) {
-    throw new Error(`Server script not found: ${serverScript}`);
-  }
-  logError(`✓ Server script exists`);
-
-  if (!fs.existsSync(nodeModulesPath)) {
-    throw new Error(`Node modules not found: ${nodeModulesPath}`);
-  }
-  logError(`✓ Node modules directory exists`);
-
-  process.env.NODE_ENV = 'production';
-  process.env.PORT = process.env.PORT || '5000';
-
-  try {
-    logError('Changing working directory to backend root...');
-    const oldCwd = process.cwd();
-    process.chdir(backendRoot);
-    logError(`✓ Changed cwd from ${oldCwd} to ${process.cwd()}`);
-
-    logError('Importing backend server module...');
-    const serverModule = pathToFileURL(serverScript).href;
-    logError(`Module URL: ${serverModule}`);
-    
-    // El import ahora resolverá node_modules relativamente a backendRoot
-    await import(serverModule);
-    logError('✓ Backend module imported successfully');
-  } catch (err) {
-    logError(`Backend import error: ${err.message}`);
-    logError(`Stack: ${err.stack}`);
-    throw err;
-  }
-
-  logError('Waiting for backend health check...');
-  return waitForUrl(BACKEND_URL, 30000);
 }
 
 async function startDevProcesses() {
@@ -165,7 +113,7 @@ async function startDevProcesses() {
   const backendRoot = path.resolve(projectRoot, 'backend');
 
   logError('Starting dev backend process...');
-  const backendProcess = spawnNpmScript(backendRoot, 'dev');
+  backendProcess = spawnNpmScript(backendRoot, 'dev');
   pipeLogs('backend', backendProcess);
 
   logError('Starting dev web process...');
@@ -179,12 +127,10 @@ async function startDevProcesses() {
 }
 
 function stopChild(child) {
-  if (!child || child.killed) {
-    return;
-  }
+  if (!child || child.killed) return;
 
   if (process.platform === 'win32') {
-    spawn('taskkill', ['/pid', String(child.pid), '/f', '/t']);
+    spawn('taskkill', ['/pid', String(child.pid), '/f', '/t'], { windowsHide: true });
     return;
   }
 
@@ -192,7 +138,9 @@ function stopChild(child) {
 }
 
 function stopAllChildren() {
+  stopChild(backendProcess);
   stopChild(webProcess);
+  backendProcess = null;
   webProcess = null;
 }
 
@@ -213,10 +161,10 @@ function createMainWindow() {
     mainWindow = null;
   });
 
-  if (isDev) {
+  if (isDev || isQa) {
     mainWindow.loadURL(WEB_URL);
   } else {
-    mainWindow.loadFile(getWebEntry());
+    mainWindow.loadURL(APP_URL);
   }
 }
 
@@ -230,13 +178,16 @@ app.whenReady().then(async () => {
       logError('Starting in DEV mode');
       await startDevProcesses();
     } else {
-      logError('Starting in PRODUCTION mode');
-      // Producción: lanzar backend compilado
-      await startBackendProduction();
+      logError('Starting in PRODUCTION mode with shared API');
+      registerAppProtocol({
+        protocol,
+        net,
+        rootDir: path.join(app.getAppPath(), 'dist'),
+      });
     }
 
-    logError('Backend started successfully, creating main window');
     createMainWindow();
+    logError('Initialization completed successfully');
 
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
@@ -244,8 +195,7 @@ app.whenReady().then(async () => {
       }
     });
   } catch (error) {
-    const errorMsg = `[electron] startup error: ${error.message}`;
-    logError(errorMsg);
+    logError(`[electron] startup error: ${error.message}`);
     logError(`Stack: ${error.stack}`);
     stopAllChildren();
     app.quit();

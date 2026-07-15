@@ -40,6 +40,19 @@ describe('corsOptions con NODE_ENV=production (escenario Render)', () => {
     expect(allowed).toBe(true);
   });
 
+  it('permite el origen estable del cliente Electron', async () => {
+    const corsOptions = await loadProdCorsOptions();
+    const { err, allowed } = await checkOrigin(corsOptions, 'app://financeapp');
+    expect(err).toBeNull();
+    expect(allowed).toBe(true);
+  });
+
+  it('rechaza el origen opaco null', async () => {
+    const corsOptions = await loadProdCorsOptions();
+    const { err } = await checkOrigin(corsOptions, 'null');
+    expect(err).toBeInstanceOf(Error);
+  });
+
   it('rechaza un puerto localhost arbitrario (sin bypass de desarrollo)', async () => {
     const corsOptions = await loadProdCorsOptions();
     const { err } = await checkOrigin(corsOptions, 'http://localhost:4321');

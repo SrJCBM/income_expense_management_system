@@ -10,6 +10,7 @@
     "electron-dev": "cross-env ELECTRON=1 electron .",
     "electron": "electron .",
     "test:smoke": "playwright test tests/electron.smoke.spec.mjs",
+    "test:smoke:production": "playwright test tests/electron.production.smoke.spec.mjs",
     "build:dist": "powershell -ExecutionPolicy Bypass -File scripts/build-dist.ps1",
     "electron-build": "npm run build:dist",
     "electron-dist": "npm run build:dist"
@@ -24,7 +25,6 @@
     "appId": "com.incomeexpense.desktop",
     "productName": "FinanceApp",
     "files": ["dist/**/*", "electron/**/*", "package.json"],
-    "extraResources": [{ "from": "dist/resources/backend", "to": "backend" }],
     "extraMetadata": { "main": "electron/main.cjs" },
     "directories": { "output": "release" },
     "win": {
